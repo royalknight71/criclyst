@@ -13,10 +13,16 @@ function App() {
       <h2>Virat Kohli</h2>
       <h2>Jasprit Bumrah</h2>
       <h2>Hardik Pandya</h2> */}
-      <PlayerCard name="Rohit Sharma"/>
-      <PlayerCard name="Virat Kohli"/>
-      <PlayerCard name="Jasprit Bumrah"/>
-      <PlayerCard name="Hardik Pandya"/>
+      <PlayerCard
+        name="Rohit Sharma"
+        runs="11168"
+        role="Batsman"
+      />
+      <PlayerCard name="Virat Kohli" runs="14085" role="Batsman"
+      />
+      <PlayerCard name="Jasprit Bumrah" runs="234" role="Bowler"
+      />
+      
     </>
   )
 }
