@@ -189,7 +189,7 @@
   padding: 20px;
   margin: 15px auto;
   width: 80%;
-  background-color: #1a202c;
+  background-color: #151023;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -225,4 +225,8 @@
 
 .bowler {
   background-color: #dc2626;
+}
+
+.all-rounder {
+  background-color: #16a34a;
 }

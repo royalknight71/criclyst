@@ -14,8 +14,14 @@ function App() {
     },
     {
       name: "Jasprit Bumrah",
-      runs: 234,
+      wickets: 450,
       role: "Bowler"
+    },
+    {
+      name: "Hardik Pandya",
+      runs: 3850,
+      wickets: 190,
+      role: "All-Rounder"
     }
   ]
 
@@ -32,6 +38,7 @@ function App() {
         name={player.name}
         runs={player.runs}
         role={player.role}
+        wickets={player.wickets}
       />
     )
       })}
