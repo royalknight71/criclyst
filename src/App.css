@@ -230,3 +230,31 @@
 .all-rounder {
   background-color: #16a34a;
 }
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 30px 0;
+}
+
+.search-box {
+  width: 60%;
+  max-width: 500px;
+  padding: 12px 18px;
+  border: 2px solid #374151;
+  border-radius: 30px;
+  background-color: #1f2937;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-box::placeholder {
+  color: #9ca3af;
+}
+
+.search-box:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+}

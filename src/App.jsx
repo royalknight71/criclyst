@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 import PlayerCard from "./components/PlayerCard.jsx"
 function App() {
@@ -68,14 +69,30 @@ function App() {
 
   ]
 
+  const [searchTerm,setsearchTerm]=useState("")
+  const filterplayer=players.filter((player)=>{
+    return player.name.toLowerCase().includes(searchTerm.toLowerCase())
+  })
+  
+
   return (
     <>
       <h1>Criclyst</h1>
       <br />
       <h2>Team India ODI Squad</h2>
       <br />
-      
-        {players.map((player)=>{
+      <div className="search-container">
+        <input
+          type="text"
+          placeholder="Search Player..."
+          className="search-box"
+          value={searchTerm}
+          onChange={(e)=>{
+            setsearchTerm(e.target.value)
+          }}
+        />
+      </div>
+        {filterplayer.map((player)=>{
           return (<PlayerCard
           key={player.name}
         name={player.name}
