@@ -258,3 +258,31 @@
   border-color: #2563eb;
   box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
 }
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.role-filter {
+  width: 250px;
+  padding: 12px 16px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 2px solid #374151;
+  background-color: #1f2937;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.role-filter:hover {
+  border-color: #2563eb;
+}
+
+.role-filter:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.5);
+}
