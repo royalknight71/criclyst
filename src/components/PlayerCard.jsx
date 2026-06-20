@@ -5,6 +5,8 @@ function PlayerCard({ name, runs, role , wickets}) {
       {
             role === "Batsman"
         ? <p>Runs: {runs}</p>
+        : role === "Wicket Keeper"
+        ? <p>Runs: {runs}</p>
         : role === "Bowler"
         ? <p>Wickets: {wickets}</p>
         : (
@@ -17,6 +19,8 @@ function PlayerCard({ name, runs, role , wickets}) {
       }
       <span className={
           role === "Batsman"
+            ? "role-badge batsman"
+            : role === "Wicket Keeper"
             ? "role-badge batsman"
             : role==="Bowler"
             ? "role-badge bowler"
