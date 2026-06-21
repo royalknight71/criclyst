@@ -1,6 +1,10 @@
-function PlayerCard({ name, runs, role , wickets}) {
+
+
+function PlayerCard({ name,image, runs, role , wickets, onClick}) {
   return (
-    <div className="player-card">
+    <div className="player-card" onClick={onClick}>
+      <img src={image} alt={name} className="player-image" />
+
       <h2>{name}</h2>
       {
             role === "Batsman"

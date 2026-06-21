@@ -289,3 +289,33 @@
 .player-size{
   color: rgb(178, 178, 234);
 }
+
+.close-btn {
+  background: #2666dc;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  background: #1ca1b9;
+  transform: translateY(-2px);
+}
+
+.close-btn:active {
+  transform: translateY(0);
+}
+
+.player-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center 28%;
+}

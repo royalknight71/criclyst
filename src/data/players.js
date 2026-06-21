@@ -1,21 +1,35 @@
+  import viratImg from "../assets/Virat_Kohli_in_PMO_New_Delhi.jpg";
+  import rohit from "../assets/Prime_Minister_Of_Bharat_Shri_Narendra_Damodardas_Modi_with_Shri_Rohit_Gurunath_Sharma_(Cropped).jpg"
+  import bumrah from "../assets/Jasprit_Bumrah_in_PMO_New_Delhi.jpg"
+  import hardik from "../assets/761a7c2e9ae48fe1f549f043a141ff05.jpg"
+
+
+
   const players=[
     {
     name: "Rohit Sharma",
+    image: rohit,
     runs: 11168,
     role: "Batsman"
     },
     {
-      name: "Virat Kohli",
-      runs: 14085,
-      role: "Batsman"
+    name: "Virat Kohli",
+    image: viratImg,
+    runs: 14085,
+    matches: 302,
+    average: 57.9,
+    strikeRate: 93.4,
+    role: "Batsman"
     },
     {
       name: "Jasprit Bumrah",
+      image: bumrah,
       wickets: 450,
       role: "Bowler"
     },
     {
       name: "Hardik Pandya",
+      image: hardik,
       runs: 3850,
       wickets: 190,
       role: "All-Rounder"
