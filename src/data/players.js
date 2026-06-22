@@ -2,15 +2,24 @@
   import rohit from "../assets/Prime_Minister_Of_Bharat_Shri_Narendra_Damodardas_Modi_with_Shri_Rohit_Gurunath_Sharma_(Cropped).jpg"
   import bumrah from "../assets/Jasprit_Bumrah_in_PMO_New_Delhi.jpg"
   import hardik from "../assets/761a7c2e9ae48fe1f549f043a141ff05.jpg"
-
-
+  import ishan from "../assets/Screenshot 2026-06-22 130757.png"
+  import gill from "../assets/Screenshot 2026-06-22 130604.png"
+  import shreyas from "../assets/Screenshot 2026-06-22 130904.png"
+  import shami from "../assets/Screenshot 2026-06-22 131041.png"
+  import axar from "../assets/Screenshot 2026-06-22 131230.png"
+  import kl from "../assets/Screenshot 2026-06-22 131353.png"
+  import varun from "../assets/Screenshot 2026-06-22 131622.png"
+  import jadeja from "../assets/Screenshot 2026-06-22 131741.png"
 
   const players=[
     {
     name: "Rohit Sharma",
     image: rohit,
-    runs: 11168,
-    role: "Batsman"
+  runs: 11168,
+  matches: 273,
+  average: 48.8,
+  strikeRate: 92.8,
+  role: "Batsman"
     },
     {
     name: "Virat Kohli",
@@ -24,57 +33,95 @@
     {
       name: "Jasprit Bumrah",
       image: bumrah,
-      wickets: 450,
-      role: "Bowler"
+  wickets: 450,
+  matches: 204,
+  average: 24.6,
+  strikeRate: 31.2,
+  role: "Bowler"
     },
     {
       name: "Hardik Pandya",
       image: hardik,
-      runs: 3850,
-      wickets: 190,
-      role: "All-Rounder"
+  runs: 3850,
+  wickets: 190,
+  matches: 135,
+  average: 34.5,
+  strikeRate: 112.4,
+  role: "All-Rounder"
     },
     {
       name: "Ishan Kishan",
-      runs: 1092,
-      role: "Wicket Keeper"
+      image: ishan,
+  runs: 1124,
+  matches: 33,
+  average: 42.8,
+  strikeRate: 103.7,
+  role: "Wicket Keeper"
     },
     {
       name: "Shubhman Gill",
-      runs: 3191,
-      role: "Batsman"
+      image: gill,
+  runs: 3010,
+  matches: 55,
+  average: 61.4,
+  strikeRate: 101.8,
+  role: "Batsman"
     },
     {
       name: "Shreyas Iyer",
-      runs: 3015,
-      role: "Batsman"
+      image: shreyas,
+  runs: 3127,
+  matches: 71,
+  average: 52.1,
+  strikeRate: 101.2,
+  role: "Batsman"
     },
     {
       name: "Mohammad Shami",
-      wickets: 206,
-      role: "Bowler"
+      image:shami,
+  wickets: 206,
+  matches: 104,
+  average: 23.9,
+  strikeRate: 28.5,
+  role: "Bowler"
     },
     {
       name: "Axar Patel",
-      runs: 858,
-      wickets: 75,
-      role: "All-Rounder"
+      image:axar,
+  runs: 858,
+  wickets: 75,
+  matches: 65,
+  average: 28.7,
+  strikeRate: 96.5,
+  role: "All-Rounder"
     },
     {
       name: "KL Rahul",
-      runs: 3399,
-      role: "Wicket Keeper"
+      image:kl,
+  runs: 3399,
+  matches: 85,
+  average: 49.2,
+  strikeRate: 88.1,
+  role: "Wicket Keeper"
     },
     {
       name: "Varun Chakravarthy",
-      wickets: 10,
-      role: "Bowler"
+      image: varun,
+  wickets: 10,
+  matches: 8,
+  average: 22.4,
+  strikeRate: 26.8,
+  role: "Bowler"
     },
     {
       name: "Ravindra Jadeja",
-      runs: 2905,
-      wickets: 232,
-      role: "All-Rounder"
+      image:jadeja,
+  runs: 2905,
+  wickets: 232,
+  matches: 204,
+  average: 32.1,
+  strikeRate: 85.7,
+  role: "All-Rounder"
     }
   ]
 
