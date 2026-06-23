@@ -46,11 +46,32 @@ function App() {
           <option value="Wicket Keeper">Wicket Keeper</option>
         </select>
       </div>
+      
       <div className='player-size'>
         {(selectedPlayer === null)
         ? <p>Showing {filterplayer.length} Players</p>
           :<p></p>
       }
+      </div>
+      <br />
+      <div className="compare-container">
+        <h2>Player Comparison</h2>
+        <select name="player1comp" id="player1comp">
+          {players.map((player) => (
+              <option key={player.name} value={player.name}>
+                {player.name}
+              </option>
+            ))}
+        </select>
+        <select name="player2comp" id="player2comp">
+          {
+            players.map((player)=>(
+              <option key={player.name} value="{player.name}">
+                {player.name}
+              </option>
+            ))
+          }
+        </select>
       </div>
       {
       (filterplayer.length===0)
