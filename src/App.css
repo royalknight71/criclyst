@@ -362,3 +362,57 @@
   margin-bottom: 15px;
   color: white;
 }
+
+.comparison-card {
+  width: 80%;
+  margin: 25px auto;
+  padding: 20px;
+  background: #1e1b4b;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.comparison-card h3 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 12px;
+  margin: 8px 0;
+  background: #312e81;
+  border-radius: 8px;
+  text-align: center;
+  color: white;
+}
+
+.comparison-row span:first-child {
+  font-weight: bold;
+  color: #c4b5fd;
+}
+
+.compare-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.vs-text {
+  color: gold;
+}
+
+.winner-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: limegreen;
+  border-radius: 50%;
+  margin-left: 6px;
+}
