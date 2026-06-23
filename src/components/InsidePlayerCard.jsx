@@ -31,6 +31,24 @@ function InsidePlayerCard({ player ,setSelectedPlayer})
         : <p></p>
         }
         {
+          (player.role==="Batsman"||player.role==="Wicket Keeper"||player.role==="All-Rounder")
+          ?
+          <p>Hundreds: {player.hundred}</p>
+        : <p></p>
+        }
+        {
+          (player.role==="Batsman"||player.role==="Wicket Keeper"||player.role==="All-Rounder")
+          ?
+          <p>Fifties: {player.fifty}</p>
+        : <p></p>
+        }
+        {
+          (player.role==="Batsman"||player.role==="Wicket Keeper"||player.role==="All-Rounder")
+          ?
+          <p>Highest Score: {player.highestScore}</p>
+        : <p></p>
+        }
+        {
           (player.role==="Bowler"|| player.role==="All-Rounder")
           ?
           <p>Economy Rate: {player.economyRate}</p>

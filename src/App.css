@@ -367,7 +367,7 @@
   width: 80%;
   margin: 25px auto;
   padding: 20px;
-  background: #1e1b4b;
+  background: #1e1a5e;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
@@ -414,5 +414,12 @@
   height: 10px;
   background: limegreen;
   border-radius: 50%;
-  margin-left: 6px;
+  margin-left: 8px;
+
+}
+
+.comment-about-avg{
+  font-size: 17px;
+max-width: 700px;
+margin: 15px auto 0;
 }
