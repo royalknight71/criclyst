@@ -1,6 +1,6 @@
 
 
-function PlayerCard({ name,image, runs, role , wickets, onClick}) {
+function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI, onClick}) {
   return (
     <div className="player-card" onClick={onClick}>
       <img src={image} alt={name} className="player-image" />

@@ -25,6 +25,14 @@ function App() {
     const player2Data = players.find(
       (player) => player.name === player2
     )
+    const isBowlerComparison =
+    player1Data?.role === "Bowler" ||
+    player2Data?.role === "Bowler"
+
+    const showWickets =
+  ["Bowler","All-Rounder"].includes(player1Data?.role) &&
+  ["Bowler","All-Rounder"].includes(player2Data?.role)
+
       let player1WinsRuns = false
       let player2WinsRuns = false
       let player1WinAvg=false
@@ -35,6 +43,8 @@ function App() {
       let player2MatchWin = false
       let player1WktWin=false
       let player2WktWin=false
+      let player1ecoWin=false
+      let player2ecoWin=false
       if(player1Data && player2Data)
       {
         player1WinsRuns = player1Data.runs > player2Data.runs
@@ -47,6 +57,8 @@ function App() {
         player2SR=player1Data.strikeRate<player2Data.strikeRate
           player1MatchWin = player1Data.matches > player2Data.matches
           player2MatchWin = player1Data.matches < player2Data.matches
+        player1ecoWin = player1Data.economyRate<player2Data.economyRate
+        player2ecoWin = player2Data.economyRate < player1Data.economyRate
       }
   return (
     <>
@@ -131,7 +143,9 @@ function App() {
             <span className="vs-text">VS</span>
             <span>{player2Data.name}</span>
           </div>
-        <div className="comparison-row">
+        
+        {
+          <div className="comparison-row">
           <span>Runs</span>
 
           <span>
@@ -144,7 +158,11 @@ function App() {
             {player2WinsRuns && <span className="winner-dot"></span>}
           </span>
         </div>
-        <div className="comparison-row">
+        }
+
+        {
+          (showWickets)
+          ? <div className="comparison-row">
           <span>Wickets</span>
 
           <span>
@@ -157,6 +175,8 @@ function App() {
             {player2WktWin && <span className="winner-dot"></span>}
           </span>
         </div>
+        : <p></p>  
+      }
 
           <div className="comparison-row">
             <span>Matches</span>
@@ -178,8 +198,44 @@ function App() {
               {player2WinAvg&&<span className="winner-dot"></span>}
             </span>
           </div>
+          {
+          (showWickets)
+          ? <div className="comparison-row">
+          <span>Economy Rate</span>
 
-          <div className="comparison-row">
+          <span>
+            {player1Data.economyRate}
+            {player1ecoWin && <span className="winner-dot"></span>}
+          </span>
+
+          <span>
+            {player2Data.economyRate}
+            {player2ecoWin && <span className="winner-dot"></span>}
+          </span>
+        </div>
+        : <p></p>  
+      }
+      {
+          (showWickets)
+          ? <div className="comparison-row">
+          <span>Best Bowling(Innings)</span>
+
+          <span>
+            {player1Data.BBI}
+          </span>
+
+          <span>
+            {player2Data.BBI}
+          </span>
+        </div>
+        : <p></p>  
+      }
+          {
+            ((player1Data.role==="Bowler"&&player2Data.role==="Bowler")||
+          isBowlerComparison
+        )
+            ? <p></p>
+            : <div className="comparison-row">
             <span>Strike Rate</span>
             <span>{player1Data.strikeRate}
               {player1SR&&<span className="winner-dot"></span>}
@@ -187,7 +243,8 @@ function App() {
             <span>{player2Data.strikeRate}
               {player2SR&&<span className="winner-dot"></span>}
             </span>
-          </div>
+          </div>}
+          <p>*Average denotes to Bowling Average if the player is Bowler otherwise it is Batting Average</p>
         </div>
         : <p></p>
       }

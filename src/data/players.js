@@ -36,10 +36,12 @@
       name: "Jasprit Bumrah",
       image: bumrah,
       runs: 91,
-  wickets: 450,
-  matches: 204,
-  average: 24.6,
+  wickets: 149,
+  matches: 89,
+  average: 23.55,
   strikeRate: 31.2,
+  economyRate:4.59,
+  BBI: "6/19",
   role: "Bowler"
     },
     {
@@ -50,6 +52,8 @@
   matches: 135,
   average: 34.5,
   strikeRate: 112.4,
+  economyRate: 5.60,
+  BBI: " 4/24 (against England)",
   role: "All-Rounder"
     },
     {
@@ -90,6 +94,8 @@
   matches: 104,
   average: 23.9,
   strikeRate: 28.5,
+  economyRate: 5.58,
+  BBI: "7/57 (vs New Zealand, 2023 WC)",
   role: "Bowler"
     },
     {
@@ -100,6 +106,8 @@
   matches: 65,
   average: 28.7,
   strikeRate: 96.5,
+  economyRate:4.49,
+  BBI: "3/24",
   role: "All-Rounder"
     },
     {
@@ -118,8 +126,10 @@
       runs:0,
   wickets: 10,
   matches: 8,
-  average: 22.4,
+  average: 19,
   strikeRate: 26.8,
+  economyRate: 4.75,
+  BBI: "5/42",
   role: "Bowler"
     },
     {
@@ -130,6 +140,8 @@
   matches: 204,
   average: 32.1,
   strikeRate: 85.7,
+  economyRate:4.89,
+  BBI: "5/33",
   role: "All-Rounder"
     }
   ]
