@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import '../App.css'
+import { Link, NavLink } from 'react-router-dom'
+import Navbar from '../components/Navbar.jsx'
 import PlayerCard from "../components/PlayerCard.jsx"
 import players from "../data/players"
 import ComparisonSelector from "../components/ComparisonSelector.jsx"
 
-function Home(){ 
-      const [searchTerm,setsearchTerm]=useState("")
+function Home(){
+       const [searchTerm,setsearchTerm]=useState("")
   const [selectedRole,setSelectedRole]=useState("All")
   const [player1,setPlayer1]=useState("")
   const [player2,setPlayer2]=useState("")
@@ -27,8 +29,7 @@ function Home(){
 
     return (
         <>
-      <h1>Criclyst</h1>
-      <br />
+        {/* <Navbar/> */}
       <h2>Team India ODI Squad</h2>
       <br />
       <div className="search-container">
@@ -84,7 +85,6 @@ function Home(){
       />
     )
       })}
-
         </>
     )
 }

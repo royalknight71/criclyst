@@ -5,7 +5,7 @@ function PlayerDetails() {
  const name=params.name
  const navigate=useNavigate()
   const player=players.find(
-    (p)=>p.name.toLowerCase().replaceAll(" ", "-") === name
+    (p)=>p.name.toLowerCase().replaceAll(" ", "-")===name
   )
   if (!player) {
   return <h1 className="player-name">Player Not Found</h1>

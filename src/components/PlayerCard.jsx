@@ -3,7 +3,10 @@ import { NavLink} from 'react-router-dom'
 
 function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI}) {
   return (
-      <NavLink to={`/player/${name.toLowerCase().replaceAll(" ", "-")}`}>
+      <NavLink
+        to={`/player/${name.toLowerCase().replaceAll(" ", "-")}`}
+        className="player-card-link"
+      >
         <div className="player-card">
       <img src={image} alt={name} className="player-image" />
 
