@@ -21,7 +21,7 @@
   matches: 273,
   average: 48.8,
   strikeRate: 92.8,
-      highestScore: " 264(against Sri Lanka, 2014)",
+      highestScore: "264(vs Sri Lanka,2014)",
   hundred: 31,
   fifty:49,
   role: "Batsman"
@@ -35,7 +35,7 @@
     matches: 302,
     average: 57.9,
     strikeRate: 93.4,
-    highestScore: " 183 (vs. Pakistan, 2012)",
+    highestScore: "183(vs. Pakistan,2012)",
   hundred: 54,
   fifty:77,
     role: "Batsman"
@@ -64,7 +64,7 @@
   hundred: 0,
   fifty:11,
   economyRate: 5.60,
-  BBI: " 4/24 (against England)",
+  BBI: "4/24(vs England)",
   role: "All-Rounder"
     },
     {
@@ -75,7 +75,7 @@
   matches: 33,
   average: 42.8,
   strikeRate: 103.7,
-      highestScore: "210 runs (against Bangladesh)",
+      highestScore: "210(vs Bangladesh)",
   hundred: 2,
   fifty:7,
   role: "Wicket Keeper"
@@ -88,7 +88,7 @@
   matches: 55,
   average: 61.4,
   strikeRate: 101.8,
-    highestScore: " 208(against New Zealand, 2023)",
+    highestScore: "208(vs New Zealand,2023)",
   hundred: 9,
   fifty:18,
   role: "Batsman"
@@ -101,7 +101,7 @@
   matches: 71,
   average: 52.1,
   strikeRate: 101.2,
-  highestScore: " 128*(vs Netherlands, 2023)",
+  highestScore: "128*(vs Netherlands,2023)",
   hundred: 5,
   fifty:23,
   role: "Batsman"
@@ -115,7 +115,7 @@
   average: 23.9,
   strikeRate: 28.5,
   economyRate: 5.58,
-  BBI: "7/57 (vs New Zealand, 2023 WC)",
+  BBI: "7/57 (vs New Zealand,2023)",
   role: "Bowler"
     },
     {
@@ -141,7 +141,7 @@
   matches: 85,
   average: 50.72,
   strikeRate: 88.1,
-    highestScore: "112*(vs New Zealand, 2026)",
+    highestScore: "112*(vs New Zealand,2026)",
   hundred: 8,
   fifty:20,
   role: "Wicket Keeper"
