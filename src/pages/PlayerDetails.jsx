@@ -1,7 +1,15 @@
-import PlayerCard from "./PlayerCard";
-import players from "../data/players";
-function InsidePlayerCard({ player ,setSelectedPlayer})
-{
+import { useParams , useNavigate } from "react-router-dom"
+import players from "../data/players"
+function PlayerDetails() {
+  const params=useParams()
+ const name=params.name
+ const navigate=useNavigate()
+  const player=players.find(
+    (p)=>p.name.toLowerCase().replaceAll(" ", "-") === name
+  )
+  if (!player) {
+  return <h1>Player Not Found</h1>
+  }
       return (
     <div className="player-card">
       <h2>{player.name}</h2>
@@ -64,7 +72,7 @@ function InsidePlayerCard({ player ,setSelectedPlayer})
                 <button
         className="close-btn"
         onClick={() => {
-            setSelectedPlayer(null)
+            navigate("/")
         }}
         >
         ← Back to Players
@@ -73,4 +81,4 @@ function InsidePlayerCard({ player ,setSelectedPlayer})
   );
 }
 
-export default InsidePlayerCard
+export default PlayerDetails

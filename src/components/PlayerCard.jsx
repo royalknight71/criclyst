@@ -1,8 +1,10 @@
+import React from 'react'
+import { NavLink} from 'react-router-dom'
 
-
-function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI, onClick}) {
+function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI}) {
   return (
-    <div className="player-card" onClick={onClick}>
+      <NavLink to={`/player/${name.toLowerCase().replaceAll(" ", "-")}`}>
+        <div className="player-card">
       <img src={image} alt={name} className="player-image" />
 
       <h2>{name}</h2>
@@ -30,7 +32,8 @@ function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI, onClick
             ? "role-badge bowler"
             : "role-badge all-rounder"
         }>{role}</span>
-    </div>
+        </div>
+      </NavLink>
   );
 }
 export default PlayerCard

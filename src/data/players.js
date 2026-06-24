@@ -14,6 +14,7 @@
   const players=[
     {
     name: "Rohit Sharma",
+    slug: "rohit-sharma",
     image: rohit,
   runs: 11168,
   wickets:9,
@@ -28,6 +29,7 @@
     {
     name: "Virat Kohli",
     image: viratImg,
+    slug: "virat-kohli",
     runs: 14085,
     wickets:5,
     matches: 302,
