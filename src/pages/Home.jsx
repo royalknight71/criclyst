@@ -60,7 +60,18 @@ function Home(){
         <p>Showing {filterplayer.length} Players</p>
         </div>
       <br />
-      
+      <div className="analytics-preview">
+        <h2>Analytics Dashboard</h2>
+
+        <p>
+          Explore player insights with interactive
+          charts and visual statistics.
+        </p>
+
+        <NavLink to="/analytics" className="analytics-btn">
+          View Analytics →
+        </NavLink>
+      </div>
      <ComparisonSelector   
           players={players}
         player1={player1}

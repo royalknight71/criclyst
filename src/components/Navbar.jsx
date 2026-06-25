@@ -3,7 +3,9 @@ import { NavLink } from "react-router-dom";
 function Navbar() {
   return (
     <nav className="navbar">
-      <h1 className="logo">Criclyst</h1>
+        <div className="criclyst">
+            <h1 className="logo">Criclyst</h1>
+        </div>
 
       <div className="nav-links">
         <NavLink

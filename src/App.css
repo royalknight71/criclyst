@@ -461,48 +461,97 @@ margin: 15px auto 0;
 }
 
 .navbar {
-  max-width: 700px;
-  margin: 20px auto;
-  padding: 20px 40px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  background: #1b1635;
-  border-radius: 18px;
+  width: 70%;
+  margin: 20px auto;
+  padding: 15px 40px;
+
+  background: #1d1740;
+  border-radius: 20px;
+}
+
+.logo {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
 }
 
 .nav-links {
+  margin-left: auto;
   display: flex;
   gap: 20px;
-}
-.logo {
-  margin: 0px;
-  font-size: 3rem;
 }
 
 .nav-link {
   text-decoration: none;
-  color: #c5c9ff;
-
-  padding: 10px 18px;
-  border-radius: 10px;
-
-  transition: all 0.25s ease;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  transition: 0.3s;
 }
 
 .nav-link:hover {
-  background: #30285f;
-  color: white;
+  background-color: #34156e;
 }
 
 .active-link {
-  background: #4f46e5;
-  color: white;
+  background-color: #4f46e5;
 }
 
 .player-card-link {
   text-decoration: none;
   color: inherit;
+}
+
+.criclyst{
+margin-right: auto;
+}
+
+.analytics-preview{
+    width: 90%;
+    max-width: 650px;
+    margin: 20px auto;
+    padding: 20px;
+
+    background:#102734;
+    border-radius:12px;
+
+    text-align:center;
+
+    border:1px solid #0e1e22;
+}
+
+.analytics-preview h3{
+    margin-bottom:10px;
+}
+
+.analytics-preview p{
+    color:#bdbdbd;
+    margin-bottom:18px;
+}
+
+.analytics-btn{
+    display:inline-block;
+
+    padding:10px 20px;
+
+    background:#6C63FF;
+
+    color:white;
+
+    border-radius:8px;
+
+    text-decoration:none;
+
+    transition:.3s;
+}
+
+.analytics-btn:hover{
+    background:#5449ff;
+
+    transform:translateY(-2px);
 }

@@ -3,6 +3,7 @@ import Home from "./pages/Home"
 import About from "./pages/About"
 import PlayerDetails from "./pages/PlayerDetails"
 import Navbar from "./components/Navbar"
+import Analytics from "./components/Analytics"
 function App() {
   return (
     <>
@@ -11,6 +12,7 @@ function App() {
       <Route path='/' element={<Home/>}/>
       <Route path='/about' element={<About/>}/>
       <Route path='/player/:name' element={<PlayerDetails/>}/>
+      <Route path='/analytics' element={<Analytics/>}/>
     </Routes>
     </>
   )
