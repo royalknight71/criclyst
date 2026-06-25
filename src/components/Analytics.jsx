@@ -56,8 +56,14 @@ function Analytics(){
 
     return (
         <>
+        <div className="analytics-page">
         <h1>Analytics Dashboard</h1>
+        <br />
         <h3>Visual insights into Team India ODI squad</h3>
+
+        <div className="graph-container">
+        <div className="chart-card">
+                    <h2 className="chart-title">Top 5 Run Scorers</h2>
     <ResponsiveContainer width="95%" height={300}>
         <BarChart
       data={topruns}
@@ -91,7 +97,12 @@ function Analytics(){
       <br />
     </div>
     </ResponsiveContainer>
+      </div>
 
+      <div className="chart-card">
+                    <h2 className="chart-title">
+                Top 5 Wicket Takers
+            </h2>
         <ResponsiveContainer width="95%" height={300}>
         <BarChart
       data={topwickets}
@@ -122,27 +133,37 @@ function Analytics(){
             />
     </BarChart>
     </ResponsiveContainer>
-<ResponsiveContainer width="100%" height={320}>
-  <PieChart>
-    <Pie
-      data={data}
-      dataKey="count"
-      nameKey="role"
-      cx="50%"
-      cy="50%"
-      outerRadius={110}
-      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-    >
-      {data.map((entry, index) => (
-        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-      ))}
-    </Pie>
+                </div>
 
-    <Tooltip formatter={(value, name) => [`${value} Players`, name]} />
-    
-    <Legend verticalAlign="bottom" iconType="circle" />
-  </PieChart>
-</ResponsiveContainer>
+            <div className="chart-card">
+
+            <h2 className="chart-title">
+                Squad Composition
+            </h2>
+            <ResponsiveContainer width="100%" height={320}>
+            <PieChart>
+                <Pie
+                data={data}
+                dataKey="count"
+                nameKey="role"
+                cx="50%"
+                cy="50%"
+                outerRadius={110}
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+                </Pie>
+
+                <Tooltip formatter={(value, name) => [`${value} Players`, name]} />
+                
+                <Legend verticalAlign="bottom" iconType="circle" />
+            </PieChart>
+            </ResponsiveContainer>
+        </div>
+        </div>
+        </div>
         </>
     )
 }
