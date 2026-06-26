@@ -28,7 +28,7 @@ function Analytics(){
     return (
         <>
         <div className="analytics-page">
-        <h1>Analytics Dashboard</h1>
+        <h1 className="analytics-heading">Analytics Dashboard</h1>
         <br />
         <h3>Visual insights into Team India ODI squad</h3>
         <div className="summary-card">
