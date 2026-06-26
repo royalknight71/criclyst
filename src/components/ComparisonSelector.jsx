@@ -11,6 +11,8 @@ function ComparisonSelector({
             }){
     return (<div className="compare-container">
         <h2>Player Comparison</h2>
+        <p>Compare two Team India players side by side.</p>
+        <br />
         <select name="player1comp" id="player1comp"
         value={player1}
         onChange={(e)=>{

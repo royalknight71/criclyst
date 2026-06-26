@@ -16,6 +16,15 @@ function Navbar() {
         >
           Home
         </NavLink>
+        
+          <NavLink
+          to="/analytics"
+          className={({ isActive }) =>
+            isActive ? "nav-link active-link" : "nav-link"
+          }
+        >
+          Analytics
+        </NavLink>
 
         <NavLink
           to="/about"
@@ -25,6 +34,7 @@ function Navbar() {
         >
           About
         </NavLink>
+
       </div>
     </nav>
   );

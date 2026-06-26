@@ -3,7 +3,7 @@ import Home from "./pages/Home"
 import About from "./pages/About"
 import PlayerDetails from "./pages/PlayerDetails"
 import Navbar from "./components/Navbar"
-import Analytics from "./components/Analytics"
+import Analytics from "./pages/Analytics"
 function App() {
   return (
     <>
