@@ -55,9 +55,9 @@ function ComparisonCard({
         ? 
         <div className="comparison-card">
           <div className="compare-title">
-            <span>{player1Data.name}</span>
+            <span className="compare-player-name">{player1Data.name}</span>
             <span className="vs-text">VS</span>
-            <span>{player2Data.name}</span>
+            <span className="compare-player-name">{player2Data.name}</span>
           </div>
         
         {

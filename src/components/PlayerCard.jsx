@@ -8,9 +8,9 @@ function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI}) {
         className="player-card-link"
       >
         <div className="player-card">
-      <img src={image} alt={name} className="player-image" />
 
       <h2>{name}</h2>
+      <img src={image} alt={name} className="player-image" />
       {
             role === "Batsman"
         ? <p>Runs: {runs}</p>

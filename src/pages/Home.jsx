@@ -72,6 +72,8 @@ function Home(){
           View Analytics →
         </NavLink>
       </div>
+
+      {filterplayer.length > 0 && (
      <ComparisonSelector   
           players={players}
         player1={player1}
@@ -79,11 +81,14 @@ function Home(){
         player2={player2}
         setPlayer2={setPlayer2}
         player1Data={player1Data}
-        player2Data={player2Data}/> 
+        player2Data={player2Data}/> )}
 
         {
         filterplayer.length === 0
-        ? <h3>No Player Found</h3>
+        ? <div>
+          <h3>No Player Found</h3>
+          <h4>Try searching another player.</h4>
+          </div>
         : filterplayer.map((player) => {
           return (
            <PlayerCard

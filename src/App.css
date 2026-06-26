@@ -331,6 +331,10 @@
   object-position: center 28%;
 }
 
+.player-image:hover {transform:scale(1.05);
+
+transition:.3s;}
+
 #player1comp,
 #player2comp {
   width: 220px;
@@ -367,8 +371,9 @@
 
 .comparison-card {
   width: 80%;
-      display:flex;
-    gap:30px;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
   margin: 25px auto;
   padding: 20px;
   background: #1e1a5e;
@@ -391,13 +396,16 @@
   border-radius: 8px;
   text-align: center;
   color: white;
+  transition:.25s;
 }
 
 .comparison-row span:first-child {
   font-weight: bold;
   color: #c4b5fd;
 }
-
+.comparison-row:hover{
+    background:#4a4396;
+}
 .compare-title {
   display: flex;
   justify-content: center;
@@ -419,7 +427,10 @@
 
 }
 .vs-text {
-  color: gold;
+      font-size: 2rem;
+    font-weight: 700;
+    color:#FFD700;
+    text-shadow:0 0 10px rgba(255,215,0,.5);
 }
 
 .winner-dot {
@@ -809,3 +820,7 @@ font-size:1.2rem;
     text-align:center;
 }
 
+.compare-player-name{
+  color:white;
+font-weight:700;
+}

@@ -12,8 +12,20 @@ function PlayerDetails() {
   }
       return (
     <div className="player-details-card">
-      <img className="player-image" src={player.image} alt={player.name} />
+      <div>
+      <span className={
+          player.role === "Batsman"
+            ? "role-badge batsman"
+            : player.role === "Wicket Keeper"
+            ? "role-badge batsman"
+            : player.role==="Bowler"
+            ? "role-badge bowler"
+            : "role-badge all-rounder"
+        }>{player.role}</span>
+        </div>
       <h1 className="player-name">{player.name}</h1>
+      <br />
+      <img className="player-image" src={player.image} alt={player.name} />
       <br />
       <div className="player-stats">
         {(player.role==="Batsman" || player.role==="Wicket Keeper")
@@ -110,17 +122,7 @@ function PlayerDetails() {
           </div>
         : null
         }
-        <div>
-      <span className={
-          player.role === "Batsman"
-            ? "role-badge batsman"
-            : player.role === "Wicket Keeper"
-            ? "role-badge batsman"
-            : player.role==="Bowler"
-            ? "role-badge bowler"
-            : "role-badge all-rounder"
-        }>{player.role}</span>
-        </div>
+        
         <br />
                 <button
         className="close-btn"
