@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import AnalyticsBarChart from "../components/AnalyticsBarChart";
 import RolePieChart from "../components/RolePieChart";
+import SummaryCard from "../components/SummaryCard";
 
 import {
     getTopRuns,
@@ -30,12 +31,39 @@ function Analytics(){
         <h1>Analytics Dashboard</h1>
         <br />
         <h3>Visual insights into Team India ODI squad</h3>
-
+        <div className="summary-card">
+            <SummaryCard
+            icon="👥"
+                title="Players"
+                value={players.length}
+            />
+            <SummaryCard
+            icon="🏏"
+            title="Batsman"
+            value={data[0].count}
+            />
+            <SummaryCard
+            icon="🎯"
+            title="Bowler"
+            value={data[1].count}
+            />
+            <SummaryCard
+            icon="⭐"
+            title="All Rounder"
+            value={data[2].count}
+            />
+            <SummaryCard
+            icon="🥅"
+            title="Wicket Keeper"
+            value={data[3].count}
+            />
+        </div>
         <div className="graph-container">
             <AnalyticsBarChart
                 title="Top Run Scorers"
                 data={topruns}
                 dataKey="runs"
+                namekey="name"
                 color="#6C63FF"
                 name="Runs"
             />
@@ -43,6 +71,7 @@ function Analytics(){
                 title="Top 5 Wicket Takers"
                 data={topwickets}
                 dataKey="wickets"
+                namekey="name"
                 color="#de2929"
                 name="Wickets"
             />

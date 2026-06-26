@@ -13,6 +13,7 @@ function AnalyticsBarChart({
     title,
     data,
     dataKey,
+    namekey,
     color,
     name})
     {
@@ -35,7 +36,7 @@ function AnalyticsBarChart({
             strokeDasharray="4 4"
               />
                 <XAxis type="number" />
-                <YAxis type="category" dataKey={dataKey} width={140}/>
+                <YAxis type="category" dataKey={namekey} width={140}/>
                 <Tooltip cursor={{ fill: "rgba(108,99,255,0.15)" }}/>
         
                 <Legend verticalAlign="top"/>
