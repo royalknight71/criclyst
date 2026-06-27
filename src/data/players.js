@@ -44,28 +44,28 @@
       name: "Jasprit Bumrah",
       image: bumrah,
       runs: 91,
-  wickets: 149,
-  matches: 89,
-  average: 23.55,
-  strikeRate: 31.2,
-  economyRate:4.59,
-  BBI: "6/19",
-  role: "Bowler"
+      wickets: 149,
+      matches: 89,
+      average: 23.55,
+      strikeRate: 31.2,
+      economyRate:4.59,
+      BBI: "6/19",
+      role: "Bowler"
     },
     {
       name: "Hardik Pandya",
       image: hardik,
-  runs: 3850,
-  wickets: 190,
-  matches: 135,
-  average: 34.5,
-  strikeRate: 112.4,
-      highestScore: "92*",
-  hundred: 0,
-  fifty:11,
-  economyRate: 5.60,
-  BBI: "4/24(vs England)",
-  role: "All-Rounder"
+      runs: 3850,
+      wickets: 190,
+      matches: 135,
+      average: 34.5,
+      strikeRate: 112.4,
+          highestScore: "92*",
+      hundred: 0,
+      fifty:11,
+      economyRate: 5.60,
+      BBI: "4/24(vs England)",
+      role: "All-Rounder"
     },
     {
       name: "Ishan Kishan",
@@ -78,6 +78,7 @@
       highestScore: "210(vs Bangladesh)",
   hundred: 2,
   fifty:7,
+  
   role: "Wicket Keeper"
     },
     {
