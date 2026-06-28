@@ -14,13 +14,13 @@ function PlayerDetails() {
     <div className="player-details-card">
       <div>
       <span className={
-          player.role === "Batsman"
-            ? "role-badge batsman"
-            : player.role === "Wicket Keeper"
-            ? "role-badge batsman"
-            : player.role==="Bowler"
-            ? "role-badge bowler"
-            : "role-badge all-rounder"
+        player.role === "Batsman"
+          ? "role-badge batsman"
+          : player.role === "Wicket Keeper"
+          ? "role-badge batsman"
+          : player.role==="Bowler"
+          ? "role-badge bowler"
+          : "role-badge all-rounder"
         }>{player.role}</span>
         </div>
       <h1 className="player-name">{player.name}</h1>

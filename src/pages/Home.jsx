@@ -7,14 +7,14 @@ import players from "../data/players"
 import ComparisonSelector from "../components/ComparisonSelector.jsx"
 
 function Home(){
-       const [searchTerm,setsearchTerm]=useState("")
+  const [searchTerm,setsearchTerm]=useState("")
   const [selectedRole,setSelectedRole]=useState("All")
   const [player1,setPlayer1]=useState("")
   const [player2,setPlayer2]=useState("")
 
   const filterplayer=players.filter((player)=>{
-    const matchSearch= player.name.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchRole=selectedRole==="All"||selectedRole===player.role
+  const matchSearch= player.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const matchRole=selectedRole==="All"||selectedRole===player.role
 
     return matchSearch&&matchRole
   })
