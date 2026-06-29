@@ -7,10 +7,27 @@ export function getTopRuns(players){
     )
 }
 
+
 export function getTopWickets(players){
     return (
     [...players]
     .sort((a, b) => b.wickets - a.wickets)
+    .slice(0,5)
+    )
+}
+
+export function getTopAvg(players){
+    return (
+    [...players]
+    .sort((a, b) => b.average - a.average)
+    .slice(0,5)
+    )
+}
+
+export function getTopSR(players){
+    return (
+    [...players]
+    .sort((a, b) => b.strikeRate - a.strikeRate)
     .slice(0,5)
     )
 }

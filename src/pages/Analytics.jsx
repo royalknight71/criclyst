@@ -17,12 +17,16 @@ import SummaryCard from "../components/SummaryCard";
 import {
     getTopRuns,
     getTopWickets,
-    getRoleDistribution
+    getRoleDistribution,
+    getTopAvg,
+    getTopSR
 } from "../utils/analytics";
 
 function Analytics(){
     const topruns=getTopRuns(players)
     const topwickets=getTopWickets(players)
+    const topavg=getTopAvg(players)
+    const topSR=getTopSR(players)
     const data = getRoleDistribution(players)
     const COLORS = ['#0088FE', '#ae3333', '#29ce60', '#FF8042'];
     return (
@@ -74,6 +78,22 @@ function Analytics(){
                 namekey="name"
                 color="#de2929"
                 name="Wickets"
+            />
+            <AnalyticsBarChart
+                title="Top 5 Highest Average Players"
+                data={topavg}
+                dataKey="average"
+                namekey="name"
+                color="#146876"
+                name="Average"
+            />
+            <AnalyticsBarChart
+                title="Top 5 Highest Strike Rate Players"
+                data={topSR}
+                dataKey="strikeRate"
+                namekey="name"
+                color="#761452"
+                name="Strike Rate"
             />
         <RolePieChart
         title="Squad Composition"
