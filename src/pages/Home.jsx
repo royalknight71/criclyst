@@ -75,7 +75,7 @@ function Home(){
 
       {filterplayer.length > 0 && (
      <ComparisonSelector   
-          players={players}
+        players={players}
         player1={player1}
         setPlayer1={setPlayer1}
         player2={player2}

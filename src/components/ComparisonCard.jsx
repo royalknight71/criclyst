@@ -51,7 +51,7 @@ function ComparisonCard({
     return(
         <div>
         {
-        (player1Data && player2Data)
+        (player1Data&&player2Data)
         ? 
         <div className="comparison-card">
           <div className="compare-title">
