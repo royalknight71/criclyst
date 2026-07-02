@@ -1,16 +1,77 @@
-# React + Vite
+# 🏏 Criclyst
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An AI-powered Cricket Analytics Platform built using the MERN Stack.
 
-Currently, two official plugins are available:
+## 🚀 Current Status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Frontend ✅
+- React
+- Vite
+- Player Search
+- Player Filter
+- Player Comparison
+- Analytics Dashboard
+- Player Details
+- Responsive UI
 
-## React Compiler
+### Backend 🚧
+- Express Setup ✅
+- First API ✅
+- Health Check API ✅
+- ES Modules ✅
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack
 
-## Expanding the ESLint configuration
+### Frontend
+- React
+- Vite
+- JavaScript
+- CSS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Backend
+- Node.js
+- Express.js
+
+### Database (Upcoming)
+- MongoDB
+- Mongoose
+
+### Authentication (Upcoming)
+- JWT
+- bcrypt
+
+## 📂 Project Structure
+
+```
+criclyst/
+│
+├── src/                # React Frontend
+│
+├── backend/
+│   ├── app.js
+│   ├── server.js
+│   ├── routes/
+│   ├── controllers/
+│   ├── models/
+│   ├── middleware/
+│   ├── config/
+│   └── utils/
+│
+└── README.md
+```
+
+## 📅 Development Progress
+
+- ✅ Frontend V1 Completed
+- ✅ Express Backend Initialized
+- ✅ First API Created
+- ✅ Health Route Added
+- ⏳ Postman Integration
+- ⏳ Player APIs
+- ⏳ MongoDB Integration
+- ⏳ JWT Authentication
+- ⏳ Deployment
+
+## 👨‍💻 Author
+
+Krish Gupta
