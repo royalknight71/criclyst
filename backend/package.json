@@ -12,5 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "type": "module"
 }
