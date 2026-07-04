@@ -5,8 +5,9 @@ const app=express();
 app.use("/api/players",playerRoutes);
 
 app.get("/",(req,res)=>{
-    res.send("Welcome to Criclyst API 🚀")
+    res.send("Welcome to Criclyst API")
 })
+
 
 app.get("/api/health",(req,res)=>{
     res.json({status:"ok",
