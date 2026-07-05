@@ -1,9 +1,8 @@
 import express from 'express';
 import playerRoutes from './routes/player.routes.js';
-import topPlayerRoutes from './routes/topPlayer.routes.js';
 import logger from './middleware/logger.middleware.js';
 const app=express();
-
+app.use(express.json());
 
 app.use(logger);
 
@@ -11,12 +10,12 @@ app.use("/api/players",playerRoutes);
 
 
 app.get("/",(req,res)=>{
-    res.send("Welcome to Criclyst API")
+    res.status(200).send("Welcome to Criclyst API")
 })
 
 
 app.get("/api/health",(req,res)=>{
-    res.json({status:"ok",
+    res.status(200).json({status:"ok",
         message: "Criclyst Backend Running"
     })
 })
