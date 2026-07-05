@@ -14,11 +14,17 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 - Player Details
 - Responsive UI
 
-### Backend 🚧
-- Express Setup ✅
-- First API ✅
-- Health Check API ✅
-- ES Modules ✅
+## Progress
+
+### Backend
+- Express project setup
+- Logger middleware
+- Health API
+- Player Routes
+- Search API
+- Dynamic Routes
+- 404 Middleware
+- Nodemon setup
 
 ## 🛠️ Tech Stack
 
