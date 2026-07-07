@@ -72,8 +72,8 @@ const searchPlayers=(req,res)=>{
     if(selectedPlayer.length===0)
     {
         return res.status(404).json({
-            success: false,
-            message: "Player not found"
+            success:false,
+            message:"Player not found"
         })
     }
     return res.status(200).json(selectedPlayer)

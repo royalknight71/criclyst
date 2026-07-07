@@ -73,7 +73,7 @@ function Home(){
         </NavLink>
       </div>
 
-      {filterplayer.length > 0 && (
+      {filterplayer.length>0 && (
      <ComparisonSelector   
         players={players}
         player1={player1}

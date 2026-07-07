@@ -158,8 +158,8 @@
   economyRate: 4.75,
   BBI: "5/42",
   role: "Bowler"
-    },
-    {
+  },
+  {
       name: "Ravindra Jadeja",
       image:jadeja,
   runs: 2905,
