@@ -8,7 +8,6 @@ app.use(logger);
 
 app.use("/api/players",playerRoutes);
 
-
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Criclyst API")
 })

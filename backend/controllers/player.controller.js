@@ -1,29 +1,6 @@
-import express from "express";
 import Player from "../models/player.model.js";
-// const player=[
-//         {
-//             id: 1,
-//             name: "Hardik Pandya",
-//             role: "All-Rounder"
-//         },
-//         {
-//             id: 2,
-//             name: "Jasprit Bumrah",
-//             role: "Bowler"
-//         },
-//         {
-//             "id": 18,
-//             "name": "Virat Kohli",
-//             "runs": 13848
-//         },
-//         {
-//             "id": 45,
-//             "name": "Rohit Sharma",
-//             "runs": 11168
-//         }
-// ];
 
-const createPlayer=async (req,res)=>{
+export const createPlayer=async (req,res)=>{
     try{
         const player=await Player.create(req.body);
         return res.status(201).json({
@@ -38,7 +15,7 @@ const createPlayer=async (req,res)=>{
     }
 }
 
-const getTopPlayers=async (req,res)=>{
+export const getTopPlayers=async (req,res)=>{
     try{
         const ply = await Player.find()
                         .sort({ runs: -1 })
@@ -56,26 +33,82 @@ const getTopPlayers=async (req,res)=>{
     }
 }
 
-// const getAllPlayers = (req,res)=>{
-//     return res.json(player)
-// }
-// const getPlayerById=(req,res)=>{
-//     const id=parseInt(req.params.id);
-//     const selectedPlayer=player.find(p=>p.id===id);
+export const getAllPlayers =async (req,res)=>{
+    try{
+        const players=await Player.find();
+        return res.status(200).json({
+            success: true,
+            data: players
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
 
-//     if(!selectedPlayer)
-//     {
-//         return res.status(404).json({
-//             success: false,
-//             message: "Player not found"
-//         })
-//     }
-//     return res.status(200).json({
-//         success: true,
-//         data: selectedPlayer
-//     })
-// }
+export const getPlayerById = async (req,res) => {
+    try {
+        const player = await Player.findById(req.params.id);
 
+        if (!player) 
+            {
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: player
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const countPlayers = async(req,res)=>{
+    try {
+        const count=await Player.countDocuments();
+        return res.status(200).json({
+            success: true,
+            count
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+}}
+
+export const updatePlayer=async (req,res)=>{
+    try{
+        const player=await Player.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        if(!player)
+        {
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.json({
+            success:true,
+            data:player
+            });
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
 // const updatePlayer = (req,res)=>{
 //     const id=parseInt(req.params.id);
 //     const ply=player.find(p=>p.id===id);
@@ -94,9 +127,10 @@ const getTopPlayers=async (req,res)=>{
 // }
 
 
-// const searchPlayers=(req,res)=>{
+// export const searchPlayers=async (req,res)=>{
 //     const naam=req.query.name;
 //     const selectedPlayer=player.filter(p=>p.name.toLowerCase().includes(naam.toLowerCase()));
+
 
 //     if(selectedPlayer.length===0)
 //     {
@@ -108,22 +142,27 @@ const getTopPlayers=async (req,res)=>{
 //     return res.status(200).json(selectedPlayer)
 // }
 
-// const deletePlayer=(req,res)=>{
-//     const id=parseInt(req.params.id);
-//     const index=player.findIndex(p=>p.id===id);
-//     if(index===-1)
-//     {
-//         return res.status(404).json({
-//             success: false,
-//             message: "Player not found"
-//         })
-//     }
-//     player.splice(index, 1);
-//     return res.status(200).json({
-//         success: true,
-//         message: "Player deleted successfully"
-//     })
-//     }
+export const deletePlayer=async (req, res)=>{
+    try {
+        const player = await Player.findByIdAndDelete(req.params.id);
+        if (!player) {
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Player deleted successfully"
+        });
+    }
+    catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
 // const createPlayer=(req,res)=>{
 //      player.push(req.body);
@@ -132,5 +171,3 @@ const getTopPlayers=async (req,res)=>{
 //         message: "Player added successfully",
 //      })
 // }
-
-export { createPlayer,getTopPlayers};

@@ -1,15 +1,14 @@
 import express from "express";
-import {createPlayer,getTopPlayers} from "../controllers/player.controller.js";
+import {createPlayer,getTopPlayers,getAllPlayers,getPlayerById,countPlayers,updatePlayer,deletePlayer} from "../controllers/player.controller.js";
 const router=express.Router();
 
-
-//router.get("/",getAllPlayers);
+router.get("/",getAllPlayers);
 
 router.post("/",createPlayer);
 
 router.get("/top",getTopPlayers);
-
-//router.get("/search",searchPlayers);
+router.get("/count",countPlayers);
+// router.get("/search",searchPlayers);
 
 // router.put("/",(req,res)=>{
 //     const id=(req.body.id);
@@ -34,10 +33,10 @@ router.get("/top",getTopPlayers);
 //     })
 // })
 
-// router.put("/:id",updatePlayer);
+router.put("/:id",updatePlayer);
 
-// router.delete("/:id",deletePlayer)
+router.delete("/:id",deletePlayer)
 
-// router.get("/:id",getPlayerById);
+router.get("/:id",getPlayerById);
 
 export default router;
