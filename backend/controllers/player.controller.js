@@ -2,7 +2,18 @@ import Player from "../models/player.model.js";
 
 export const createPlayer=async (req,res)=>{
     try{
-        const player=await Player.create(req.body);
+        const existingPlayer = await Player.findOne({
+            name: req.body.name
+        });
+
+        if(existingPlayer){
+            return res.status(400).json({
+                success:false,
+                message:"Player already exists"
+            });
+        }
+
+        const player = await Player.create(req.body);
         return res.status(201).json({
             success: true,
             data: player
@@ -89,7 +100,10 @@ export const countPlayers = async(req,res)=>{
 
 export const updatePlayer=async (req,res)=>{
     try{
-        const player=await Player.findByIdAndUpdate(req.params.id,req.body,{new:true})
+        const player=await Player.findByIdAndUpdate(req.params.id,req.body,{
+            new:true,
+            runValidators:true,
+        })
         if(!player)
         {
             return res.status(404).json({

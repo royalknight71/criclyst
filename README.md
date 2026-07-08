@@ -26,6 +26,15 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 - 404 Middleware
 - Nodemon setup
 
+### Database
+✔ MongoDB
+
+✔ Mongoose
+
+✔ CRUD APIs
+
+✔ Schema Validation
+
 ## 🛠️ Tech Stack
 
 ### Frontend
@@ -72,9 +81,9 @@ criclyst/
 - ✅ Express Backend Initialized
 - ✅ First API Created
 - ✅ Health Route Added
-- ⏳ Postman Integration
-- ⏳ Player APIs
-- ⏳ MongoDB Integration
+- ✅ Postman Integration
+- ✅ Player APIs
+- ✅ MongoDB Integration
 - ⏳ JWT Authentication
 - ⏳ Deployment
 
