@@ -23,6 +23,8 @@ const playerSchema=new mongoose.Schema({
         default: 0,
         min: 0
     },
+},{
+    timestamps: true
 })
 
 const Player=mongoose.model('Player',playerSchema);

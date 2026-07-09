@@ -1,5 +1,6 @@
 import express from 'express';
 import playerRoutes from './routes/player.routes.js';
+import userRoutes from './routes/user.routes.js';
 import logger from './middleware/logger.middleware.js';
 const app=express();
 app.use(express.json());
@@ -7,6 +8,8 @@ app.use(express.json());
 app.use(logger);
 
 app.use("/api/players",playerRoutes);
+
+app.use("/api/users",userRoutes);
 
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Criclyst API")
