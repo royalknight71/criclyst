@@ -47,7 +47,7 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 - Node.js
 - Express.js
 
-### Database (Upcoming)
+### Database 
 - MongoDB
 - Mongoose
 

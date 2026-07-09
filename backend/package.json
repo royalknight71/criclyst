@@ -13,7 +13,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "express": "^5.2.1",
-    "mongoose": "^9.7.4"
+    "mongoose": "^9.7.4",
+    "validator": "^13.15.35"
   },
   "type": "module"
 }
