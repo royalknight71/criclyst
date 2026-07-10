@@ -83,7 +83,7 @@ export const loginUser=async (req,res)=>{
                 message:"User not found"
             });
         }
-        const isPasswordSame=await bcrypt.compare(password,existingUser.password);
+        const isPasswordSame=await existingUser.comparePassword(password);
         if(!isPasswordSame){
             return res.status(401).json({
                 success:false,
@@ -96,7 +96,7 @@ export const loginUser=async (req,res)=>{
                                 id: existingUser._id,
                                 email: existingUser.email
                                 },
-                                "King@123",
+                                process.env.JWT_SECRET,
                                 {
                                 expiresIn: "1d"
                             });

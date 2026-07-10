@@ -12,7 +12,7 @@ export const userAuth=async (req,res,next)=>{
                 message:"Token Expired or Unauthorized Access"
             });
         }
-        const payload=jwt.verify(token,"King@123");
+        const payload=jwt.verify(token,process.env.JWT_SECRET);
         const {id}=payload
         const user = await User
         .findById(id)
