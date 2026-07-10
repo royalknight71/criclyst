@@ -99,8 +99,7 @@ export const loginUser=async (req,res)=>{
                                 "King@123",
                                 {
                                 expiresIn: "1d"
-                        
-    });
+                            });
         res.cookie("token",token)
         res.status(200).json({
             success:true,
@@ -116,6 +115,79 @@ export const loginUser=async (req,res)=>{
         return res.status(500).json({
             success: false,
             message: error.message
+        });
+    }
+}
+
+export const getProfile=async (req,res)=>{
+    try{
+        const data=req.user;
+        return res.status(200).json({
+            success:true,
+            data:{
+                _id: data._id,
+                name: data.name,
+                email: data.email
+            }
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
+export const deleteProfile=async (req,res)=>{
+    try{
+        const user=await User.findByIdAndDelete(req.user._id)
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Player deleted successfully"
+        }); 
+    }
+    catch(error){
+        return res.status(500).json({
+        success: false,
+        message: error.message
+    });
+    }
+}
+
+export const updateProfile=async (req,res)=>{
+    try{
+        const { name, email } = req.body;
+        const user=await User.findByIdAndUpdate(req.user._id,{name,email},{
+            new:true,
+            runValidators:true
+        })
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            user: {
+                    _id: user._id,
+                    name: user.name,
+                    email: user.email
+                }
+        })
+    }
+    catch(error)
+    {
+        return res.status(500).json({
+        success: false,
+        message: error.message
         });
     }
 }
