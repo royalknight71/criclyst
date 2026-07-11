@@ -5,11 +5,12 @@ import User from '../models/user.model.js';
 export const userAuth=async (req,res,next)=>{
     try{
         const {token}=req.cookies
-
+        console.log(req.cookies);
+        
         if(!token){
             return res.status(401).json({
                 success:false,
-                message:"Token Expired or Unauthorized Access"
+                message:"Please login to continue"
             });
         }
         const payload=jwt.verify(token,process.env.JWT_SECRET);
@@ -31,14 +32,14 @@ export const userAuth=async (req,res,next)=>{
         if(error.name==="TokenExpiredError"){
             return res.status(401).json({
             success:false,
-            message:"Token Expired"
+            message:"Session expired. Please login again."
             })
         }
 
         if(error.name==="JsonWebTokenError"){
             return res.status(401).json({
             success:false,
-            message:"Invalid Token"
+            message:"Invalid authentication token"
             })
             }
 

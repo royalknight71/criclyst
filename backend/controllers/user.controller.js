@@ -119,6 +119,20 @@ export const loginUser=async (req,res)=>{
     }
 }
 
+export const logoutUser=async (req,res)=>{
+    try{
+        //res.cookie("token",null,{expires:new Date(Date.now())})
+        res.clearCookie("token");
+        return res.status(200).send("Logout Successfully")
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 export const getProfile=async (req,res)=>{
     try{
         const data=req.user;
