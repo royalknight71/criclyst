@@ -3,10 +3,12 @@ import playerRoutes from './routes/player.routes.js';
 import userRoutes from './routes/user.routes.js';
 import logger from './middleware/logger.middleware.js';
 import cookieParser from 'cookie-parser';
+import rateLimiter from './middleware/rateLimiter.js';
+
 
 const app=express();
-
 app.use(cookieParser());
+app.use(rateLimiter)
 
 app.use(express.json());
 
