@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
-
+import redisClient from '../config/redis.js';
 
 export const userAuth=async (req,res,next)=>{
     try{
@@ -13,6 +13,15 @@ export const userAuth=async (req,res,next)=>{
                 message:"Please login to continue"
             });
         }
+
+        const isBlocked=await redisClient.exists(token)
+        if (isBlocked) {
+            return res.status(401).json({
+                success: false,
+                message: "Session expired. Please login again."
+            });
+        }
+
         const payload=jwt.verify(token,process.env.JWT_SECRET);
         const {id}=payload
         const user = await User
@@ -25,6 +34,8 @@ export const userAuth=async (req,res,next)=>{
                 message:"User Unavailable"
             });
         }
+        
+
         req.user=user;
         next();
     }

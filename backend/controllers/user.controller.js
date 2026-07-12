@@ -2,7 +2,7 @@ import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
-
+import redisClient from '../config/redis.js';
 
 export const createUser=async (req,res)=>{
     try{
@@ -122,6 +122,17 @@ export const loginUser=async (req,res)=>{
 export const logoutUser=async (req,res)=>{
     try{
         //res.cookie("token",null,{expires:new Date(Date.now())})
+        const {token}=req.cookies;
+        if(!token)
+            throw new Error("Invalid Token")
+
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
+        // const payload=jwt.decode(token)
+        // console.log(payload);
+        
+         await redisClient.set(token,"blocked")
+         await redisClient.expireAt(token,payload.exp)
+
         res.clearCookie("token");
         return res.status(200).send("Logout Successfully")
     }
