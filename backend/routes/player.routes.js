@@ -1,5 +1,5 @@
 import express from "express";
-import {createPlayer,getTopPlayers,getAllPlayers,getPlayerById,countPlayers,updatePlayer,deletePlayer} from "../controllers/player.controller.js";
+import {createPlayer,getTopPlayers,getAllPlayers,getPlayerById,countPlayers,updatePlayer,deletePlayer,searchPlayers,searchPlayersById} from "../controllers/player.controller.js";
 const router=express.Router();
 
 router.get("/",getAllPlayers);
@@ -8,7 +8,8 @@ router.post("/",createPlayer);
 
 router.get("/top",getTopPlayers);
 router.get("/count",countPlayers);
-// router.get("/search",searchPlayers);
+router.get("/search",searchPlayers);
+router.get("/:id",searchPlayersById)
 
 // router.put("/",(req,res)=>{
 //     const id=(req.body.id);

@@ -1,4 +1,5 @@
 import Player from "../models/player.model.js";
+import mongoose from "mongoose";
 
 export const createPlayer=async (req,res)=>{
     try{
@@ -141,20 +142,40 @@ export const updatePlayer=async (req,res)=>{
 // }
 
 
-// export const searchPlayers=async (req,res)=>{
-//     const naam=req.query.name;
-//     const selectedPlayer=player.filter(p=>p.name.toLowerCase().includes(naam.toLowerCase()));
-
-
-//     if(selectedPlayer.length===0)
-//     {
-//         return res.status(404).json({
-//             success:false,
-//             message:"Player not found"
-//         })
-//     }
-//     return res.status(200).json(selectedPlayer)
-// }
+export const searchPlayers=async (req,res)=>{
+    try{
+        const filter={}
+        const name=req.query.name
+        const country=req.query.country
+        const role=req.query.role
+        const team=req.query.team
+        if(name){
+            filter.name={$regex:name,$options:"i"}
+        }
+        if(country){
+            filter.country={$regex:country,$options:"i"} 
+        }
+        if(role){
+            filter.role={$regex:role,$options:"i"}
+        }
+        if(team){
+            filter.team={$regex:team,$options:"i"}
+        }
+        const players=await Player.find(filter)
+        if(players.length===0)
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+            return res.status(200).json(player)
+    }
+    catch(error){
+        return res.status(500).json({
+            success:false,
+            message:error.message
+        });
+    }
+}
 
 export const deletePlayer=async (req, res)=>{
     try {
@@ -178,10 +199,33 @@ export const deletePlayer=async (req, res)=>{
     }
 };
 
-// const createPlayer=(req,res)=>{
-//      player.push(req.body);
-//      return res.status(201).json({
-//         success: true,
-//         message: "Player added successfully",
-//      })
-// }
+export const searchPlayersById=async (req,res)=>{
+    try{
+        const id=req.params.id
+        const check=mongoose.Types.ObjectId.isValid(id)
+        if(!check){
+            return res.status(400).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        const player=await Player.findById(id)
+
+        if(!player){
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            data: player
+        })
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
