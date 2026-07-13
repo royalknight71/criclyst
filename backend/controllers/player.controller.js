@@ -206,7 +206,7 @@ export const searchPlayersById=async (req,res)=>{
         if(!check){
             return res.status(400).json({
                 success: false,
-                message: "Player not found"
+                message: "Invalid Player ID"
             });
         }
         const player=await Player.findById(id)
@@ -227,5 +227,70 @@ export const searchPlayersById=async (req,res)=>{
             success: false,
             message: error.message
         });
+    }
+}
+
+export const deletePlayersById=async (req,res)=>{
+    try{
+        const id=req.params.id;
+
+        const check=mongoose.Types.ObjectId.isValid(id)
+        if(!check){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid Player ID"
+            });
+        }
+
+        const player=await Player.findByIdAndDelete(id)
+        if(!player){
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Player deleted successfully"
+        });
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });        
+    }
+}
+export const updatePlayersById=async (req,res)=>{
+    try{
+        const id=req.params.id
+        const check=mongoose.Types.ObjectId.isValid(id)
+        if(!check){
+            return res.status(400).json({
+                success: false,
+                message: "Player not found"
+            });
+        }     
+        const player=await Player.findByIdAndUpdate(id,req.body,{
+            new:true,
+            runValidators:true
+        })
+                if(!player){
+            return res.status(404).json({
+                success: false,
+                message: "Player not found"
+            });
+        }
+        return res.status(200).json({
+            success:true,
+            data:player
+            })
+
+    }
+    catch(error){
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });          
     }
 }

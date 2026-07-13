@@ -1,5 +1,6 @@
 import express from "express";
-import {createPlayer,getTopPlayers,getAllPlayers,getPlayerById,countPlayers,updatePlayer,deletePlayer,searchPlayers,searchPlayersById} from "../controllers/player.controller.js";
+import {createPlayer,getTopPlayers,getAllPlayers,getPlayerById,countPlayers,updatePlayer,
+    deletePlayer,searchPlayers,searchPlayersById,deletePlayersById,updatePlayersById} from "../controllers/player.controller.js";
 const router=express.Router();
 
 router.get("/",getAllPlayers);
@@ -10,7 +11,8 @@ router.get("/top",getTopPlayers);
 router.get("/count",countPlayers);
 router.get("/search",searchPlayers);
 router.get("/:id",searchPlayersById)
-
+router.delete("/:id",deletePlayersById)
+router.patch("/:id",updatePlayersById)
 // router.put("/",(req,res)=>{
 //     const id=(req.body.id);
 //     const ply=player.find(p=>p.id===id);
