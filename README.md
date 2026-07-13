@@ -14,17 +14,17 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 - Player Details
 - Responsive UI
 
-## Progress
-
-### Backend
-- Express project setup
-- Logger middleware
+### Backend ✅
+- Express.js
+- REST APIs
+- MVC Architecture
+- Logger Middleware
 - Health API
-- Player Routes
-- Search API
+- CRUD Operations
 - Dynamic Routes
-- 404 Middleware
-- Nodemon setup
+- Search API
+- Error Handling
+- Protected Routes
 
 ### Database
 ✔ MongoDB
@@ -34,6 +34,37 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 ✔ CRUD APIs
 
 ✔ Schema Validation
+
+## 📈 Progress
+
+### Backend
+- ✅ Express Project Setup
+- ✅ MVC Architecture
+- ✅ Logger Middleware
+- ✅ Health API
+- ✅ Player Routes
+- ✅ CRUD APIs
+- ✅ Search API
+- ✅ Dynamic Routes
+- ✅ Error Handling
+- ✅ Authentication APIs
+- ✅ Protected Routes
+
+### Database
+- ✅ MongoDB
+- ✅ Mongoose
+- ✅ Schema Validation
+- ✅ CRUD Operations
+
+### Authentication
+- ✅ JWT Authentication
+- ✅ Password Hashing (bcrypt)
+- ✅ User Registration
+- ✅ User Login
+
+### Caching
+- ✅ Redis Cloud Integration
+
 
 ## 🛠️ Tech Stack
 
@@ -47,45 +78,87 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 - Node.js
 - Express.js
 
-### Database 
+### Database
 - MongoDB
 - Mongoose
 
-### Authentication (Upcoming)
+### Authentication
 - JWT
 - bcrypt
+
+### Cache
+- Redis Cloud
 
 ## 📂 Project Structure
 
 ```
 criclyst/
 │
-├── src/                # React Frontend
+├── frontend/
+│   └── src/
 │
 ├── backend/
-│   ├── app.js
-│   ├── server.js
-│   ├── routes/
-│   ├── controllers/
-│   ├── models/
-│   ├── middleware/
 │   ├── config/
-│   └── utils/
+│   ├── controllers/
+│   ├── middleware/
+│   ├── models/
+│   ├── routes/
+│   ├── utils/
+│   ├── app.js
+│   └── server.js
 │
 └── README.md
 ```
 
 ## 📅 Development Progress
 
-- ✅ Frontend V1 Completed
-- ✅ Express Backend Initialized
-- ✅ First API Created
-- ✅ Health Route Added
-- ✅ Postman Integration
-- ✅ Player APIs
-- ✅ MongoDB Integration
-- ⏳ JWT Authentication
-- ⏳ Deployment
+### ✅ Completed
+- React Frontend (V1)
+- Express Backend Setup
+- REST API Development
+- MongoDB Integration
+- Mongoose Models
+- CRUD Operations
+- Search APIs
+- Authentication System
+- JWT Authorization
+- Redis Cloud Integration
+- Protected Routes
+- Postman API Testing
+
+### 🚧 In Progress
+- Team Module
+- Match Module
+- Player Statistics
+
+### 📌 Upcoming
+- AI Match Analysis
+- Advanced Player Comparison
+- Visual Analytics Dashboard
+- Fantasy Cricket Assistant
+- Deployment
+
+## ✨ Features
+
+- User Authentication
+- Secure JWT Authorization
+- Player CRUD Operations
+- Search Players
+- Filter Players
+- Protected APIs
+- Redis Caching
+- Responsive Frontend
+
+## 🚀 Future Roadmap
+
+- Team Management
+- Match Management
+- Player Analytics
+- AI Match Insights
+- Visual Graphs
+- Fantasy Cricket Assistant
+- Admin Dashboard
+- Deployment
 
 ## 👨‍💻 Author
 
