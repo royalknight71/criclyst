@@ -47,9 +47,71 @@ export const getTopPlayers=async (req,res)=>{
 
 export const getAllPlayers =async (req,res)=>{
     try{
-        const players=await Player.find();
+        const page = req.query.page ? parseInt(req.query.page) : 1;
+        const limit = req.query.limit ? parseInt(req.query.limit) : 10;
+        const sortBy = req.query.sortBy || "name";
+        const order = req.query.order || "asc";
+     
+
+        if(isNaN(page)||isNaN(limit)||page<=0||limit<=0)
+        {
+            return res.status(400).json({
+                status:false,
+                message:"Invalid Page or Limit"
+            })
+        }
+
+          if(order!="asc"&&order!="desc")
+         {
+            return res.status(400).json({
+                status:false,
+                message:"Invalid Order"
+            })
+        }  
+        
+        const allowedFields=["name","country","role","runs","matches","wickets"]
+        if(!allowedFields.includes(sortBy))
+         {
+            return res.status(400).json({
+                status:false,
+                message:"Invalid Sorting Request"
+            })
+        }  
+
+        const totalPlayers = await Player.countDocuments();
+
+        const totalPages = Math.ceil(totalPlayers / limit);
+
+         const startIndex=(page-1)*limit
+        const sortValue = order === "asc" ? 1 : -1;
+        const players=await Player.find().sort({
+            [sortBy]:sortValue
+        }).skip(startIndex).limit(limit)
+
+        const pagination={}
+        if(page>1)
+        {
+            pagination.previous={
+                page:page-1,
+                limit:limit
+            }
+        }
+        if(page<totalPages)
+        {
+            pagination.next={
+                page:page+1,
+                limit:limit
+            }
+        }
+        
+
         return res.status(200).json({
             success: true,
+            page,
+            limit,
+            totalPlayers,
+            totalPages,
+            pagination,
             data: players
         });
     } catch (error) {
