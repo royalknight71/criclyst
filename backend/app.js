@@ -1,6 +1,7 @@
 import express from 'express';
 import playerRoutes from './routes/player.routes.js';
 import userRoutes from './routes/user.routes.js';
+import teamRoute from './routes/team.routes.js';
 import logger from './middleware/logger.middleware.js';
 import cookieParser from 'cookie-parser';
 import rateLimiter from './middleware/rateLimiter.js';
@@ -14,27 +15,11 @@ app.use(express.json());
 
 app.use(logger);
 
-app.use("/api/players",playerRoutes);
-
 app.use("/api/users",userRoutes);
 
-// app.get("/api/test",async(req,res)=>{
-//     try{
-//         await redisClient.set("name","Krish")
-//         const value=await redisClient.get("name");
+app.use("/api/players",playerRoutes);
 
-//         return res.status(200).json({
-//             success: true,
-//             data: value
-//         });
-//     }
-//     catch(error){
-//             return res.status(500).json({
-//             success: false,
-//             message: error.message
-//         });
-//     }
-// })
+app.use("/api/teams",teamRoute)
 
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Criclyst API")
