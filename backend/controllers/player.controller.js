@@ -51,12 +51,52 @@ export const getAllPlayers =async (req,res)=>{
         const limit = req.query.limit ? parseInt(req.query.limit) : 10;
         const sortBy = req.query.sortBy || "name";
         const order = req.query.order || "asc";
-     
+        const selectedFields=req.query.fields
+        
+        const filter={...req.query}
+        delete filter.page;
+        delete filter.limit;
+        delete filter.sortBy;
+        delete filter.order;
+        delete filter.fields;
+
+        const allowedFields = [
+                "name",
+                "country",
+                "role",
+                "runs",
+                "wickets",
+                "matches"
+                ];
+            
+        const isPresent = Object.keys(filter).every(key => allowedFields.includes(key));
+        if(!isPresent)
+        {
+            return res.status(400).json({
+            success:false,
+            message:"Invalid Filteration Request"
+            })
+        }
+
+        let query=""
+        if(selectedFields)
+        {
+            const split=selectedFields.split(",")
+            if(!split.every(field=>allowedFields.includes(field)))
+            {
+                    return res.status(400).json({
+                    success:false,
+                    message:"Invalid field selection"
+                    })
+                
+            }
+            query = split.join(" ");
+        }
 
         if(isNaN(page)||isNaN(limit)||page<=0||limit<=0)
         {
             return res.status(400).json({
-                status:false,
+                success:false,
                 message:"Invalid Page or Limit"
             })
         }
@@ -64,29 +104,37 @@ export const getAllPlayers =async (req,res)=>{
           if(order!="asc"&&order!="desc")
          {
             return res.status(400).json({
-                status:false,
+                success:false,
                 message:"Invalid Order"
             })
         }  
         
-        const allowedFields=["name","country","role","runs","matches","wickets"]
         if(!allowedFields.includes(sortBy))
          {
             return res.status(400).json({
-                status:false,
+                success:false,
                 message:"Invalid Sorting Request"
             })
         }  
-
-        const totalPlayers = await Player.countDocuments();
-
-        const totalPages = Math.ceil(totalPlayers / limit);
-
+        
          const startIndex=(page-1)*limit
         const sortValue = order === "asc" ? 1 : -1;
-        const players=await Player.find().sort({
-            [sortBy]:sortValue
-        }).skip(startIndex).limit(limit)
+        let mongoQuery=Player.find(filter)
+            .sort({
+                [sortBy]: sortValue
+            });
+
+            if (query) {
+                mongoQuery = mongoQuery.select(query);
+            }
+
+            const players = await mongoQuery
+            .skip(startIndex)
+            .limit(limit);
+
+        const totalPlayers = await Player.countDocuments(filter);
+
+        const totalPages = Math.ceil(totalPlayers / limit);
 
         const pagination={}
         if(page>1)
