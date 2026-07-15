@@ -26,7 +26,7 @@ export const getAllTeams = async (req, res) => {
         "founded"
     ]
 
-    const filterableFields=[
+        const selectableFields=[
         "name",
         "country",
         "format",
@@ -37,6 +37,68 @@ export const getAllTeams = async (req, res) => {
         "players",
         "description"
     ]
+
+    const filterableFields=[
+        "name",
+        "country",
+        "format",
+        "ranking",
+        "founded",
+        "captain",
+        "coach",
+        "isActive"
+    ]
+
+    // Handle advanced filtering
+    const operatorMap = {
+      gt: "$gt",
+      gte: "$gte",
+      lt: "$lt",
+      lte: "$lte",
+    };
+    const numericFields = ["ranking","founded"];
+    let openBracketIndex = -1;
+    let closeBracketIndex = -1;
+    for (const key in filter) {
+        openBracketIndex=key.indexOf('[')
+        closeBracketIndex=key.indexOf(']')
+        if(openBracketIndex===-1&&closeBracketIndex===-1)
+            continue;
+
+        const field=key.slice(0,openBracketIndex)
+        const operator=key.slice(openBracketIndex+1,closeBracketIndex)
+
+      if (!numericFields.includes(field)) {
+        return res.status(400).json({
+          success: false,
+          message: "Advanced filtering is allowed only on numeric fields.",
+        });
+      }
+
+      //Validate Operators
+      if (!(operator in operatorMap)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Operator",
+        });
+      }
+      const value=Number(filter[key])
+      if(isNaN(value))
+        {
+            return res.status(400).json({
+            success: false,
+            message: "Invalid numeric value.",
+            });
+        }     
+        
+        delete filter[key]
+
+        filter[field]={
+            [operatorMap[operator]]:value
+        }
+        
+        
+    }
 
     //Validate sortBy
     if(!sortingFields.includes(sortBy))
@@ -83,7 +145,7 @@ export const getAllTeams = async (req, res) => {
     if(selectedFields)
     {
         split=selectedFields.split(",")
-        if(!split.every((field)=>filterableFields.includes(field)))
+        if(!split.every((field)=>selectableFields.includes(field)))
         {
         return res.status(400).json({
           success: false,
