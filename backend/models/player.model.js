@@ -33,7 +33,7 @@ const playerSchema=new mongoose.Schema({
         type:String,
         required:true,
         trim:true,
-        enum:['Right-arm Fast','Right-arm Medium','Right-arm Off Break','Left-arm Fast',
+        enum:['Right-arm Fast','Right-arm Medium','Right-arm Leg break','Right-arm Off break','Left-arm Fast',
                 'Left-arm Medium','Left-arm Orthodox','Left-arm Chinaman','Leg Break','None']
     },
     matches:{

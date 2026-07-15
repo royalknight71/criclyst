@@ -254,7 +254,8 @@ export const getTeamsById = async (req, res) => {
 export const createTeam = async (req, res) => {
   try {
     const existingTeam = await Team.findOne({
-      name: req.body.name,
+          country: req.body.country,
+        format: req.body.format
     });
     if (existingTeam) {
       return res.status(400).json({

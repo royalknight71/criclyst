@@ -6,7 +6,6 @@ const teamSchema=new mongoose.Schema({
         required:true,
         trim:true,
         lowercase: true,
-        unique: true,
         index:true
     },
     country:{
@@ -67,6 +66,16 @@ const teamSchema=new mongoose.Schema({
 },{
     timestamps:true
 })
+
+teamSchema.index(
+    {
+        country: 1,
+        format: 1
+    },
+    {
+        unique: true
+    }
+);
 
 const Team=mongoose.model('Team',teamSchema)
 
