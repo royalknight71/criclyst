@@ -78,6 +78,7 @@ export const getAllPlayers = async (req, res) => {
     const numericFields = ["runs", "wickets", "matches"];
     let openBracketIndex = -1;
     let closeBracketIndex = -1;
+    
     for (const key in filter) {
       openBracketIndex = key.indexOf("[");
       closeBracketIndex = key.indexOf("]");

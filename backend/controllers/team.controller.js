@@ -9,8 +9,16 @@ export const getAllTeams = async (req, res) => {
     const limit=req.query.limit?parseInt(req.query.limit):5
     const sortBy=req.query.sortBy||"name"
     const order=req.query.order||"asc"
+    const selectedFields=req.query.fields
 
-    const allowedFields=[
+    const filter={...req.query}
+    delete filter.page
+    delete filter.limit
+    delete filter.sortBy
+    delete filter.order
+    delete filter.fields
+
+    const sortingFields=[
         "name",
         "country",
         "format",
@@ -18,8 +26,20 @@ export const getAllTeams = async (req, res) => {
         "founded"
     ]
 
+    const filterableFields=[
+        "name",
+        "country",
+        "format",
+        "ranking",
+        "founded",
+        "captain",
+        "coach",
+        "players",
+        "description"
+    ]
+
     //Validate sortBy
-    if(!allowedFields.includes(sortBy))
+    if(!sortingFields.includes(sortBy))
     {
       return res.status(400).json({
         success: false,
@@ -47,9 +67,35 @@ export const getAllTeams = async (req, res) => {
       });
     }
 
+    const isPresent=Object.keys(filter).every((key)=>
+    filterableFields.includes(key))
+    if(!isPresent)
+    {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Filter Request",
+      });        
+    }
+
+    //Query selection
+    let query=""
+    let split=[]
+    if(selectedFields)
+    {
+        split=selectedFields.split(",")
+        if(!split.every((field)=>filterableFields.includes(field)))
+        {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid field selection",
+        });            
+        }
+        query=split.join(" ")
+    }
+
     //Basic Calulation on finding Page Details
     const startIndex=(page-1)*limit
-    const totalTeams=await Team.countDocuments()
+    const totalTeams=await Team.countDocuments(filter)
     const totalPages=Math.ceil(totalTeams/limit)
 
     //Validate Page
@@ -62,9 +108,21 @@ export const getAllTeams = async (req, res) => {
     }
 
     //MongoDB Query
-    const teams = await Team.find().sort({
+    let mongoQuery= Team.find(filter).sort({
         [sortBy]:sortValue
-    }).skip(startIndex).limit(limit).populate("players", "name role country");
+    })
+
+    if(query){
+        mongoQuery = mongoQuery.select(query);
+    }
+    if(split.includes("players"))
+    {
+        mongoQuery = mongoQuery.populate(
+            "players",
+            "name role country"
+        );
+    }
+    const teams = await mongoQuery.skip(startIndex).limit(limit)
 
     //Pagination
     const pagination={}
