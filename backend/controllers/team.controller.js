@@ -4,9 +4,91 @@ import Player from "../models/player.model.js";
 
 export const getAllTeams = async (req, res) => {
   try {
-    const teams = await Team.find().populate("players", "name role country");
+    //Query Request
+    const page=req.query.page ? parseInt(req.query.page):1
+    const limit=req.query.limit?parseInt(req.query.limit):5
+    const sortBy=req.query.sortBy||"name"
+    const order=req.query.order||"asc"
+
+    const allowedFields=[
+        "name",
+        "country",
+        "format",
+        "ranking",
+        "founded"
+    ]
+
+    //Validate sortBy
+    if(!allowedFields.includes(sortBy))
+    {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Sorting Request",
+      })        
+    }
+    const validOrders=["asc","desc"]
+
+    //Validate order
+    if(!validOrders.includes(order))
+    {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Order",
+      });        
+    }
+    const sortValue=order==="asc"?1:-1
+
+    //Validate Page & limit
+    if(isNaN(page)||isNaN(limit)||page<=0||limit<=0)
+    {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Page or Limit",
+      });
+    }
+
+    //Basic Calulation on finding Page Details
+    const startIndex=(page-1)*limit
+    const totalTeams=await Team.countDocuments()
+    const totalPages=Math.ceil(totalTeams/limit)
+
+    //Validate Page
+    if(page > totalPages && totalTeams > 0)
+    {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Page Request",
+      });        
+    }
+
+    //MongoDB Query
+    const teams = await Team.find().sort({
+        [sortBy]:sortValue
+    }).skip(startIndex).limit(limit).populate("players", "name role country");
+
+    //Pagination
+    const pagination={}
+    if(page>1)
+    {
+        pagination.previous={
+            page:page-1,
+            limit:limit
+        }
+    }
+    if(page<totalPages)
+    {
+        pagination.next={
+            page:page+1,
+            limit:limit
+        }
+    }
     return res.status(200).json({
       success: true,
+      page,
+      limit,
+      totalTeams,
+      totalPages,
+      pagination,
       data: teams,
     });
   } catch (error) {
@@ -128,7 +210,7 @@ export const updateTeam = async (req, res) => {
         message: "Invalid Team ID",
       });
     }
-    
+
     const players = req.body.players;
 
     if(players)

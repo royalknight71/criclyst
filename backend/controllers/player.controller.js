@@ -141,13 +141,15 @@ export const getAllPlayers = async (req, res) => {
       query = split.join(" ");
     }
 
-    //Validate Things
+    //Validate Page
     if (isNaN(page) || isNaN(limit) || page <= 0 || limit <= 0) {
       return res.status(400).json({
         success: false,
         message: "Invalid Page or Limit",
       });
     }
+
+    //Validate Order
     const validOrder = ["asc", "desc"];
     if (!validOrder.includes(order)) {
       return res.status(400).json({
@@ -323,6 +325,7 @@ export const deletePlayersById = async (req, res) => {
     });
   }
 };
+
 export const updatePlayersById = async (req, res) => {
   try {
     const id = req.params.id;
