@@ -2,6 +2,7 @@ import express from 'express';
 import playerRoutes from './routes/player.routes.js';
 import userRoutes from './routes/user.routes.js';
 import teamRoute from './routes/team.routes.js';
+import matchRoute from './routes/match.routes.js'
 import logger from './middleware/logger.middleware.js';
 import cookieParser from 'cookie-parser';
 import rateLimiter from './middleware/rateLimiter.js';
@@ -20,6 +21,8 @@ app.use("/api/users",userRoutes);
 app.use("/api/players",playerRoutes);
 
 app.use("/api/teams",teamRoute)
+
+app.use("/api/matches",matchRoute)
 
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Criclyst API")
