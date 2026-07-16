@@ -288,26 +288,7 @@ export const createTeam = async (req, res) => {
         });
       }
     }
-
-    //         let idCheck=true
-    //         for(let i=0;i<players.length;i++)
-    //         {
-    //             let id=players[i]
-    //             const idExists=await Player.findById(id)
-    //             if(!idExists)
-    //             {
-    //                 idCheck=false;
-    //                 break;
-    //             }
-
-    //         }
-    //         if(!idCheck)
-    //         {
-    //             return res.status(400).json({
-    //     "success": false,
-    //     "message": "One or more players not found"
-    // })
-    //         }
+    
     const team = await Team.create(req.body);
     return res.status(201).json({
       success: true,
