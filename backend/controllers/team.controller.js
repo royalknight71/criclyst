@@ -144,7 +144,7 @@ export const getAllTeams = async (req, res) => {
     let split=[]
     if(selectedFields)
     {
-        split=selectedFields.split(",")
+        split=selectedFields.split(",").map(field => field.trim());
         if(!split.every((field)=>selectableFields.includes(field)))
         {
         return res.status(400).json({
@@ -288,7 +288,7 @@ export const createTeam = async (req, res) => {
         });
       }
     }
-    
+
     const team = await Team.create(req.body);
     return res.status(201).json({
       success: true,

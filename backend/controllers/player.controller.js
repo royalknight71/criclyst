@@ -132,7 +132,7 @@ export const getAllPlayers = async (req, res) => {
     // Build MongoDB query
     let query = "";
     if (selectedFields) {
-      const split = selectedFields.split(",");
+      const split = selectedFields.split(",").map(field => field.trim());;
       if (!split.every((field) => allowedFields.includes(field))) {
         return res.status(400).json({
           success: false,
