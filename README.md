@@ -125,10 +125,10 @@ criclyst/
 - Redis Cloud Integration
 - Protected Routes
 - Postman API Testing
-
-### 🚧 In Progress
 - Team Module
 - Match Module
+
+### 🚧 In Progress
 - Player Statistics
 
 ### 📌 Upcoming
