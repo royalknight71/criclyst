@@ -14,6 +14,6 @@ router.get("/profile",userAuth,getProfile)
 
 router.delete("/profile",userAuth,deleteProfile)
 
-router.put("/profile",userAuth,updateProfile)
+router.patch("/profile",userAuth,updateProfile)
 
 export default router;

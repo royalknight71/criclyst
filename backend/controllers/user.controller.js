@@ -98,7 +98,7 @@ export const loginUser=async (req,res)=>{
                                 },
                                 process.env.JWT_SECRET,
                                 {
-                                expiresIn: 30
+                                expiresIn: 15*60
                             });
         res.cookie("token",token)
         res.status(200).json({

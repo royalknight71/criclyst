@@ -1,70 +1,55 @@
 # 🏏 Criclyst
 
-An AI-powered Cricket Analytics Platform built using the MERN Stack.
+An AI-powered Cricket Analytics Platform built using the MERN Stack. Criclyst provides player analytics, team management, match tracking, and an interactive dashboard with a scalable backend architecture.
 
-## 🚀 Current Status
+---
 
-### Frontend ✅
-- React
-- Vite
-- Player Search
-- Player Filter
-- Player Comparison
-- Analytics Dashboard
-- Player Details
-- Responsive UI
+## 🚀 Features
 
-### Backend ✅
-- Express.js
-- REST APIs
-- MVC Architecture
-- Logger Middleware
-- Health API
-- CRUD Operations
-- Dynamic Routes
-- Search API
-- Error Handling
+### 👤 Authentication
+- JWT Authentication
+- Secure Password Hashing (bcrypt)
+- User Registration & Login
 - Protected Routes
 
-### Database
-✔ MongoDB
+### 🏏 Player Management
+- Create, Read, Update, Delete Players
+- Search Players
+- Filter Players
+- Pagination
+- Sorting
+- Dynamic Field Selection
 
-✔ Mongoose
+### 👥 Team Management
+- Complete CRUD Operations
+- Team Statistics
+- Player References
+- Search & Filters
 
-✔ CRUD APIs
+### 🏆 Match Management
+- Create & Manage Matches
+- Live Matches
+- Upcoming Matches
+- Completed Matches
+- Toss & Winner Management
 
-✔ Schema Validation
+### 📊 Dashboard
+- Overall Statistics
+- Live Matches
+- Upcoming Matches
+- Recent Matches
+- Top Run Scorers
+- Top Wicket Takers
 
-## 📈 Progress
+### ⚡ Backend
+- RESTful APIs
+- MVC Architecture
+- Centralized Error Handling
+- Logger Middleware
+- Environment Configuration
+- Redis Cloud Integration
 
-### Backend
-- ✅ Express Project Setup
-- ✅ MVC Architecture
-- ✅ Logger Middleware
-- ✅ Health API
-- ✅ Player Routes
-- ✅ CRUD APIs
-- ✅ Search API
-- ✅ Dynamic Routes
-- ✅ Error Handling
-- ✅ Authentication APIs
-- ✅ Protected Routes
-
-### Database
-- ✅ MongoDB
-- ✅ Mongoose
-- ✅ Schema Validation
-- ✅ CRUD Operations
-
-### Authentication
-- ✅ JWT Authentication
-- ✅ Password Hashing (bcrypt)
-- ✅ User Registration
-- ✅ User Login
-
-### Caching
-- ✅ Redis Cloud Integration
-
+---
 
 ## 🛠️ Tech Stack
 
@@ -89,12 +74,15 @@ An AI-powered Cricket Analytics Platform built using the MERN Stack.
 ### Cache
 - Redis Cloud
 
-## 📂 Project Structure
+---
 
-```
+## 📂 Folder Structure
+
+```text
 criclyst/
 │
 ├── frontend/
+│   ├── public/
 │   └── src/
 │
 ├── backend/
@@ -105,61 +93,123 @@ criclyst/
 │   ├── routes/
 │   ├── utils/
 │   ├── app.js
-│   └── server.js
+│   ├── server.js
+│   └── package.json
 │
 └── README.md
 ```
 
-## 📅 Development Progress
+---
 
-### ✅ Completed
-- React Frontend (V1)
-- Express Backend Setup
-- REST API Development
-- MongoDB Integration
-- Mongoose Models
-- CRUD Operations
-- Search APIs
-- Authentication System
-- JWT Authorization
-- Redis Cloud Integration
-- Protected Routes
-- Postman API Testing
-- Team Module
-- Match Module
+## 📌 REST APIs
 
-### 🚧 In Progress
-- Player Statistics
+### Authentication
+- Register User
+- Login User
 
-### 📌 Upcoming
-- AI Match Analysis
-- Advanced Player Comparison
-- Visual Analytics Dashboard
-- Fantasy Cricket Assistant
-- Deployment
-
-## ✨ Features
-
-- User Authentication
-- Secure JWT Authorization
-- Player CRUD Operations
+### Players
+- Get All Players
+- Get Player by ID
+- Create Player
+- Update Player
+- Delete Player
 - Search Players
-- Filter Players
-- Protected APIs
-- Redis Caching
-- Responsive Frontend
 
-## 🚀 Future Roadmap
+### Teams
+- Get All Teams
+- Get Team by ID
+- Create Team
+- Update Team
+- Delete Team
 
-- Team Management
-- Match Management
-- Player Analytics
-- AI Match Insights
-- Visual Graphs
+### Matches
+- Get All Matches
+- Get Match by ID
+- Create Match
+- Update Match
+- Delete Match
+
+### Dashboard
+- Overall Statistics
+- Live Matches
+- Upcoming Matches
+- Recent Matches
+- Top Players
+
+---
+
+## 🚀 Installation
+
+Clone the repository
+
+```bash
+git clone https://github.com/royalknight71/criclyst
+```
+
+Go to project directory
+
+```bash
+cd criclyst
+```
+
+Install backend dependencies
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file
+
+```env
+PORT=3000
+MONGO_URI=your_mongodb_uri
+JWT_SECRET=your_jwt_secret
+REDIS_PASSWORD=your_redis_password
+NODE_ENV=development
+```
+
+Run backend
+
+```bash
+npm run dev
+```
+
+Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## 📈 Current Status
+
+### Backend
+- ✅ Complete (V1)
+
+### Frontend
+- ✅ UI Complete
+- 🚧 Backend Integration In Progress
+
+---
+
+## 🔮 Future Scope
+
+- AI Match Analysis
+- AI Match Prediction
+- AI Match Summary
+- Player Performance Insights
+- Advanced Analytics
 - Fantasy Cricket Assistant
+- Live Score Integration
 - Admin Dashboard
 - Deployment
 
+---
+
 ## 👨‍💻 Author
 
-Krish Gupta
+**Krish Gupta**
