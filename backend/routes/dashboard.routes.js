@@ -8,5 +8,4 @@ router.get('/recent-matches',getRecentMatches)
 router.get('/upcoming-matches',getUpcomingMatches)
 router.get('/top-players',getTopPlayers)
 
-
 export default router

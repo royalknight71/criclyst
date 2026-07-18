@@ -24,6 +24,8 @@ import Player from "../models/player.model.js";
           select: "name role"
       }
   ];
+
+
 export const getAllMatches = async (req, res) => {
   try {
     //Query Request
@@ -250,6 +252,7 @@ export const getMatchById = async (req, res) => {
     });
   }
 };
+
 
 export const createMatch = async (req, res) => {
   try {
