@@ -10,9 +10,9 @@ import {
   ResponsiveContainer,
   Pie, PieChart, Cell,
 } from "recharts";
-import AnalyticsBarChart from "../components/AnalyticsBarChart";
-import RolePieChart from "../components/RolePieChart";
-import SummaryCard from "../components/SummaryCard";
+import AnalyticsBarChart from "../components/analytics/AnalyticsBarChart";
+import RolePieChart from "../components/analytics/RolePieChart";
+import SummaryCard from "../components/common/SummaryCard";
 
 import {
     getTopRuns,
