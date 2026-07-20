@@ -9,6 +9,7 @@ import {
 import { useState, useEffect } from "react";
 
 function Hero() {
+  //Text Animation Typre-Writer
 const texts = [
   "Analyze players with AI-powered insights.",
   "Compare player performance instantly.",
