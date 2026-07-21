@@ -1,7 +1,7 @@
 import PlayerSummaryCard from "./widgets/PlayerSummaryCard";
 import PerformanceChart from "./widgets/PerformanceChart";
 import { useState,useEffect } from "react";
-
+import { getTopPlayer } from "../../services/player.service";
 
 function HeroDashboard() {
 
@@ -10,7 +10,22 @@ function HeroDashboard() {
     const [error, setError] = useState("");
 
     useEffect(()=>{
-        
+        setLoading(true)
+        async function findTopPlayers() {
+          try{
+            const player=await getTopPlayer()
+            setPlayer(player)
+          }
+          catch(error)
+          {
+              setError(error.message);
+          }
+          finally{
+            setLoading(false)
+          }
+        }
+        findTopPlayers()
+
     },[])
   return (
     <section className="-mt-20 relative z-20 px-6">
@@ -34,7 +49,7 @@ function HeroDashboard() {
 
         <main className="grid gap-6 lg:grid-cols-3">
 
-                <PlayerSummaryCard />
+                <PlayerSummaryCard player={player}/>
                     <div className="lg:col-span-2">
                         <PerformanceChart />
                     </div>

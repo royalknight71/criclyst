@@ -7,14 +7,13 @@ import dashboardRoute from './routes/dashboard.routes.js'
 import logger from './middleware/logger.middleware.js';
 import cookieParser from 'cookie-parser';
 import rateLimiter from './middleware/rateLimiter.js';
-
+import cors from "cors";
 
 const app=express();
 app.use(cookieParser());
 app.use(rateLimiter)
-
+app.use(cors());
 app.use(express.json());
-
 app.use(logger);
 
 app.use("/api/users",userRoutes);
