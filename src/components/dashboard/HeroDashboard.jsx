@@ -1,8 +1,7 @@
 import PlayerSummaryCard from "./widgets/PlayerSummaryCard";
-import PerformanceChart from "./widgets/PerformanceChart";
 import { useState,useEffect } from "react";
 import { getTopPlayer } from "../../services/player.service";
-
+import AIInsight from "./widgets/AIInsight"
 function HeroDashboard() {
 
     const [player, setPlayer] = useState(null);
@@ -47,12 +46,11 @@ function HeroDashboard() {
           </span>
         </header>
 
-        <main className="grid gap-6 lg:grid-cols-3">
+        <main className="grid gap-6 lg:grid-cols-2">
 
                 <PlayerSummaryCard player={player}/>
-                    <div className="lg:col-span-2">
-                        <PerformanceChart />
-                    </div>
+                    
+                    <AIInsight player={player}/>
             </main>
 
       </div>
