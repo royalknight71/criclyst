@@ -9,7 +9,7 @@ import TopPlayers from "../components/dashboard/TopPlayers";
 
 function Home() {
   return (
-    <>
+    <div>
       <Hero />
       <HeroDashboard />
       <StatsCards />
@@ -17,7 +17,7 @@ function Home() {
       <UpcomingMatches />
       <RecentMatches />
       <TopPlayers />
-    </>
+    </div>
   );
 }
 

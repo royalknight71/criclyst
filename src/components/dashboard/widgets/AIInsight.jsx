@@ -7,6 +7,7 @@ import {
   FaRobot
 } from "react-icons/fa6";
 
+
 import { MdSportsCricket } from "react-icons/md";
 
 function AIInsight ({player}){

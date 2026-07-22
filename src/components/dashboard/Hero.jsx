@@ -65,10 +65,11 @@ items-center
 justify-center
 px-6
 pt-10
-bg-gradient-to-br
-from-slate-950
-via-slate-900
-to-slate-800
+bg-gradient-to-b
+from-[#020617]
+via-[#0f172a]
+to-[#111827]
+py-24
 "
 >
   <div className="max-w-4xl text-center">

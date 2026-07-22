@@ -27,7 +27,10 @@ function HeroDashboard() {
 
     },[])
   return (
-    <section className="-mt-20 relative z-20 px-6">
+    <section className="-mt-20 relative z-20 px-6 bg-gradient-to-b
+from-[#020617]
+via-[#0f172a]
+to-[#111827] py-24">
       <div className="mx-auto max-w-6xl rounded-3xl border border-slate-800 bg-slate-900/90 p-8 shadow-2xl backdrop-blur-md ">
 
         <header className="mb-8 flex items-center justify-between">
