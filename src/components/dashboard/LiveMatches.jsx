@@ -39,11 +39,21 @@ if(matches.length===0)
 
   return (
 <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    <div className="max-w-7xl mx-auto px-6">
+    <div className="max-w-4xl mx-auto px-6">
 
-        <h2 className="text-3xl font-bold text-white">
-            Live Matches
-        </h2>
+        <div className="mb-10">
+    <span className="text-cyan-400 uppercase tracking-widest text-sm font-semibold">
+        LIVE CRICKET
+    </span>
+
+    <h2 className="text-4xl font-bold text-white mt-2">
+        Live Matches
+    </h2>
+
+    <p className="text-slate-400 mt-2">
+        Follow ongoing matches in real time.
+    </p>
+</div>
         <div className="grid gap-6">
                { matches.map((match)=>(
     <MatchCard

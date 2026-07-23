@@ -1,14 +1,34 @@
 import { FaCircle, FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
+const formatName = (name = "") =>
+  name
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
+const getShortName = (name = "") => {
+  const teams = {
+    "india": "IND",
+    "new zealand": "NZ",
+    "australia": "AUS",
+    "england": "ENG",
+    "pakistan": "PAK",
+    "south africa": "SA",
+    "sri lanka": "SL",
+    "bangladesh": "BAN",
+    "afghanistan": "AFG",
+    "ireland": "IRE",
+    "west indies": "WI",
+  };
+
+  return teams[name.toLowerCase()] || name.substring(0, 3).toUpperCase();
+};
 function MatchCard({match}){
-    const formatName = (name) =>
-    name
-      ?.split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
   return (
-    <div className="group bg-slate-800/90 backdrop-blur-md border border-slate-700 rounded-3xl p-8 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/10">
+    <div className="group  bg-gradient-to-br
+from-slate-900
+to-slate-800 backdrop-blur-md border border-slate-700 rounded-3xl p-4
+transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/10 shadow-lg">
 
       {/* Header */}
 
@@ -32,20 +52,25 @@ function MatchCard({match}){
 
       </div>
 
-      <div className="h-px bg-slate-700 my-8"></div>
+      <div className="border-t border-slate-700/50 my-5"></div>
 
       {/* Teams */}
 
-      <div className="grid grid-cols-3 items-center">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
 
         {/* Team A */}
 
         <div className="text-center">
 
-          <div className="w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-22
+h-22
+rounded-full
+border-2
+border-cyan-500/40
+bg-slate-900 flex items-center justify-center mx-auto mb-3">
 
             <span className="text-2xl font-bold text-cyan-400">
-              {match.teamA?.name?.substring(0,3)?.toUpperCase()}
+              {getShortName(match.teamA?.name)}
             </span>
 
           </div>
@@ -54,7 +79,9 @@ function MatchCard({match}){
             {formatName(match.teamA.name)}
           </h2>
 
-          <p className="mt-2 text-4xl font-extrabold text-cyan-400">
+          <p className="mt-2 text-5xl
+font-black
+tracking-tight text-cyan-400">
             {match.scorecard.teamAScore}
           </p>
 
@@ -64,7 +91,9 @@ function MatchCard({match}){
 
         <div className="text-center">
 
-          <div className="text-3xl font-black text-slate-500">
+          <div className="text-4xl
+font-black
+text-slate-600 ">
             VS
           </div>
 
@@ -74,10 +103,15 @@ function MatchCard({match}){
 
         <div className="text-center">
 
-          <div className="w-20 h-20 rounded-full bg-cyan-500/10 border border-cyan-500 flex items-center justify-center mx-auto mb-4">
+          <div className="w-22
+h-22
+rounded-full
+border-2
+border-cyan-500/40
+bg-slate-900  flex items-center justify-center mx-auto mb-3">
 
             <span className="text-2xl font-bold text-cyan-400">
-              {match.teamB?.name?.substring(0,3)?.toUpperCase()}
+              {getShortName(match.teamB?.name)}
             </span>
 
           </div>
@@ -86,7 +120,9 @@ function MatchCard({match}){
             {formatName(match.teamB.name)}
           </h2>
 
-          <p className="mt-2 text-4xl font-extrabold text-cyan-400">
+          <p className="mt-2 text-5xl
+font-black
+tracking-tight text-cyan-400">
             {match.scorecard.teamBScore}
           </p>
 
@@ -94,7 +130,7 @@ function MatchCard({match}){
 
       </div>
 
-      <div className="h-px bg-slate-700 my-8"></div>
+      <div className="border-t border-slate-700/60 my-8"></div>
 
       {/* Match Info */}
 
@@ -111,7 +147,7 @@ function MatchCard({match}){
             </p>
 
             <p className="text-white">
-              {match.venue}
+              {formatName(match.venue)}
             </p>
 
           </div>
@@ -129,7 +165,7 @@ function MatchCard({match}){
             </p>
 
             <p className="text-white">
-              {match.tossWinner?.name} chose to {match.tossDecision}
+              {formatName(match.tossWinner?.name)} won the toss & elected to {match.tossDecision}
             </p>
 
           </div>
@@ -140,7 +176,7 @@ function MatchCard({match}){
 
       {/* Stats */}
 
-      <div className="grid grid-cols-2 gap-5 mt-8">
+      <div className="grid grid-cols-2 gap-5 mt-6">
 
         <div className="bg-slate-900 rounded-2xl p-5 border border-slate-700">
 
@@ -152,7 +188,7 @@ function MatchCard({match}){
 
           <h3 className="text-3xl font-bold text-white mt-2">
 
-            {match.scorecard.target || "-"}
+            {match.scorecard?.target || "—"}
 
           </h3>
 
@@ -178,9 +214,9 @@ function MatchCard({match}){
 
       {/* Result */}
 
-      <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-5">
+      <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 py-4 px-5">
 
-        <p className="text-center text-cyan-300 font-semibold text-lg">
+        <p className="text-center text-cyan-300 font-semibold text-lg tracking-wide">
 
           {match.result}
 
@@ -190,13 +226,16 @@ function MatchCard({match}){
 
       {/* Button */}
 
-      <button className="group mt-8 w-full rounded-2xl bg-cyan-500 py-4 text-lg font-semibold text-slate-900 transition-all duration-300 hover:bg-cyan-400">
+      <button className="group mt-6 w-full rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
+       text-slate-900 transition-all duration-300 hover:bg-cyan-400
+hover:shadow-xl
+hover:shadow-cyan-500/30">
 
         <span className="flex items-center justify-center gap-3">
 
-          View Live Match
+          Open Match Center
 
-          <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1"/>
+          <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-2"/>
 
         </span>
 
