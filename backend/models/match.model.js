@@ -19,7 +19,6 @@ const matchSchema=new mongoose.Schema({
     venue:{
         type:String,
         required:true,
-        lowercase:true,
         trim:true
     },
     matchDate:{
@@ -52,10 +51,28 @@ const matchSchema=new mongoose.Schema({
         type:String,
         default:""
     },
-    scorecard:{
-        type:Object,
-        default:{}
+   scorecard: {
+    teamAScore: {
+        type: String,
+        default: ""
     },
+    teamBScore: {
+        type: String,
+        default: ""
+    },
+    overs: {
+        type: String,
+        default: ""
+    },
+    currentRunRate: {
+        type: Number,
+        default: 0
+    },
+    target: {
+        type: Number,
+        default: 0
+    }
+},
     manOfTheMatch:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Player",

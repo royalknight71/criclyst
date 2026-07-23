@@ -157,8 +157,14 @@ export const getAllMatches = async (req, res) => {
     if(query){
         mongoQuery = mongoQuery.select(query);
     }
+if (selectedFields) {
     for (const item of populateFields) {
-    if (split.includes(item.field)) {
+        if (split.includes(item.field)) {
+            mongoQuery = mongoQuery.populate(item.field, item.select);
+        }
+    }
+} else {
+    for (const item of populateFields) {
         mongoQuery = mongoQuery.populate(item.field, item.select);
     }
 }
