@@ -226,7 +226,7 @@ tracking-tight text-cyan-400">
 
       {/* Button */}
 
-      <button className="group mt-6 w-full rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
+      <button className="group mt-6 w-full cursor-pointer rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
        text-slate-900 transition-all duration-300 hover:bg-cyan-400
 hover:shadow-xl
 hover:shadow-cyan-500/30">

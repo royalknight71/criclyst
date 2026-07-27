@@ -173,7 +173,7 @@ function UpcomingMatchCard({ match }) {
 
       {/* Button */}
 
-      <button className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl bg-cyan-500 py-3 text-lg font-semibold text-slate-900 transition-all duration-300 hover:bg-cyan-400">
+      <button className="mt-6 flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-cyan-500 py-3 text-lg font-semibold text-slate-900 transition-all duration-300 hover:bg-cyan-400">
 
         View Fixture
 
