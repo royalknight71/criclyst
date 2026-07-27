@@ -23,7 +23,6 @@ function LiveMatches() {
         }
         findLiveMatches()
     },[])
-console.log(matches);
 
         if(loading)
 {

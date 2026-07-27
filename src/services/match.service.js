@@ -6,3 +6,10 @@ export const getLiveMatch=async ()=>{
     )
     return data.data
 }
+
+export const getUpcomingMatches=async ()=>{
+    const {data}=await api.get(
+        "/matches?status=upcoming&sortBy=matchDate&order=asc"
+    )
+    return data.data;
+}
