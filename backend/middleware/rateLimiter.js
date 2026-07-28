@@ -1,7 +1,7 @@
 import redisClient from "../config/redis.js"
 
 const windowSize=15*60*1000
-const maxRequest=100
+const maxRequest=10000
 
 const rateLimiter=async (req,res,next)=>{
     try{

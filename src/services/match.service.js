@@ -13,3 +13,11 @@ export const getUpcomingMatches=async ()=>{
     )
     return data.data;
 }
+
+export const getRecentMatches=async()=>
+{
+    const {data}=await api.get(
+        "/matches?status=completed&sortBy=matchDate&order=desc"
+    )
+    return data.data
+}

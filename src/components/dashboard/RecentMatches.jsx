@@ -1,21 +1,84 @@
+import { getRecentMatches } from "../../services/match.service";
+import RecentMatchCard from "./widgets/RecentMatchCard";
+import EmptyRecentMatches from "./widgets/EmptyRecentMatches"
+import { useState,useEffect } from "react";
 
+function RecentMatches() {
+    const [loading,setLoading]=useState(true)
+    const [matches,setMatches]=useState([])
+    const [error,setError]=useState(null)
 
-function ReacentMatches() {
-  return (
-<section className="py-20">
-    <div className="max-w-7xl mx-auto px-6">
+    useEffect(()=>{
+        async function findRecentMatches()
+        {
+            try{
+                const response = await getRecentMatches();
+                setMatches(response)
+            }
+            catch(error)
+            {
+                setError(error.message)
+            }
+            finally
+            {
+                setLoading(false)
+            }
+        }
+        findRecentMatches()
+    },[])
+    if(loading)
+    {
+        return (
+            <p>Loading...</p>
+        )
+    }
+    if(error)
+    {
+            return (
+     <div className="text-center text-red-400 py-20">
+        <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
+    {error}
+    </section>
+</div>
+    )
+    }
+    if(matches.length===0)
+    {
+        return <EmptyRecentMatches/>
+    }
 
-        <h2 className="text-3xl font-bold text-white">
-            Recent Matches
-        </h2>
+        return (
+<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
+    <div className="max-w-4xl mx-auto px-6">
 
-        <div className="mt-8 rounded-2xl border border-dashed border-slate-700 h-60 flex items-center justify-center text-slate-500">
-            Coming Soon...
+ <div className="mb-10">
+
+    <span className="uppercase tracking-widest text-cyan-400 text-sm font-semibold">
+        MATCH HISTORY
+    </span>
+
+    <h2 className="text-4xl font-bold text-white mt-2">
+        Recent Matches
+    </h2>
+
+    <p className="text-slate-400 mt-2">
+        Relive the latest international cricket action.
+    </p>
+
+</div>
+        <div className="grid gap-6">
+               { matches.map((match)=>(
+    <RecentMatchCard
+        key={match._id}
+        match={match}
+    />
+        ))}
         </div>
+
 
     </div>
 </section>
   );
 }
 
-export default ReacentMatches;
+export default RecentMatches;
