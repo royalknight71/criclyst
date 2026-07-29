@@ -162,7 +162,7 @@ function TopPlayerCard({ player, index }) {
 
         </p>
 
-        <button className="flex items-center gap-2 rounded-xl border border-cyan-400 px-5 py-2 font-medium text-cyan-300 transition-all duration-300 hover:bg-cyan-400 hover:text-slate-900">
+        <button className="flex items-center gap-2 rounded-xl cursor-pointer border border-cyan-400 px-5 py-2 font-medium text-cyan-300 transition-all duration-300 hover:bg-cyan-400 hover:text-slate-900">
 
           View Profile
 
