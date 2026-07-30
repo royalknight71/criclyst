@@ -66,9 +66,12 @@ function PlayerCard({ player }) {
       className="
         group
         relative
+            w-full
+    max-w-380
         cursor-pointer
         overflow-hidden
         rounded-3xl
+        
         border
         border-slate-800
         bg-[#111827]
