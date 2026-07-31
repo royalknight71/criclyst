@@ -1,6 +1,6 @@
 import { FaSearch } from "react-icons/fa";
 
-function SearchBar({ value, onChange }) {
+function SearchBar({ value, onChange,placeholder }) {
   return (
     <div className="relative w-full">
 
@@ -18,7 +18,7 @@ function SearchBar({ value, onChange }) {
 
       <input
         type="text"
-        placeholder="Search players by name, country or team..."
+        placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="

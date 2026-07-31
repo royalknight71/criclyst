@@ -4,6 +4,7 @@ import EmptyPlayers from "../components/dashboard/widgets/EmptyPlayers"
 import SearchBar from "../components/player/SearchBar"
 import PlayerGrid from "../components/player/PlayerGrid"
 import PlayerFilters from "../components/player/PlayerFilters"
+import Pagination from "../components/player/Pagination";
 
 function Players()
 {
@@ -12,14 +13,23 @@ function Players()
   const [error,setError]=useState(null)
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole,setSelectedRole]=useState("")
+  const [page, setPage] = useState(1);
 
+const [totalPages, setTotalPages] = useState(1);
+
+const [totalPlayers, setTotalPlayers] = useState(0);
   useEffect(()=>{
     async function fetchPlayers()
     {
     try
     {
-      const response=await getPlayers()
-      setPlayers(response)
+      const response = await getPlayers(page, 8);
+
+setPlayers(response.data);
+
+setTotalPages(response.totalPages);
+
+setTotalPlayers(response.totalPlayers);
     }
     catch(error)
     {
@@ -31,19 +41,18 @@ function Players()
     }
   }
   fetchPlayers()
-  },[])
+  },[page])
+  const search = searchTerm.trim().toLowerCase();
 const filteredPlayers = players.filter((player) => {
 
     const matchesRole =
         !selectedRole ||
         player.role === selectedRole;
 
-const search = searchTerm.trim().toLowerCase();
-
 const matchesSearch =
   player.name.toLowerCase().includes(search) ||
   player.country.toLowerCase().includes(search) ||
-  player.team.toLowerCase().includes(search);
+  player.team?.toLowerCase().includes(search);
 
     return matchesRole && matchesSearch;
 });
@@ -119,7 +128,7 @@ return (
     <SearchBar
     value={searchTerm}
     onChange={setSearchTerm}
-    placeholder="Search players..."
+    placeholder="Search players by name, country or team..."
     />
     </div>
 
@@ -131,12 +140,39 @@ return (
 
 </div>
 
+<div className="mt-6 flex items-center justify-between">
 
-      <div className="mt-20">
+    <p className="text-sm text-slate-400">
+
+        Showing
+
+        <span className="mx-2 font-bold text-cyan-400">
+            {filteredPlayers.length}
+        </span>
+
+        of
+
+        <span className="mx-2 font-bold text-white">
+            {totalPlayers}
+        </span>
+
+        Players
+
+    </p>
+
+</div>
+      <div className="mt-12">
     <PlayerGrid players={filteredPlayers}/>
 </div>
-
+<div className="mt-14">
     {/* Pagination */}
+    <Pagination
+  currentPage={page}
+  totalPages={totalPages}
+  onPrevious={() => setPage((prev) => prev - 1)}
+  onNext={() => setPage((prev) => prev + 1)}
+/>
+</div>
 </div>
   </section>
 );
