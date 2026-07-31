@@ -59,6 +59,9 @@ export const getAllPlayers = async (req, res) => {
     delete filter.order;
     delete filter.fields;
 
+    const search = req.query.search?.trim();
+
+delete filter.search;
     const allowedFields = [
       "name",
       "country",
@@ -170,9 +173,33 @@ export const getAllPlayers = async (req, res) => {
     const sortValue = order === "asc" ? 1 : -1;
 
     // Execute query
-    let mongoQuery = Player.find(filter).sort({
-      [sortBy]: sortValue,
-    });
+    let mongoFilter = { ...filter };
+
+if (search) {
+  mongoFilter.$or = [
+    {
+      name: {
+        $regex: search,
+        $options: "i",
+      },
+    },
+    {
+      country: {
+        $regex: search,
+        $options: "i",
+      },
+    },
+    {
+      team: {
+        $regex: search,
+        $options: "i",
+      },
+    },
+  ];
+}
+    let mongoQuery = Player.find(mongoFilter).sort({
+  [sortBy]: sortValue,
+});
 
     if (query) {
       mongoQuery = mongoQuery.select(query);
@@ -257,7 +284,10 @@ export const searchPlayers = async (req, res) => {
         success: false,
         message: "Player not found",
       });
-    return res.status(200).json(player);
+    return res.status(200).json({
+    success: true,
+    data: players,
+});
   } catch (error) {
     return res.status(500).json({
       success: false,

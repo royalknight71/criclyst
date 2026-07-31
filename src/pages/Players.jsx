@@ -23,7 +23,12 @@ const [totalPlayers, setTotalPlayers] = useState(0);
     {
     try
     {
-      const response = await getPlayers(page, 8);
+      const response = await getPlayers(
+  page,
+  8,
+  searchTerm,
+  selectedRole
+);
 
 setPlayers(response.data);
 
@@ -41,21 +46,21 @@ setTotalPlayers(response.totalPlayers);
     }
   }
   fetchPlayers()
-  },[page])
+  },[page, searchTerm, selectedRole])
   const search = searchTerm.trim().toLowerCase();
-const filteredPlayers = players.filter((player) => {
+// const filteredPlayers = players.filter((player) => {
 
-    const matchesRole =
-        !selectedRole ||
-        player.role === selectedRole;
+//     const matchesRole =
+//         !selectedRole ||
+//         player.role === selectedRole;
 
-const matchesSearch =
-  player.name.toLowerCase().includes(search) ||
-  player.country.toLowerCase().includes(search) ||
-  player.team?.toLowerCase().includes(search);
+// const matchesSearch =
+//   player.name.toLowerCase().includes(search) ||
+//   player.country.toLowerCase().includes(search) ||
+//   player.team?.toLowerCase().includes(search);
 
-    return matchesRole && matchesSearch;
-});
+//     return matchesRole && matchesSearch;
+// });
   if(loading)
     return <p>Loading...</p>
 
@@ -147,7 +152,7 @@ return (
         Showing
 
         <span className="mx-2 font-bold text-cyan-400">
-            {filteredPlayers.length}
+            {players.length}
         </span>
 
         of
@@ -162,7 +167,7 @@ return (
 
 </div>
       <div className="mt-12">
-    <PlayerGrid players={filteredPlayers}/>
+    <PlayerGrid players={players} />
 </div>
 <div className="mt-14">
     {/* Pagination */}
