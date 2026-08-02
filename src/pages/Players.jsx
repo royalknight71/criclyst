@@ -47,7 +47,7 @@ setTotalPlayers(response.totalPlayers);
   }
   fetchPlayers()
   },[page, searchTerm, selectedRole])
-  const search = searchTerm.trim().toLowerCase();
+  // const search = searchTerm.trim().toLowerCase();
 // const filteredPlayers = players.filter((player) => {
 
 //     const matchesRole =
@@ -61,8 +61,24 @@ setTotalPlayers(response.totalPlayers);
 
 //     return matchesRole && matchesSearch;
 // });
-  if(loading)
-    return <p>Loading...</p>
+const handleSearchChange = (value) => {
+  setPage(1);
+  setSearchTerm(value);
+};
+
+const handleRoleChange = (value) => {
+  setPage(1);
+  setSelectedRole(value);
+};
+if (loading) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-[#0B1120]">
+      <p className="text-lg text-cyan-400 animate-pulse">
+        Loading Players...
+      </p>
+    </div>
+  );
+}
 
   if(error)
     return (
@@ -132,7 +148,7 @@ return (
     <div className="flex-1">
     <SearchBar
     value={searchTerm}
-    onChange={setSearchTerm}
+    onChange={handleSearchChange}
     placeholder="Search players by name, country or team..."
     />
     </div>
@@ -140,7 +156,7 @@ return (
     {/* Filters */}
     <PlayerFilters
     value={selectedRole}
-    onChange={setSelectedRole}
+    onChange={handleRoleChange}
 />
 
 </div>
@@ -169,15 +185,18 @@ return (
       <div className="mt-12">
     <PlayerGrid players={players} />
 </div>
-<div className="mt-14">
-    {/* Pagination */}
-    <Pagination
-  currentPage={page}
-  totalPages={totalPages}
-  onPrevious={() => setPage((prev) => prev - 1)}
-  onNext={() => setPage((prev) => prev + 1)}
-/>
-</div>
+{
+  totalPages > 1 && (
+    <div className="mt-14">
+      <Pagination
+        currentPage={page}
+        totalPages={totalPages}
+        onPrevious={() => setPage(prev => prev - 1)}
+        onNext={() => setPage(prev => prev + 1)}
+      />
+    </div>
+  )
+}
 </div>
   </section>
 );

@@ -25,10 +25,10 @@ function PlayerDetails() {
         </div>
       <h1 className="player-name">{player.name}</h1>
       <br />
-      <img className="player-image" src={player.image} alt={player.name} />
+      <img className="player-image" src = {player.image} alt = {player.name} />
       <br />
       <div className="player-stats">
-        {(player.role==="Batsman" || player.role==="Wicket Keeper")
+        {(player.role==="Batsman" || player.role ==="Wicket Keeper")
         ? <div className="stat-row">
             <span className="stat-label">Runs</span>
             <span className="stat-value">{player.runs}</span>
@@ -42,7 +42,7 @@ function PlayerDetails() {
       ? <div>
          <div className="stat-row">
           <span className="stat-label">Runs</span>
-          <span className="stat-value">{player.runs}</span>
+          <span className="stat-value"> {player.runs} </span>
         </div>
         <div className="stat-row">
           <span className="stat-label">Wickets</span>
