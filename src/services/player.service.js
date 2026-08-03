@@ -41,3 +41,8 @@ export const getPlayers = async (
 
   return data;
 };
+
+export const getPlayerById = async (id) => {
+  const {data}=await api.get(`/players/${id}`);
+  return data.data;
+}
