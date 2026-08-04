@@ -650,7 +650,8 @@ margin-right: auto;
     width:95%;
     padding:25px 15px;
 }
-.analytics-heading{
+.analytics-heading
+{
   font-size: 1.5rem;
 }
 
@@ -682,7 +683,8 @@ overflow-x:auto;
     border-color:#6C63FF;
 }
 
-.chart-title{
+.chart-title
+{
     font-size:1.35rem;
 
     font-weight:600;
@@ -708,7 +710,8 @@ overflow-x:auto;
     margin-top:15px;
 }
 
-.summary-card {
+.summary-card 
+{
     display: flex;
     justify-content: center;
     gap: 20px;
@@ -750,6 +753,9 @@ overflow-x:auto;
     color: white;
     font-weight: bold;
 }
+
+
+
 
 @media(max-width:768px){
 

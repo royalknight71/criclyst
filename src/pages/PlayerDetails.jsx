@@ -43,24 +43,24 @@ const [error, setError] = useState(null);
   if (!player) {
     return <h1 className="player-name">Player Not Found</h1>;
   }
-  const formattedCountryName=player.country.split(" ").map(
+  const formattedCountryName=(player.country || "").split(" ").map(
       (word) =>
         word.charAt(0).toUpperCase() +
         word.slice(1).toLowerCase()
     ).join(" ")
 
-    const formattedTeamName=player.team.split(" ").map(
+    const formattedTeamName=(player.team || "").split(" ").map(
       (word) =>
         word.charAt(0).toUpperCase() +
         word.slice(1).toLowerCase()
     ).join(" ")
-    const formattedPlayerName=player.name.split(" ").map((word)=>word.charAt(0).toUpperCase()+
+    const formattedPlayerName=(player.name || "").split(" ").map((word)=>word.charAt(0).toUpperCase()+
   word.slice(1).toLowerCase()
   ).join(" ")
   const stats = [
   {
     label: "Runs",
-    value: player.runs,
+    value: player.runs?.toLocaleString(),
     show: player.runs !== undefined,
     icon: GiCricketBat,
   },
@@ -105,19 +105,19 @@ const playerInfo = [
   },
   {
     label: "Team",
-    value: formattedTeamName || "Free Agent",
+    value: formattedTeamName,
   },
   {
     label: "Batting Style",
-    value: player.battingStyle,
+    value: player.battingStyle || "--",
   },
   {
     label: "Bowling Style",
-    value: player.bowlingStyle,
+    value: player.bowlingStyle || "--",
   },
   {
     label: "Debut Year",
-    value: player.debutYear,
+    value: player.debutYear || "--",
   },
   {
     label: "Jersey Number",
@@ -272,7 +272,7 @@ return (
     Career Statistics
   </h2>
 
-  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
 
     {stats
       .filter((stat) => stat.show)

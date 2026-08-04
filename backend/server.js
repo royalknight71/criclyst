@@ -2,7 +2,7 @@ import "dotenv/config";
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
-import redisClient from "./config/redis.js";
+//import redisClient from "./config/redis.js";
 
 
 const initializeConnection=async ()=>{
@@ -12,7 +12,8 @@ const initializeConnection=async ()=>{
 
     // await connectDB()
 
-    await Promise.all([redisClient.connect(),connectDB()])
+    //await Promise.all([redisClient.connect(),connectDB()])
+    await connectDB()
     console.log("Connected to DB");
     
     
