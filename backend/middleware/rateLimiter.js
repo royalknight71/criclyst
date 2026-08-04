@@ -24,7 +24,7 @@ const rateLimiter=async (req,res,next)=>{
 
         // console.log(cnt);
         
-        const key=`$req.ip`
+        const key=req.ip
         const currentTime=Date.now()/1000
         const windowTime=currentTime-windowSize
 

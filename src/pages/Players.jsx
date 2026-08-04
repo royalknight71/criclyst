@@ -5,6 +5,7 @@ import SearchBar from "../components/player/SearchBar"
 import PlayerGrid from "../components/player/PlayerGrid"
 import PlayerFilters from "../components/player/PlayerFilters"
 import Pagination from "../components/player/Pagination";
+import PlayerSkeleton from "../components/player/PlayerSkeleton";
 
 function Players()
 {
@@ -12,12 +13,23 @@ function Players()
   const [players,setPlayers]=useState([])
   const [error,setError]=useState(null)
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedRole,setSelectedRole]=useState("")
   const [page, setPage] = useState(1);
 
 const [totalPages, setTotalPages] = useState(1);
 
 const [totalPlayers, setTotalPlayers] = useState(0);
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedSearch(searchTerm);
+  }, 500);
+
+  return () => clearTimeout(timer);
+
+}, [searchTerm]);
+
   useEffect(()=>{
     async function fetchPlayers()
     {
@@ -46,7 +58,7 @@ setTotalPlayers(response.totalPlayers);
     }
   }
   fetchPlayers()
-  },[page, searchTerm, selectedRole])
+  },[page, debouncedSearch, selectedRole])
   // const search = searchTerm.trim().toLowerCase();
 // const filteredPlayers = players.filter((player) => {
 
@@ -70,13 +82,28 @@ const handleRoleChange = (value) => {
   setPage(1);
   setSelectedRole(value);
 };
+
 if (loading) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#0B1120]">
-      <p className="text-lg text-cyan-400 animate-pulse">
-        Loading Players...
-      </p>
-    </div>
+    <section className="relative min-h-screen overflow-hidden bg-[#0B1120]">
+
+      <div className="absolute top-20 left-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
+
+      <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[120px]" />
+
+      <div className="relative mx-auto max-w-7xl px-6 py-16">
+
+        <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+
+          {Array.from({ length: 8 }).map((_, index) => (
+            <PlayerSkeleton key={index} />
+          ))}
+
+        </div>
+
+      </div>
+
+    </section>
   );
 }
 

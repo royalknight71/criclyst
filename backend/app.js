@@ -11,7 +11,7 @@ import cors from "cors";
 
 const app=express();
 app.use(cookieParser());
-app.use(rateLimiter)
+//app.use(rateLimiter)
 app.use(cors());
 app.use(express.json());
 app.use(logger);

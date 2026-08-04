@@ -296,35 +296,7 @@ export const searchPlayers = async (req, res) => {
   }
 };
 
-export const searchPlayersById = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const check = mongoose.Types.ObjectId.isValid(id);
-    if (!check) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Player ID",
-      });
-    }
-    const player = await Player.findById(id);
 
-    if (!player) {
-      return res.status(404).json({
-        success: false,
-        message: "Player not found",
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      data: player,
-    });
-  } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
 
 export const deletePlayersById = async (req, res) => {
   try {
@@ -371,6 +343,35 @@ export const updatePlayersById = async (req, res) => {
       new: true,
       runValidators: true,
     });
+    if (!player) {
+      return res.status(404).json({
+        success: false,
+        message: "Player not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      data: player,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+export const searchPlayersById = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const check = mongoose.Types.ObjectId.isValid(id);
+    if (!check) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Player ID",
+      });
+    }
+    const player = await Player.findById(id);
+
     if (!player) {
       return res.status(404).json({
         success: false,
