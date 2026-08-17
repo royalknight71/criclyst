@@ -8,5 +8,4 @@ router.post("/",createTeam)
 router.patch("/:id",updateTeam)
 router.delete("/:id",deleteTeam)
 
-
 export default router

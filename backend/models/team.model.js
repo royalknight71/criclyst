@@ -23,11 +23,10 @@ const teamSchema=new mongoose.Schema({
         trim:true
     },
     captain:{
-        type:String,
-        required:true,
-        trim:true,
-        lowercase:true
-    },
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Player",
+    required: true
+},
     coach:{
         type:String,
         required:true,
@@ -35,8 +34,10 @@ const teamSchema=new mongoose.Schema({
         lowercase:true
     },
     ranking:{
-        type:Number,
-        min:1
+            type:Number,
+    required:true,
+    min:1,
+    max:20
     },
     founded:{
         type:Number,
@@ -46,7 +47,8 @@ const teamSchema=new mongoose.Schema({
     },
     logo:{
         type:String,
-        default:""
+        default:"",
+        trim:true
     },
     players:{
         type:[{
@@ -55,10 +57,16 @@ const teamSchema=new mongoose.Schema({
         }],
         default:[]
     },
+    homeGround:{
+    type:String,
+    trim:true,
+    lowercase:true
+},
     description:{
-        type:String,
-        default:"Cricket Team"
-    },
+    type:String,
+    default:"Cricket Team",
+    maxlength:300
+},
     isActive:{
         type:Boolean,
         default:true

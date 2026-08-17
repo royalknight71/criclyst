@@ -5,6 +5,8 @@ import Navbar from "./components/layout/Navbar"
 import Analytics from "./pages/Analytics"
 import Footer from "./components/layout/Footer";
 import Players from "./pages/Players"
+import Teams from "./pages/Teams"
+
 function App() {
   return (
     <>
@@ -14,6 +16,7 @@ function App() {
       <Route path="/players" element={<Players />} />
       <Route path="/players/:id" element={<PlayerDetails />} />
       <Route path='/analytics' element={<Analytics/>}/>
+      <Route path="/teams" element={<Teams />} />
     </Routes>
     <Footer />
     </>

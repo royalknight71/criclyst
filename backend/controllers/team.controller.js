@@ -10,13 +10,14 @@ export const getAllTeams = async (req, res) => {
     const sortBy=req.query.sortBy||"name"
     const order=req.query.order||"asc"
     const selectedFields=req.query.fields
-
+      const search = req.query.search?.trim() || "";
     const filter={...req.query}
     delete filter.page
     delete filter.limit
     delete filter.sortBy
     delete filter.order
     delete filter.fields
+    delete filter.search;
 
     const sortingFields=[
         "name",
@@ -138,7 +139,22 @@ export const getAllTeams = async (req, res) => {
         message: "Invalid Filter Request",
       });        
     }
-
+if (search) {
+  filter.$or = [
+    {
+      name: {
+        $regex: search,
+        $options: "i"
+      }
+    },
+    {
+      country: {
+        $regex: search,
+        $options: "i"
+      }
+    }
+  ];
+}
     //Query selection
     let query=""
     let split=[]
@@ -169,22 +185,30 @@ export const getAllTeams = async (req, res) => {
       });        
     }
 
-    //MongoDB Query
-    let mongoQuery= Team.find(filter).sort({
-        [sortBy]:sortValue
-    })
+ // MongoDB Query
+let mongoQuery = Team.find(filter).sort({
+    [sortBy]: sortValue
+});
 
-    if(query){
-        mongoQuery = mongoQuery.select(query);
-    }
-    if(split.includes("players"))
-    {
-        mongoQuery = mongoQuery.populate(
-            "players",
-            "name role country"
-        );
-    }
-    const teams = await mongoQuery.skip(startIndex).limit(limit)
+if (query) {
+    mongoQuery = mongoQuery.select(query);
+}
+
+mongoQuery = mongoQuery.populate(
+    "captain",
+    "name role country"
+);
+
+if (split.includes("players")) {
+    mongoQuery = mongoQuery.populate(
+        "players",
+        "name role country"
+    );
+}
+
+const teams = await mongoQuery
+    .skip(startIndex)
+    .limit(limit);
 
     //Pagination
     const pagination={}
