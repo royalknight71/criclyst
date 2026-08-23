@@ -7,6 +7,7 @@
  */
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 /**
  * Renders an individual team card with logo, metadata and staff details.
@@ -22,6 +23,7 @@ import { useState } from "react";
  */
 const TeamCard = ({ team }) => {
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -127,6 +129,7 @@ const TeamCard = ({ team }) => {
 
       {/* View Team */}
       <button
+        onClick={() => navigate(`/teams/${team._id}`)}
         className="
           mt-6 w-full
           rounded-lg
