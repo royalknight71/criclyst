@@ -1,8 +1,26 @@
+/**
+ * TopPlayers.jsx
+ *
+ * Dashboard section showcasing the top-performing cricket players.
+ * Fetches ranked player data on mount and renders a TopPlayerCard for each
+ * player, with dedicated loading, error, and empty states.
+ */
+
 import { getTopPlayers } from "../../services/player.service";
 import { useState,useEffect } from "react";
 import EmptyTopPlayers from "./widgets/EmptyTopPlayers";
 import TopPlayerCard from "./widgets/TopPlayerCard";
 
+/**
+ * TopPlayers component.
+ *
+ * Loads the top players ranking via getTopPlayers and displays them as a
+ * list of cards. Shows a loading indicator, an error message, or an
+ * empty-state section depending on the fetch outcome.
+ *
+ * @component
+ * @returns {JSX.Element} The top players section.
+ */
 function TopPlayers() {
   const [loading,setLoading]=useState(true)
   const [players,setPlayers]=useState([])

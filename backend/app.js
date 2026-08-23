@@ -1,3 +1,8 @@
+/**
+ * Express application setup for the Criclyst API.
+ * Configures global middleware (cookies, CORS, JSON parsing, request logging)
+ * and mounts all resource routers under the /api namespace.
+ */
 import express from 'express';
 import playerRoutes from './routes/player.routes.js';
 import userRoutes from './routes/user.routes.js';

@@ -1,4 +1,16 @@
+/**
+ * Analytics utilities for computing leaderboard rankings and
+ * squad-composition data from a collection of player objects.
+ * All functions are pure: they return new arrays without
+ * mutating the input.
+ */
 
+/**
+ * Get the top 5 players ranked by career runs.
+ *
+ * @param {Array<Object>} players - Collection of player objects with a `runs` field.
+ * @returns {Array<Object>} New array of up to 5 players, sorted by runs (descending).
+ */
 export function getTopRuns(players){
     return (
     [...players]
@@ -7,7 +19,12 @@ export function getTopRuns(players){
     )
 }
 
-
+/**
+ * Get the top 5 players ranked by wickets taken.
+ *
+ * @param {Array<Object>} players - Collection of player objects with a `wickets` field.
+ * @returns {Array<Object>} New array of up to 5 players, sorted by wickets (descending).
+ */
 export function getTopWickets(players){
     return (
     [...players]
@@ -15,7 +32,12 @@ export function getTopWickets(players){
     .slice(0,5)
     )
 }
-
+/**
+ * Get the top 5 players ranked by average.
+ *
+ * @param {Array<Object>} players - Collection of player objects with an `average` field.
+ * @returns {Array<Object>} New array of up to 5 players, sorted by average (descending).
+ */
 export function getTopAvg(players){
     return (
     [...players]
@@ -23,7 +45,12 @@ export function getTopAvg(players){
     .slice(0,5)
     )
 }
-
+/**
+ * Get the top 5 players ranked by strike rate.
+ *
+ * @param {Array<Object>} players - Collection of player objects with a `strikeRate` field.
+ * @returns {Array<Object>} New array of up to 5 players, sorted by strike rate (descending).
+ */
 export function getTopSR(players){
     return (
     [...players]
@@ -32,6 +59,14 @@ export function getTopSR(players){
     )
 }
 
+/**
+ * Count players per playing role and return the distribution
+ * in a chart-friendly shape.
+ *
+ * @param {Array<Object>} players - Collection of player objects with a `role` field.
+ * @returns {Array<{role: string, count: number}>} One entry each for
+ *   "Batsman", "Bowler", "All-Rounder" and "Wicket Keeper", always in that order.
+ */
 export function getRoleDistribution(players) {
 
         const data=[]

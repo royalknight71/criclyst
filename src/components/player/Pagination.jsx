@@ -1,3 +1,20 @@
+/**
+ * Pagination.jsx
+ *
+ * Pagination controls for the players listing page. Shows Previous/Next
+ * buttons with a "Page X of Y" indicator. Buttons are automatically
+ * disabled at the first and last pages.
+ */
+
+/**
+ * Renders pagination controls for navigating between pages of results.
+ * @param {object} props - Component props.
+ * @param {number} props.currentPage - Current active page number (1-indexed).
+ * @param {number} props.totalPages - Total number of available pages.
+ * @param {function(): void} props.onPrevious - Callback invoked when the Previous button is clicked.
+ * @param {function(): void} props.onNext - Callback invoked when the Next button is clicked.
+ * @returns {JSX.Element} The pagination controls element.
+ */
 function Pagination({
   currentPage,
   totalPages,

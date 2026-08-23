@@ -1,3 +1,9 @@
+/**
+ * Match routes.
+ * Maps /api/matches endpoints to match controllers:
+ * listing (with pagination/filtering), per-ID read, and
+ * create/update/delete operations.
+ */
 import express from "express";
 import {getAllMatches,getMatchById,createMatch,deleteMatch,updateMatch} from '../controllers/match.controller.js'
 

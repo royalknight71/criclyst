@@ -1,3 +1,13 @@
+/**
+ * PlayerCard.jsx
+ *
+ * Detailed player card used in the players listing grid. Shows the
+ * player's photo, name, country and role badge (color-coded by role),
+ * a stats list (runs, matches, average, wickets), team/jersey info and
+ * a "View Profile" link. Clicking the card navigates to the player's
+ * profile page.
+ */
+
 import { useNavigate } from "react-router-dom";
 import {
   FaArrowRight,
@@ -10,6 +20,23 @@ import { GiCricket } from "react-icons/gi";      // Cricket ball
 import { PiCricketBold } from "react-icons/pi";
 import {TbTargetArrow} from "react-icons/tb"
 
+/**
+ * Renders an interactive player card that navigates to the player's profile on click.
+ * @param {object} props - Component props.
+ * @param {object} props.player - Player object to display.
+ * @param {string} props.player._id - Unique player identifier used for navigation.
+ * @param {string} props.player.name - Player's full name.
+ * @param {string} [props.player.image] - URL of the player's photo; falls back to a default image.
+ * @param {string} props.player.country - Player's country.
+ * @param {string} props.player.role - Player role (Batsman, Bowler, All-Rounder, Wicket-Keeper).
+ * @param {number} [props.player.runs] - Total runs scored.
+ * @param {number} [props.player.matches] - Matches played.
+ * @param {number} [props.player.average] - Batting/bowling average.
+ * @param {number} [props.player.wickets] - Total wickets taken.
+ * @param {string} [props.player.team] - Team name; falls back to "Free Agent".
+ * @param {number|string} [props.player.jerseyNumber] - Jersey number.
+ * @returns {JSX.Element} The player card element.
+ */
 function PlayerCard({ player }) {
   const navigate = useNavigate();
 

@@ -1,9 +1,26 @@
+/**
+ * Compare page.
+ *
+ * Lets the user pick two players from the local static dataset and
+ * view them side by side. State:
+ *   - player1 / player2: currently selected player names (empty until chosen).
+ * The selected names are resolved against the static `players` array,
+ * and once both selections exist a ComparisonCard is rendered with
+ * head-to-head stats. Selection inputs are handled by ComparisonSelector.
+ */
+
 import players from "../data/players"
 import ComparisonSelector from "../components/compare/ComparisonSelector.jsx"
 import { useState } from 'react'
 import '../App.css'
 import ComparisonCard from "../components/compare/ComparisonCard";
 
+/**
+ * Renders the player comparison UI.
+ *
+ * @returns {JSX.Element} Selector for choosing two players, plus the
+ *   comparison card once both players are selected.
+ */
 function Compare(){
     const [player1,setPlayer1]=useState("")
   const [player2,setPlayer2]=useState("")

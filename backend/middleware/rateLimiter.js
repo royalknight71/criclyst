@@ -1,8 +1,21 @@
+/**
+ * Rate limiting middleware using a Redis sorted-set sliding window.
+ * Tracks requests per client IP within a 15-minute window and blocks
+ * clients exceeding the maximum request count with a 429 response.
+ */
 import redisClient from "../config/redis.js"
 
+// Sliding window length in seconds (15 minutes)
 const windowSize=15*60*1000
+// Maximum allowed requests per window
 const maxRequest=10000
 
+/**
+ * Applies per-IP rate limiting on each request.
+ * Prunes expired entries from the sorted set, rejects the request with 429
+ * if the limit is reached, otherwise records the current request (with a
+ * random tiebreaker value for uniqueness) and refreshes the key TTL.
+ */
 const rateLimiter=async (req,res,next)=>{
     try{
         // const ip=req.ip

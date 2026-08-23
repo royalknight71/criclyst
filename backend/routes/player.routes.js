@@ -1,3 +1,9 @@
+/**
+ * Player routes.
+ * Maps /api/players endpoints to player controllers:
+ * listing (with pagination/filter/search), creation, top players, count,
+ * search, and per-ID read/update/delete operations.
+ */
 import express from "express";
 import {createPlayer,getTopPlayers,getAllPlayers,countPlayers,
     searchPlayers,searchPlayersById,deletePlayersById,updatePlayersById} from "../controllers/player.controller.js";

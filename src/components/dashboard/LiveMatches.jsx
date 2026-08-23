@@ -1,8 +1,26 @@
+/**
+ * LiveMatches.jsx
+ *
+ * Dashboard section listing all currently live cricket matches.
+ * Fetches live matches on mount and renders a MatchCard for each one,
+ * with dedicated loading, error, and empty states.
+ */
+
 import { getLiveMatch } from "../../services/match.service";
 import MatchCard from "./widgets/MatchCard";
 import { useState,useEffect } from "react";
 import EmptyLiveMatches from "./widgets/EmptyLiveMatches";
 
+/**
+ * LiveMatches component.
+ *
+ * Loads live match data via getLiveMatch and displays it as a grid of cards.
+ * Shows a loading indicator, an error message, or an empty-state section
+ * depending on the fetch outcome.
+ *
+ * @component
+ * @returns {JSX.Element} The live matches section.
+ */
 function LiveMatches() {
     const [loading,setLoading]=useState(true)
     const [matches,setMatches]=useState([])

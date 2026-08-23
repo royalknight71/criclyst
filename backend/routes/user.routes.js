@@ -1,3 +1,9 @@
+/**
+ * User routes.
+ * Maps /api/users endpoints to user controllers: registration, login,
+ * and authenticated (userAuth-guarded) logout, profile read, update,
+ * and delete operations.
+ */
 import express from 'express';
 import { createUser, loginUser,getProfile, deleteProfile, updateProfile, logoutUser } from '../controllers/user.controller.js';
 import {userAuth} from '../middleware/auth.middleware.js';

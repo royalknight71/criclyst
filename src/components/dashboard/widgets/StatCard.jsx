@@ -1,5 +1,23 @@
+/**
+ * StatCard.jsx
+ *
+ * Reusable dashboard statistic tile. Displays an icon, a title, a large
+ * formatted numeric value, and an optional subtitle in a hoverable card.
+ */
 
 
+/**
+ * StatCard component.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {string} props.title - Statistic title shown next to the icon.
+ * @param {number|string} props.value - The statistic value (rendered with
+ *   locale-aware number formatting when numeric).
+ * @param {string} [props.subtitle] - Optional descriptive text below the value.
+ * @param {React.ReactNode} props.icon - Icon element displayed beside the title.
+ * @returns {JSX.Element} The rendered statistic card.
+ */
 function StatCard({title,value,subtitle,icon}){
     return (
 <div

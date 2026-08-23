@@ -1,3 +1,9 @@
+/**
+ * Team routes.
+ * Maps /api/teams endpoints to team controllers:
+ * listing (with pagination/filter/search), per-ID read, and
+ * create/update/delete operations.
+ */
 import express from "express";
 import {getAllTeams,getTeamsById,createTeam,updateTeam,deleteTeam} from "../controllers/team.controller.js";
 const router=express.Router();

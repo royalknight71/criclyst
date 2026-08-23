@@ -1,3 +1,14 @@
+/**
+ * Root application component.
+ * Renders the shared layout (Navbar and Footer) around the routed page content.
+ * Defines the top-level routes:
+ *   /            - Home dashboard (live/upcoming/recent matches, stats, top players)
+ *   /players     - Searchable, paginated player directory
+ *   /players/:id - Detailed profile view for a single player
+ *   /analytics   - Charts and visual insights into the squad
+ *   /teams       - Team database with search and format filters
+ */
+
 import { Routes, Route } from "react-router-dom"
 import Home from "./pages/Home"
 import PlayerDetails from "./pages/PlayerDetails"

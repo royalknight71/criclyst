@@ -1,9 +1,21 @@
+/**
+ * User controllers.
+ * Authentication and profile management handlers: registration with
+ * password hashing, login with JWT issuance via cookie, logout with
+ * Redis token blacklisting, and CRUD operations on the user's own profile.
+ */
 import User from '../models/user.model.js';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 import redisClient from '../config/redis.js';
 
+/**
+ * Registers a new user.
+ * Validates required fields, email format, and password strength; rejects
+ * duplicate emails; stores the password as a bcrypt hash. Returns the
+ * created user without the password.
+ */
 export const createUser=async (req,res)=>{
     try{
         const {name,email,password}=req.body;
@@ -59,6 +71,12 @@ export const createUser=async (req,res)=>{
     }
 }
 
+/**
+ * Authenticates a user and issues a JWT.
+ * Verifies credentials via bcrypt comparison, signs a token (15-minute
+ * expiry) containing the user ID and email, sets it as the "token" cookie,
+ * and returns the user's public profile data.
+ */
 export const loginUser=async (req,res)=>{
     try{
         const {email,password}=req.body;
@@ -119,6 +137,11 @@ export const loginUser=async (req,res)=>{
     }
 }
 
+/**
+ * Logs out the current user.
+ * Verifies the JWT from the cookie, blacklists the token in Redis until
+ * its original expiry (so it cannot be reused), and clears the cookie.
+ */
 export const logoutUser=async (req,res)=>{
     try{
         //res.cookie("token",null,{expires:new Date(Date.now())})
@@ -144,6 +167,10 @@ export const logoutUser=async (req,res)=>{
     }
 }
 
+/**
+ * Returns the authenticated user's profile (ID, name, email).
+ * Relies on req.user being set by the auth middleware.
+ */
 export const getProfile=async (req,res)=>{
     try{
         const data=req.user;
@@ -164,6 +191,9 @@ export const getProfile=async (req,res)=>{
     }
 }
 
+/**
+ * Deletes the authenticated user's account.
+ */
 export const deleteProfile=async (req,res)=>{
     try{
         const user=await User.findByIdAndDelete(req.user._id)
@@ -186,6 +216,10 @@ export const deleteProfile=async (req,res)=>{
     }
 }
 
+/**
+ * Updates the authenticated user's name and/or email.
+ * Runs schema validators and returns the updated public profile.
+ */
 export const updateProfile=async (req,res)=>{
     try{
         const { name, email } = req.body;

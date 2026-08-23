@@ -1,5 +1,34 @@
+/**
+ * ComparisonCard.jsx
+ *
+ * Displays a head-to-head statistical comparison between two players.
+ * Computes win indicators for each metric (runs, wickets, matches,
+ * average, strike rate, hundreds, fifties, economy rate) and renders a
+ * "winner dot" next to the better value. Rows are conditionally shown
+ * based on the players' roles: batting-only rows are hidden when either
+ * player is a Bowler, while bowling rows appear only when both players
+ * bowl (Bowler or All-Rounder).
+ */
 
-
+/**
+ * Renders the side-by-side comparison table for two selected players.
+ * @param {object} props - Component props.
+ * @param {object|null} props.player1Data - Stats object for the first player, or null if not yet selected.
+ * @param {string} props.player1Data.name - First player's name.
+ * @param {string} props.player1Data.role - First player's role (Batsman, Bowler, All-Rounder, etc.).
+ * @param {number} props.player1Data.runs - Total runs scored.
+ * @param {number} props.player1Data.wickets - Total wickets taken.
+ * @param {number} props.player1Data.matches - Matches played.
+ * @param {number} props.player1Data.average - Batting or bowling average.
+ * @param {number} props.player1Data.strikeRate - Batting strike rate.
+ * @param {number} props.player1Data.hundred - Number of centuries.
+ * @param {number} props.player1Data.fifty - Number of half-centuries.
+ * @param {number|string} props.player1Data.highestScore - Highest individual score.
+ * @param {number} props.player1Data.economyRate - Bowling economy rate.
+ * @param {string} props.player1Data.BBI - Best bowling in an innings.
+ * @param {object|null} props.player2Data - Stats object for the second player (same shape as player1Data), or null if not yet selected.
+ * @returns {JSX.Element} The comparison card element, or empty paragraph if data is missing.
+ */
 function ComparisonCard({
         player1Data,
         player2Data,

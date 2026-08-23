@@ -1,7 +1,19 @@
+/**
+ * Authentication middleware.
+ * Guards protected routes by verifying the JWT stored in the "token" cookie,
+ * rejecting blacklisted (logged-out) tokens via Redis, loading the user
+ * document, and attaching it to req.user for downstream handlers.
+ */
 import jwt from 'jsonwebtoken';
 import User from '../models/user.model.js';
 import redisClient from '../config/redis.js';
 
+/**
+ * Verifies the request's auth token and attaches the authenticated user
+ * to req.user (password excluded).
+ * Responds with 401 for missing, blacklisted, expired, or invalid tokens;
+ * calls next() on success.
+ */
 export const userAuth=async (req,res,next)=>{
     try{
         const {token}=req.cookies

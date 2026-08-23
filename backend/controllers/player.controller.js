@@ -1,6 +1,16 @@
+/**
+ * Player controllers.
+ * CRUD and query handlers for the player resource, including paginated
+ * listing with sorting, field selection, advanced numeric filtering, search,
+ * and count endpoints.
+ */
 import Player from "../models/player.model.js";
 import mongoose from "mongoose";
 
+/**
+ * Creates a new player.
+ * Rejects the request if a player with the same name already exists.
+ */
 export const createPlayer = async (req, res) => {
   try {
     const existingPlayer = await Player.findOne({
@@ -27,6 +37,9 @@ export const createPlayer = async (req, res) => {
   }
 };
 
+/**
+ * Returns the top 5 players sorted by runs in descending order.
+ */
 export const getTopPlayers = async (req, res) => {
   try {
     const ply = await Player.find().sort({ runs: -1 }).limit(5);
@@ -42,6 +55,17 @@ export const getTopPlayers = async (req, res) => {
   }
 };
 
+/**
+ * Returns a paginated, sorted list of players with optional filtering,
+ * field selection, and text search.
+ *
+ * Supported query parameters:
+ * - page / limit: pagination (defaults 1 / 10)
+ * - sortBy / order: sorting on whitelisted fields (defaults "name" / "asc")
+ * - fields: comma-separated whitelist of fields to return
+ * - search: case-insensitive regex match on name, country, and team
+ * - field[gt|gte|lt|lte]=value: advanced filtering on numeric fields
+ */
 export const getAllPlayers = async (req, res) => {
   try {
     // Read query parameters
@@ -244,6 +268,9 @@ if (search) {
   }
 };
 
+/**
+ * Returns the total number of player documents in the collection.
+ */
 export const countPlayers = async (req, res) => {
   try {
     const count = await Player.countDocuments();
@@ -259,6 +286,10 @@ export const countPlayers = async (req, res) => {
   }
 };
 
+/**
+ * Searches players by case-insensitive regex matches on the optional
+ * query parameters: name, country, role, and team.
+ */
 export const searchPlayers = async (req, res) => {
   try {
     const filter = {};
@@ -298,6 +329,10 @@ export const searchPlayers = async (req, res) => {
 
 
 
+/**
+ * Deletes a player by ID.
+ * @param {string} req.params.id - MongoDB ObjectId of the player to delete.
+ */
 export const deletePlayersById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -329,6 +364,10 @@ export const deletePlayersById = async (req, res) => {
   }
 };
 
+/**
+ * Updates a player by ID and returns the updated document.
+ * Runs schema validators on the updated fields.
+ */
 export const updatePlayersById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -360,6 +399,9 @@ export const updatePlayersById = async (req, res) => {
     });
   }
 };
+/**
+ * Fetches a single player by ID.
+ */
 export const searchPlayersById = async (req, res) => {
   try {
     const id = req.params.id;

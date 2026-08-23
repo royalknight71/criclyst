@@ -1,3 +1,12 @@
+/**
+ * AIInsight.jsx
+ *
+ * Dashboard widget that derives heuristic "smart insights" from a player's
+ * career statistics. Categorizes batting output, consistency, experience,
+ * and aggression, computes an overall score out of 100 with a progress bar,
+ * and generates a natural-language career summary.
+ */
+
 import {
   FaBrain,
   FaBaseballBatBall,
@@ -10,6 +19,21 @@ import {
 
 import { MdSportsCricket } from "react-icons/md";
 
+/**
+ * AIInsight component.
+ *
+ * Classifies the player's stats into rating tiers (e.g. Elite/Excellent/Good
+ * for batting, Veteran/Rising/Newcomer for experience), combines them into
+ * an overall score, and displays the results with an AI-generated summary.
+ * Renders nothing if no player data is provided.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} [props.player] - Player data containing name, role, runs,
+ *   average, matches, and strikeRate.
+ * @returns {JSX.Element|null} The insight panel, or null when no player is
+ *   supplied.
+ */
 function AIInsight ({player}){
     if (!player) return null;
     const {

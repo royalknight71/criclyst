@@ -1,6 +1,20 @@
+/**
+ * EmptyUpcomingMatches.jsx
+ *
+ * Placeholder section shown when no upcoming fixtures are scheduled.
+ * Renders the "Upcoming Matches" heading with an empty-state card featuring
+ * a calendar icon, explanatory text, and a stay-tuned badge.
+ */
+
 import { FaCalendarAlt } from "react-icons/fa";
 import { FaClock } from "react-icons/fa6";
 
+/**
+ * EmptyUpcomingMatches component.
+ *
+ * @component
+ * @returns {JSX.Element} The empty-state view for the upcoming matches section.
+ */
 function EmptyUpcomingMatches() {
   return (
     <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">

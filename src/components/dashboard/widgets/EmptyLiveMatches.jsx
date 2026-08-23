@@ -1,6 +1,21 @@
+/**
+ * EmptyLiveMatches.jsx
+ *
+ * Placeholder section shown when no cricket matches are currently live.
+ * Renders the "Live Matches" heading with an empty-state card featuring a
+ * satellite-dish icon, explanatory text, and a pulsing monitoring badge.
+ */
+
 import { MdSportsCricket } from "react-icons/md";
 import { FiRefreshCw } from "react-icons/fi";
 import { FaSatelliteDish } from "react-icons/fa";
+
+/**
+ * EmptyLiveMatches component.
+ *
+ * @component
+ * @returns {JSX.Element} The empty-state view for the live matches section.
+ */
 function EmptyLiveMatches(){
 return (
 <section className="bg-gradient-to-b

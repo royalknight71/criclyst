@@ -1,5 +1,26 @@
+/**
+ * PlayerSummaryCard.jsx
+ *
+ * Dashboard widget presenting a featured player's profile: name, country
+ * flag, role, key career statistics (runs, average, strike rate, matches),
+ * and batting style.
+ */
+
 import { FaUserCircle } from "react-icons/fa";
 
+/**
+ * PlayerSummaryCard component.
+ *
+ * Renders nothing if no player data is provided. Country names are mapped
+ * to flag emojis with a cricket-bat emoji as the fallback.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} [props.player] - Player data containing name, country,
+ *   role, runs, average, strikeRate, matches, and battingStyle.
+ * @returns {JSX.Element|null} The player summary card, or null when no
+ *   player is supplied.
+ */
 function PlayerSummaryCard({player}){
     if(!player)
         return null;

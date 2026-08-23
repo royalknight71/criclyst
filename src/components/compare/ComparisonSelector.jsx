@@ -1,5 +1,25 @@
+/**
+ * ComparisonSelector.jsx
+ *
+ * Provides the player comparison interface: two dropdown selectors to
+ * pick the players to compare, plus a rendered ComparisonCard once both
+ * players' data is available.
+ */
+
 import ComparisonCard from "./ComparisonCard"
 
+/**
+ * Renders the player selection controls and comparison result.
+ * @param {object} props - Component props.
+ * @param {Array<{name: string}>} props.players - List of available players for the dropdowns.
+ * @param {string} props.player1 - Currently selected first player's name.
+ * @param {function(string): void} props.setPlayer1 - Setter for the first player's selection.
+ * @param {string} props.player2 - Currently selected second player's name.
+ * @param {function(string): void} props.setPlayer2 - Setter for the second player's selection.
+ * @param {object|null} props.player1Data - Loaded stats object for player 1, or null if not selected/loaded.
+ * @param {object|null} props.player2Data - Loaded stats object for player 2, or null if not selected/loaded.
+ * @returns {JSX.Element} The comparison selector element.
+ */
 function ComparisonSelector({
             players,
             player1,

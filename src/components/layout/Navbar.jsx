@@ -1,6 +1,19 @@
+/**
+ * Navbar.jsx
+ *
+ * Sticky top navigation bar for the Criclyst application.
+ * Renders the brand logo, primary navigation links (Home, Players,
+ * Teams, Matches, Compare, Analytics) with active-route highlighting,
+ * and a Login call-to-action button.
+ */
+
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/Criclyst_LOGO.png";
 
+/**
+ * Renders the sticky site-wide navigation bar.
+ * @returns {JSX.Element} The navigation bar element.
+ */
 function Navbar() {
   const navLinkClass = ({ isActive }) =>
   `text-[21px] font-medium transition-all duration-300 ${

@@ -1,11 +1,25 @@
+/**
+ * MatchCard.jsx
+ *
+ * Card widget displaying a single live cricket match: team badges with
+ * scores, match format and overs, venue, toss result, target, current run
+ * rate, match result, and a call-to-action to open the match center.
+ */
+
 import { FaCircle, FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
+
+/** Converts a name to Title Case (e.g. "new zealand" -> "New Zealand"). */
 const formatName = (name = "") =>
   name
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+/**
+ * Maps a full country name to its cricket abbreviation (e.g. "India" -> "IND").
+ * Falls back to the first three letters, uppercased, for unknown teams.
+ */
 const getShortName = (name = "") => {
   const teams = {
     "india": "IND",
@@ -23,6 +37,16 @@ const getShortName = (name = "") => {
 
   return teams[name.toLowerCase()] || name.substring(0, 3).toUpperCase();
 };
+
+/**
+ * MatchCard component.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} props.match - Live match data including teams, scorecard,
+ *   venue, toss info, and result.
+ * @returns {JSX.Element} The rendered live match card.
+ */
 function MatchCard({match}){
   return (
     <div className="group  bg-gradient-to-br

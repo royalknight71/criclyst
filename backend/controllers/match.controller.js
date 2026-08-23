@@ -1,7 +1,19 @@
+/**
+ * Match controllers.
+ * CRUD and query handlers for the match resource, including paginated
+ * listing with sorting/filtering/field selection, reference population,
+ * and status-dependent validation rules for create and update operations.
+ */
 import mongoose from "mongoose";
 import Match from "../models/match.model.js";
 import Team from "../models/team.model.js";
 import Player from "../models/player.model.js";
+
+/**
+ * Population configuration shared by list and detail endpoints.
+ * Maps each reference field on the Match schema to the fields that
+ * should be selected when populating it.
+ */
   const populateFields = [
       {
           field: "teamA",
@@ -26,6 +38,16 @@ import Player from "../models/player.model.js";
   ];
 
 
+/**
+ * Returns a paginated, sorted list of matches with optional filtering
+ * and field selection.
+ *
+ * Supported query parameters:
+ * - page / limit: pagination (defaults 1 / 5)
+ * - sortBy / order: sorting on whitelisted fields (defaults "matchDate" / "desc")
+ * - fields: comma-separated whitelist of fields to return; referenced fields
+ *   present in the selection are populated accordingly
+ */
 export const getAllMatches = async (req, res) => {
   try {
     //Query Request
@@ -225,6 +247,9 @@ if (selectedFields) {
   }
 };
 
+/**
+ * Fetches a single match by ID with all reference fields populated.
+ */
 export const getMatchById = async (req, res) => {
   try {
     const id=req.params.id
@@ -260,6 +285,16 @@ export const getMatchById = async (req, res) => {
 };
 
 
+/**
+ * Creates a new match after extensive validation:
+ * - Status-dependent rules (upcoming/completed/live constraints on winner,
+ *   result, Man of the Match, and match date)
+ * - Team IDs must be valid, distinct, existing teams with matching formats
+ * - Match format must match the teams' format
+ * - Toss winner must be one of the two teams
+ * - Winner (if provided) must be one of the two teams
+ * - Man of the Match (if provided) must belong to either team's squad
+ */
 export const createMatch = async (req, res) => {
   try {
     const teamA = req.body.teamA;
@@ -442,6 +477,9 @@ export const createMatch = async (req, res) => {
   }
 };
 
+/**
+ * Deletes a match by ID.
+ */
 export const deleteMatch = async (req, res) => {
   try {
     const id=req.params.id
@@ -472,6 +510,12 @@ export const deleteMatch = async (req, res) => {
   }
 };
 
+/**
+ * Updates a match by ID, merging request body fields with existing values,
+ * then applies the same status-dependent validation rules as creation
+ * (status constraints, team/format consistency, toss/winner/MoM checks)
+ * before persisting the update.
+ */
 export const updateMatch = async (req, res) => {
   try {
       const id=req.params.id

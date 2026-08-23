@@ -1,3 +1,15 @@
+/**
+ * PlayerSkeleton.jsx
+ *
+ * Loading placeholder that mirrors the PlayerCard layout. Renders a
+ * pulsing skeleton (avatar, name, role badge, stat rows and footer)
+ * to indicate content is being fetched.
+ */
+
+/**
+ * Renders a pulse-animated placeholder card matching the player card layout.
+ * @returns {JSX.Element} The skeleton card element.
+ */
 function PlayerSkeleton() {
   return (
     <article

@@ -1,3 +1,13 @@
+/**
+ * Analytics page (route: /analytics).
+ *
+ * Visual analytics dashboard for the squad, computed from the local
+ * static player dataset (no API calls, no state/effects). Renders
+ * summary cards per role and Recharts-based charts: top 5 run scorers,
+ * wicket takers, highest averages, highest strike rates, and a pie
+ * chart of squad composition by role.
+ */
+
 import players from "../data/players"
 import {
   BarChart,
@@ -22,6 +32,14 @@ import {
     getTopSR
 } from "../utils/analytics";
 
+/**
+ * Renders the analytics dashboard.
+ * Computes all leaderboard slices and the role distribution once per
+ * render via pure helpers from utils/analytics, then feeds them to
+ * SummaryCard, AnalyticsBarChart and RolePieChart components.
+ *
+ * @returns {JSX.Element} The analytics dashboard UI.
+ */
 function Analytics(){
     const topruns=getTopRuns(players)
     const topwickets=getTopWickets(players)

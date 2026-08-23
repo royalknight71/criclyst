@@ -1,3 +1,12 @@
+/**
+ * One-off migration script: converts Team.captain values stored as player
+ * name strings into Player ObjectId references.
+ * Connects to MongoDB, iterates all teams via the raw collection (bypassing
+ * the current schema's ObjectId cast), looks up each captain by trimmed,
+ * lowercased name, and updates the reference in place.
+ *
+ * Run manually: node scripts/migrateTeamCaptains.js
+ */
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import Team from "../models/team.model.js";
@@ -7,6 +16,10 @@ dotenv.config({
   path: "./backend/.env"
 });
 
+/**
+ * Performs the captain string-to-ObjectId migration and disconnects
+ * from the database on completion; exits with code 1 on failure.
+ */
 const migrateCaptains = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

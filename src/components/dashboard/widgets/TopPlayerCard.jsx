@@ -1,3 +1,11 @@
+/**
+ * TopPlayerCard.jsx
+ *
+ * Card widget displaying a ranked top player: avatar with a rank badge
+ * (gold/silver/bronze for the top three), name, country, role, career
+ * statistics (runs, matches, wickets, rank), and a profile link.
+ */
+
 import {
   FaArrowRight,
   FaFlag,
@@ -7,6 +15,7 @@ import {
 } from "react-icons/fa6";
 import { IoTrendingUp } from "react-icons/io5";
 
+/** Normalizes text casing to Title Case (e.g. "VIRAT" -> "Virat"). */
 const formatText = (text = "") =>
   text
     .split(" ")
@@ -17,6 +26,7 @@ const formatText = (text = "") =>
     )
     .join(" ");
 
+/** Badge styling for the first, second, and third ranked players. */
 const medals = [
   {
     bg: "bg-yellow-500/20",
@@ -35,6 +45,19 @@ const medals = [
   },
 ];
 
+/**
+ * TopPlayerCard component.
+ *
+ * Selects a medal badge for the top three players and a numbered badge
+ * otherwise.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} props.player - Player data containing name, country,
+ *   role, runs, matches, and wickets.
+ * @param {number} props.index - Zero-based ranking position of the player.
+ * @returns {JSX.Element} The rendered top player card.
+ */
 function TopPlayerCard({ player, index }) {
   const badge =
     index < 3
@@ -176,6 +199,19 @@ function TopPlayerCard({ player, index }) {
   );
 }
 
+/**
+ * StatCard component (local to TopPlayerCard).
+ *
+ * Compact statistic tile showing an icon, a label, and a large value.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {React.ReactNode} props.icon - Icon element displayed above the label.
+ * @param {string} props.title - Statistic label.
+ * @param {number|string} props.value - The statistic value.
+ * @param {string} props.valueColor - Tailwind text color class for the value.
+ * @returns {JSX.Element} The rendered stat tile.
+ */
 function StatCard({ icon, title, value, valueColor }) {
   return (
     <div className="rounded-2xl bg-slate-800/80 p-4 transition-all duration-300 hover:bg-slate-700">
