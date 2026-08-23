@@ -1,3 +1,18 @@
+/**
+ * Players page (route: /players).
+ *
+ * Searchable, filterable, paginated player directory backed by the API.
+ * State:
+ *   - searchTerm / debouncedSearch: search input debounced by 500ms to
+ *     limit API calls.
+ *   - selectedRole: role filter (e.g. "Batsman", "Bowler").
+ *   - page / totalPages / totalPlayers: pagination state.
+ *   - players / loading / error: fetched data and request status.
+ * Effects:
+ *   - Debounces searchTerm into debouncedSearch.
+ *   - Fetches players whenever page, debouncedSearch or selectedRole changes.
+ */
+
 import {getPlayers} from "../services/player.service"
 import { useState,useEffect } from "react"
 import EmptyPlayers from "../components/dashboard/widgets/EmptyPlayers"
@@ -7,6 +22,14 @@ import PlayerFilters from "../components/player/PlayerFilters"
 import Pagination from "../components/player/Pagination";
 import PlayerSkeleton from "../components/player/PlayerSkeleton";
 
+/**
+ * Renders the player directory: hero header, search bar, role filters,
+ * result grid and pagination. Shows a skeleton grid while loading,
+ * an error message on fetch failure, and an empty state when no
+ * players match the current query.
+ *
+ * @returns {JSX.Element} The players listing UI.
+ */
 function Players()
 {
   const [loading,setLoading]=useState(true)
@@ -73,11 +96,13 @@ setTotalPlayers(response.totalPlayers);
 
 //     return matchesRole && matchesSearch;
 // });
+/** Reset to the first page and apply the new search term. */
 const handleSearchChange = (value) => {
   setPage(1);
   setSearchTerm(value);
 };
 
+/** Reset to the first page and apply the new role filter. */
 const handleRoleChange = (value) => {
   setPage(1);
   setSelectedRole(value);

@@ -1,3 +1,11 @@
+/**
+ * RecentMatchCard.jsx
+ *
+ * Card widget displaying a single completed cricket match: team badges with
+ * final scores, match result, player of the match, winner, venue, formatted
+ * match date, and a call-to-action to view the full match summary.
+ */
+
 import {
   FaLocationDot,
   FaArrowRight,
@@ -5,12 +13,18 @@ import {
 } from "react-icons/fa6";
 import { FaCalendarAlt, FaStar } from "react-icons/fa";
 
+/** Converts a name to Title Case (e.g. "south africa" -> "South Africa"). */
 const formatName = (name = "") =>
   name
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+/**
+ * Maps a full country name to its cricket abbreviation (e.g. "India" -> "IND").
+ * Falls back to the first three letters, uppercased; returns "---" when the
+ * name is missing.
+ */
 const getShortName = (name = "") => {
   const teams = {
     india: "IND",
@@ -31,6 +45,15 @@ const getShortName = (name = "") => {
   return teams[name.toLowerCase()] || name.slice(0, 3).toUpperCase();
 };
 
+/**
+ * RecentMatchCard component.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} props.match - Completed match data including teams,
+ *   scorecard, result, man of the match, winner, venue, and match date.
+ * @returns {JSX.Element} The rendered completed match card.
+ */
 function RecentMatchCard({ match }) {
   const matchDate = new Date(match.matchDate);
 

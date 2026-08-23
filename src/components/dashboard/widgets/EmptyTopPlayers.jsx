@@ -1,6 +1,20 @@
+/**
+ * EmptyTopPlayers.jsx
+ *
+ * Placeholder section shown when no top player data is available.
+ * Renders the "Top Performers" heading with an empty-state card featuring
+ * a trophy icon, explanatory text, and a rankings badge.
+ */
+
 import { FaTrophy } from "react-icons/fa";
 import { IoPeople } from "react-icons/io5";
 
+/**
+ * EmptyTopPlayers component.
+ *
+ * @component
+ * @returns {JSX.Element} The empty-state view for the top players section.
+ */
 function EmptyTopPlayers() {
   return (
     <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">

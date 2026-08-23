@@ -1,7 +1,28 @@
+/**
+ * Teams page (route: /teams).
+ *
+ * Searchable, format-filterable, paginated team directory backed by the API.
+ * State:
+ *   - search / format: filter inputs; both reset pagination to page 1 on change.
+ *   - page / pagination: current page and server-side previous/next metadata.
+ *   - teams / loading / error: fetched data and request status.
+ * Effects:
+ *   - Debounces fetches by 400ms on any change of page, search or format.
+ *   - Shows the full-page loading state only on the first load
+ *     (tracked via the firstLoad ref) to avoid flicker on refetches.
+ */
+
 import { useEffect, useState ,useRef} from "react";
 import { getTeams } from "../services/team.service.js";
 import TeamCard from "../components/team/TeamCard";
 
+/**
+ * Renders the team directory: hero header, inline search input,
+ * format selector, team card grid and previous/next pagination.
+ * Shows a loading message on first load and an error panel on failure.
+ *
+ * @returns {JSX.Element} The teams listing UI.
+ */
 const Teams = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,4 +1,16 @@
-  import viratImg from "../assets/Virat_Kohli_in_PMO_New_Delhi.jpg";
+  /**
+ * Static seed data for the squad: an array of player objects used by
+ * client-side pages (Compare, Analytics) and components that render
+ * from local data rather than the backend API.
+ *
+ * Each player object contains identity fields (name, slug, image, role)
+ * and ODI career statistics such as runs, wickets, matches, average,
+ * strikeRate, highestScore, hundred/fifty counts, economyRate and BBI.
+ * Fields vary by role (e.g. bowlers carry wickets/economyRate while
+ * batsmen carry runs/highestScore).
+ */
+
+import viratImg from "../assets/Virat_Kohli_in_PMO_New_Delhi.jpg";
   import rohit from "../assets/Prime_Minister_Of_Bharat_Shri_Narendra_Damodardas_Modi_with_Shri_Rohit_Gurunath_Sharma_(Cropped).jpg"
   import bumrah from "../assets/Jasprit_Bumrah_in_PMO_New_Delhi.jpg"
   import hardik from "../assets/761a7c2e9ae48fe1f549f043a141ff05.jpg"
@@ -11,6 +23,7 @@
   import varun from "../assets/Screenshot 2026-06-22 131622.png"
   import jadeja from "../assets/Screenshot 2026-06-22 131741.png"
 
+  /** List of squad players with their profile images and career statistics. */
   const players=[
     {
     name: "Rohit Sharma",
@@ -177,4 +190,5 @@
   ]
   
 
+/** Default export: the full squad player dataset. */
 export default players

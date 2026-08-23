@@ -1,3 +1,15 @@
+/**
+ * PlayerDetails page (route: /players/:id).
+ *
+ * Shows the full profile for a single player: hero card (image, name,
+ * country, role badge), career statistics cards and personal
+ * information (country, team, batting/bowling style, debut year,
+ * jersey number, active status).
+ * State/effects:
+ *   - Fetches the player by route `id` on mount (and whenever id changes)
+ *     via getPlayerById; tracks player/loading/error.
+ */
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getPlayerById } from "../services/player.service";
@@ -6,6 +18,15 @@ import { GiCricketBat } from "react-icons/gi";
 import { PiCricketBold } from "react-icons/pi";
 import { TbTargetArrow } from "react-icons/tb";
 import { FaShieldHalved, FaChartLine, FaArrowRight } from "react-icons/fa6";
+/**
+ * Renders the player profile page.
+ * Displays loading, error and "not found" states, then the hero card,
+ * career statistics grid (filtered to stats available for this player's
+ * role) and the player information panel. Names, country and team are
+ * displayed in title case.
+ *
+ * @returns {JSX.Element} The player details UI.
+ */
 function PlayerDetails() {
 const { id } = useParams();
  const navigate=useNavigate()

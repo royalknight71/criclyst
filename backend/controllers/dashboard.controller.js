@@ -1,8 +1,18 @@
+/**
+ * Dashboard controllers.
+ * Aggregated read-only endpoints powering the dashboard: overall counts,
+ * live/recent/upcoming matches, and top player leaderboards.
+ */
 import mongoose from "mongoose";
 import Player from "../models/player.model.js";
 import Team from "../models/team.model.js";
 import Match from "../models/match.model.js";
 
+/**
+ * Returns aggregate counts for players, teams, and matches
+ * (totals plus active/completed/live/upcoming breakdowns),
+ * computed concurrently via Promise.all.
+ */
 export const getAllStats=async (req,res)=>{
     try{
         const [totalPlayers,activePlayers,totalTeams,activeTeams,totalMatches,completedMatches,liveMatches,upcomingMatches]
@@ -50,6 +60,10 @@ export const getAllStats=async (req,res)=>{
     }
 }
 
+/**
+ * Returns all live matches sorted by match date ascending, with team
+ * and toss-winner references populated (lean documents for performance).
+ */
 export const getLiveMatches=async (req,res)=>{
     try{
         const liveMatches=await Match.find({
@@ -76,6 +90,10 @@ export const getLiveMatches=async (req,res)=>{
     }
 }
 
+/**
+ * Returns the 5 most recent completed matches (newest first) with all
+ * reference fields populated.
+ */
 export const getRecentMatches=async (req,res)=>{
     try{
         const recentMatches=await Match.find({
@@ -105,6 +123,10 @@ export const getRecentMatches=async (req,res)=>{
     }
 }
 
+/**
+ * Returns the next 5 upcoming matches (earliest first) with both teams
+ * populated.
+ */
 export const getUpcomingMatches=async (req,res)=>{
     try{
         const upcomingMatches=await Match.find({
@@ -130,6 +152,10 @@ export const getUpcomingMatches=async (req,res)=>{
     }
 }
 
+/**
+ * Returns leaderboard data: the top 5 run scorers and top 5 wicket takers,
+ * both tie-broken by fewer matches played, fetched concurrently.
+ */
 export const getTopPlayers=async (req,res)=>{
     try{
         const [topRunScorers,topWicketTakers]=await Promise.all([

@@ -1,5 +1,20 @@
+/**
+ * PlayerFilters.jsx
+ *
+ * Role filter dropdown for the players listing page. Allows filtering
+ * players by their role: Batsman, Bowler, All-Rounder or Wicket-Keeper.
+ * Rendered as a styled select with a filter icon and custom arrow.
+ */
+
 import { FaFilter } from "react-icons/fa";
 
+/**
+ * Renders the role filter dropdown control.
+ * @param {object} props - Component props.
+ * @param {string} props.value - Currently selected role value ("" for all roles).
+ * @param {function(string): void} props.onChange - Callback invoked with the newly selected role value.
+ * @returns {JSX.Element} The filter dropdown element.
+ */
 function PlayerFilters({ value, onChange }) {
   return (
     <div className="relative w-full md:w-64">

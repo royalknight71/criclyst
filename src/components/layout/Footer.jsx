@@ -1,3 +1,12 @@
+/**
+ * Footer.jsx
+ *
+ * Site-wide footer containing four sections: brand information with
+ * social media links, quick navigation links, resource links (About,
+ * Privacy, Terms, Contact) and the project tech stack. Ends with a
+ * bottom bar showing copyright and tagline.
+ */
+
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/Criclyst_LOGO.png";
 
@@ -15,6 +24,10 @@ import {
   SiMongodb,
 } from "react-icons/si";
 
+/**
+ * Renders the application footer.
+ * @returns {JSX.Element} The footer element.
+ */
 function Footer() {
   return (
     <footer className="border-t border-slate-800 bg-slate-950">

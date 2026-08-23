@@ -1,7 +1,29 @@
-import { useState } from "react";
+/**
+ * TeamCard.jsx
+ *
+ * Card component that displays a cricket team's overview: logo (with a
+ * letter fallback when the image fails to load), name, country and match
+ * format badge, plus captain/coach details and a "View Team" button.
+ */
 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+/**
+ * Renders an individual team card with logo, metadata and staff details.
+ * @param {object} props - Component props.
+ * @param {object} props.team - Team object to display.
+ * @param {string} props.team.name - Team name.
+ * @param {string} props.team.country - Team country.
+ * @param {string} props.team.format - Match format badge (e.g. Test, ODI, T20I).
+ * @param {string} [props.team.logo] - URL of the team logo image.
+ * @param {{name?: string}} [props.team.captain] - Captain details.
+ * @param {string} [props.team.coach] - Coach name.
+ * @returns {JSX.Element} The team card element.
+ */
 const TeamCard = ({ team }) => {
   const [imageError, setImageError] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <div
@@ -107,6 +129,7 @@ const TeamCard = ({ team }) => {
 
       {/* View Team */}
       <button
+        onClick={() => navigate(`/teams/${team._id}`)}
         className="
           mt-6 w-full
           rounded-lg

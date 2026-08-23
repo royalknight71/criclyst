@@ -1,7 +1,26 @@
+/**
+ * Team controllers.
+ * CRUD and query handlers for the team resource, including paginated
+ * listing with sorting, filtering, field selection, search, and population
+ * of captain/squad references.
+ */
 import Team from "../models/team.model.js";
 import mongoose from "mongoose";
 import Player from "../models/player.model.js";
 
+/**
+ * Returns a paginated, sorted list of teams with optional filtering,
+ * field selection, and text search.
+ *
+ * Supported query parameters:
+ * - page / limit: pagination (defaults 1 / 5)
+ * - sortBy / order: sorting on whitelisted fields (defaults "name" / "asc")
+ * - fields: comma-separated whitelist of fields to return
+ * - search: case-insensitive regex match on name and country
+ * - field[gt|gte|lt|lte]=value: advanced filtering on numeric fields
+ *
+ * Always populates "captain"; populates "players" only when requested via fields.
+ */
 export const getAllTeams = async (req, res) => {
   try {
     //Query Request
@@ -243,6 +262,9 @@ const teams = await mongoQuery
   }
 };
 
+/**
+ * Fetches a single team by ID with its squad of players populated.
+ */
 export const getTeamsById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -275,6 +297,11 @@ export const getTeamsById = async (req, res) => {
   }
 };
 
+/**
+ * Creates a new team.
+ * Rejects duplicate country/format combinations and validates that every
+ * referenced player ID exists before insertion.
+ */
 export const createTeam = async (req, res) => {
   try {
     const existingTeam = await Team.findOne({
@@ -326,6 +353,11 @@ export const createTeam = async (req, res) => {
   }
 };
 
+/**
+ * Updates a team by ID and returns the updated document.
+ * Validates any supplied players array (must be an array of valid,
+ * existing Player IDs) before applying the update.
+ */
 export const updateTeam = async (req, res) => {
   try {
     const id = req.params.id;
@@ -387,6 +419,9 @@ export const updateTeam = async (req, res) => {
   }
 };
 
+/**
+ * Deletes a team by ID.
+ */
 export const deleteTeam = async (req, res) => {
   try {
     const id = req.params.id;

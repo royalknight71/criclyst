@@ -1,5 +1,21 @@
+/**
+ * SearchBar.jsx
+ *
+ * Controlled text input for searching players on the players listing
+ * page. Rendered as a styled input with a search icon; the current value
+ * and change handler are managed by the parent component.
+ */
+
 import { FaSearch } from "react-icons/fa";
 
+/**
+ * Renders a controlled search input field.
+ * @param {object} props - Component props.
+ * @param {string} props.value - Current search query text.
+ * @param {function(string): void} props.onChange - Callback invoked with the updated query text on each keystroke.
+ * @param {string} [props.placeholder] - Placeholder text shown inside the empty input.
+ * @returns {JSX.Element} The search bar element.
+ */
 function SearchBar({ value, onChange,placeholder }) {
   return (
     <div className="relative w-full">

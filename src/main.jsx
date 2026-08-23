@@ -1,3 +1,9 @@
+/**
+ * Application entry point.
+ * Mounts the React application onto the DOM inside React StrictMode,
+ * wrapped in a BrowserRouter to enable client-side routing via react-router-dom.
+ */
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'

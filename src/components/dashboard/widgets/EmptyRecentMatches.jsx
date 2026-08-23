@@ -1,6 +1,20 @@
+/**
+ * EmptyRecentMatches.jsx
+ *
+ * Placeholder section shown when no completed matches are available.
+ * Renders the "Recent Matches" heading with an empty-state card featuring
+ * a trophy icon, explanatory text, and a match-history badge.
+ */
+
 import { FaTrophy } from "react-icons/fa";
 import { MdHistory } from "react-icons/md";
 
+/**
+ * EmptyRecentMatches component.
+ *
+ * @component
+ * @returns {JSX.Element} The empty-state view for the recent matches section.
+ */
 function EmptyRecentMatches() {
   return (
     <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">

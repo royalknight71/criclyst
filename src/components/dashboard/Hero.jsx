@@ -1,3 +1,12 @@
+/**
+ * Hero.jsx
+ *
+ * Landing hero section for the dashboard. Displays the main headline, an
+ * AI-powered badge, a typewriter-animated tagline cycling through multiple
+ * texts, feature highlights, and navigation buttons to the players and
+ * analytics pages.
+ */
+
 import { NavLink } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
 import {
@@ -8,6 +17,16 @@ import {
 } from "react-icons/fa";
 import { useState, useEffect } from "react";
 
+/**
+ * Hero component.
+ *
+ * Runs a type/delete typewriter effect over the taglines using timed state
+ * updates: characters are typed at 70ms intervals and deleted at 40ms, with
+ * a pause after each full sentence.
+ *
+ * @component
+ * @returns {JSX.Element} The hero landing section.
+ */
 function Hero() {
   //Text Animation Typre-Writer
 const texts = [

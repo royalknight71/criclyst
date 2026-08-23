@@ -1,7 +1,26 @@
+/**
+ * HeroDashboard.jsx
+ *
+ * Top section of the dashboard presenting the featured player.
+ * Fetches the top player on mount and displays their profile summary
+ * alongside AI-generated career insights in a two-column layout.
+ */
+
 import PlayerSummaryCard from "./widgets/PlayerSummaryCard";
 import { useState,useEffect } from "react";
 import { getTopPlayer } from "../../services/player.service";
 import AIInsight from "./widgets/AIInsight"
+
+/**
+ * HeroDashboard component.
+ *
+ * Renders the "Performance Dashboard" hero section with a live badge,
+ * a PlayerSummaryCard for the top player, and an AIInsight panel.
+ * Handles loading and error states while fetching the top player data.
+ *
+ * @component
+ * @returns {JSX.Element} The hero dashboard section.
+ */
 function HeroDashboard() {
 
     const [player, setPlayer] = useState(null);

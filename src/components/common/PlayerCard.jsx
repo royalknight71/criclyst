@@ -1,6 +1,27 @@
+/**
+ * PlayerCard.jsx
+ *
+ * Compact player card that links to the player's detail page. Displays
+ * the player's name, photo and role badge, with a headline stat that
+ * varies by role: runs for batsmen/wicket-keepers, wickets for bowlers,
+ * and both for all-rounders.
+ */
+
 import React from 'react'
 import { NavLink} from 'react-router-dom'
 
+/**
+ * Renders a clickable player summary card linking to the player's detail page.
+ * @param {object} props - Component props.
+ * @param {string} props.name - Player's name (also used to build the profile URL).
+ * @param {string} props.image - URL of the player's photo.
+ * @param {string} props.role - Player role ("Batsman", "Wicket Keeper", "Bowler", or all-rounder).
+ * @param {number|string} props.runs - Total runs scored.
+ * @param {number|string} props.wickets - Total wickets taken.
+ * @param {number|string} props.economyRate - Bowling economy rate.
+ * @param {string} props.BBI - Best bowling in an innings.
+ * @returns {JSX.Element} The player card link element.
+ */
 function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI}) {
   return (
       <NavLink

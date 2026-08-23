@@ -1,8 +1,26 @@
+/**
+ * UpcomingMatches.jsx
+ *
+ * Dashboard section listing scheduled (upcoming) cricket matches.
+ * Fetches upcoming fixtures on mount and renders an UpcomingMatchCard for
+ * each one, with dedicated loading, error, and empty states.
+ */
+
 import { getUpcomingMatches } from "../../services/match.service";
 import { useState,useEffect } from "react";
 import UpcomingMatchCard from "./widgets/UpcomingMatchCard";
 import EmptyUpcomingMatches from "./widgets/EmptyUpcomingMatches";
 
+/**
+ * UpcomingMatches component.
+ *
+ * Loads upcoming fixtures via getUpcomingMatches and displays them as a list
+ * of cards. Shows a loading indicator, an error message, or an empty-state
+ * section depending on the fetch outcome.
+ *
+ * @component
+ * @returns {JSX.Element} The upcoming matches section.
+ */
 function UpcomingMatches() {
   const [loading,setLoading]=useState(true)
   const [matches,setMatches]=useState([])

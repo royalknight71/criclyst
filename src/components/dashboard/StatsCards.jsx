@@ -1,8 +1,27 @@
+/**
+ * StatsCards.jsx
+ *
+ * Dashboard section showing platform-wide statistics (players, teams,
+ * matches, live matches). Fetches aggregate counts on mount and renders
+ * them as a responsive grid of StatCard tiles.
+ */
+
 import StatCard from "./widgets/StatCard"
 import { getDashboardStats } from "../../services/dashboard.service";
 import { useState,useEffect } from "react";
 import { FaUsers,FaPeopleGroup,FaSignal } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
+
+/**
+ * StatsCards component.
+ *
+ * Loads aggregate dashboard stats via getDashboardStats and displays four
+ * summary cards. Shows a loading indicator or error message depending on
+ * the fetch outcome.
+ *
+ * @component
+ * @returns {JSX.Element} The dashboard statistics section.
+ */
 function StatsCards() {
         const [statsData, setStatsData] = useState(null);
         const [loading, setLoading] = useState(true);

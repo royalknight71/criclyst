@@ -1,3 +1,12 @@
+/**
+ * AnalyticsBarChart.jsx
+ *
+ * Reusable horizontal bar chart card built with Recharts. Renders a
+ * titled chart card containing a vertical-layout bar chart with grid,
+ * tooltip, legend and animated bars for visualizing a single metric
+ * across categories.
+ */
+
 import {
   BarChart,
   Bar,
@@ -9,6 +18,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
+/**
+ * Renders an animated horizontal bar chart inside a titled chart card.
+ * @param {object} props - Component props.
+ * @param {string} props.title - Chart title displayed above the chart.
+ * @param {Array<object>} props.data - Array of data objects to plot.
+ * @param {string} props.dataKey - Key in each data object holding the numeric value to plot.
+ * @param {string} props.namekey - Key in each data object holding the category label (Y axis).
+ * @param {string} props.color - Fill color for the bars.
+ * @param {string} props.name - Legend/series name for the bar.
+ * @returns {JSX.Element} The bar chart card element.
+ */
 function AnalyticsBarChart({    
     title,
     data,

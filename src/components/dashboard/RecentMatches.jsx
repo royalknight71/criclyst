@@ -1,8 +1,26 @@
+/**
+ * RecentMatches.jsx
+ *
+ * Dashboard section listing recently completed cricket matches.
+ * Fetches match history on mount and renders a RecentMatchCard for each
+ * completed match, with dedicated loading, error, and empty states.
+ */
+
 import { getRecentMatches } from "../../services/match.service";
 import RecentMatchCard from "./widgets/RecentMatchCard";
 import EmptyRecentMatches from "./widgets/EmptyRecentMatches"
 import { useState,useEffect } from "react";
 
+/**
+ * RecentMatches component.
+ *
+ * Loads recent matches via getRecentMatches and displays them as a list of
+ * result cards. Shows a loading indicator, an error message, or an
+ * empty-state section depending on the fetch outcome.
+ *
+ * @component
+ * @returns {JSX.Element} The recent matches section.
+ */
 function RecentMatches() {
     const [loading,setLoading]=useState(true)
     const [matches,setMatches]=useState([])

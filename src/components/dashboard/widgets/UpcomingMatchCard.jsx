@@ -1,12 +1,26 @@
+/**
+ * UpcomingMatchCard.jsx
+ *
+ * Card widget displaying a single scheduled cricket match: team badges,
+ * match format, venue, formatted date and time, a countdown of days until
+ * kick-off, and a call-to-action to view the fixture.
+ */
+
 import { FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { FaCalendarAlt } from "react-icons/fa";
 
+/** Converts a name to Title Case (e.g. "sri lanka" -> "Sri Lanka"). */
 const formatName = (name = "") =>
   name
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 
+/**
+ * Maps a full country name to its cricket abbreviation (e.g. "India" -> "IND").
+ * Falls back to the first three letters, uppercased; returns "---" when the
+ * name is missing.
+ */
 const getShortName = (name = "") => {
   const teams = {
     india: "IND",
@@ -27,6 +41,15 @@ const getShortName = (name = "") => {
   return teams[name.toLowerCase()] || name.slice(0, 3).toUpperCase();
 };
 
+/**
+ * UpcomingMatchCard component.
+ *
+ * @component
+ * @param {Object} props - Component props.
+ * @param {Object} props.match - Scheduled match data including teams,
+ *   format, venue, and matchDate.
+ * @returns {JSX.Element} The rendered upcoming match card.
+ */
 function UpcomingMatchCard({ match }) {
   const matchDate = new Date(match.matchDate);
 
