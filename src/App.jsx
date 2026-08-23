@@ -8,6 +8,8 @@
  *   /analytics   - Charts and visual insights into the squad
  *   /teams       - Team database with search and format filters
  *   /teams/:id   - Detailed profile view for a single team (with squad)
+ *   /matches     - Match database with status/format filters and sorting
+ *   /matches/:id - Detailed profile view for a single match
  */
 
 import { Routes, Route } from "react-router-dom"
@@ -19,6 +21,8 @@ import Footer from "./components/layout/Footer";
 import Players from "./pages/Players"
 import Teams from "./pages/Teams"
 import TeamDetails from "./pages/TeamDetails"
+import Matches from "./pages/Matches"
+import MatchDetails from "./pages/MatchDetails"
 
 function App() {
   return (
@@ -31,6 +35,8 @@ function App() {
       <Route path='/analytics' element={<Analytics/>}/>
       <Route path="/teams" element={<Teams />} />
       <Route path="/teams/:id" element={<TeamDetails />} />
+      <Route path="/matches" element={<Matches />} />
+      <Route path="/matches/:id" element={<MatchDetails />} />
     </Routes>
     <Footer />
     </>
