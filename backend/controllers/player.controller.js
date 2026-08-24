@@ -287,6 +287,135 @@ export const countPlayers = async (req, res) => {
 };
 
 /**
+ * Returns aggregated player analytics computed in the database.
+ * Powers the Analytics dashboard: overview counts, role and country
+ * distributions, and top-5 leaderboards (runs, wickets, average,
+ * strike rate).
+ *
+ * Supported query parameters:
+ * - country: case-insensitive exact country filter
+ * - role: case-insensitive exact role filter
+ *
+ * All metrics are recomputed against the applied filters so the
+ * dashboard can update interactively.
+ */
+export const getPlayerAnalytics = async (req, res) => {
+  try {
+    const country = req.query.country?.trim();
+    const role = req.query.role?.trim();
+
+    // Build optional case-insensitive exact-match filters
+    const filter = {};
+    if (country) {
+      filter.country = { $regex: `^${country}$`, $options: "i" };
+    }
+    if (role) {
+      filter.role = { $regex: `^${role}$`, $options: "i" };
+    }
+
+    const [
+      totalPlayers,
+      distinctCountries,
+      roleDistribution,
+      countryDistribution,
+      topRunScorers,
+      topWicketTakers,
+      topBattingAverages,
+      topStrikeRates,
+    ] = await Promise.all([
+      Player.countDocuments(filter),
+
+      Player.distinct("country", filter),
+
+      Player.aggregate([
+        { $match: filter },
+        {
+          $group: {
+            _id: "$role",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            role: "$_id",
+            count: 1,
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+      ]),
+
+      Player.aggregate([
+        { $match: filter },
+        {
+          $group: {
+            _id: "$country",
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            country: "$_id",
+            count: 1,
+          },
+        },
+        {
+          $sort: { count: -1 },
+        },
+      ]),
+
+      Player.find(filter)
+        .select("name country runs")
+        .sort({ runs: -1 })
+        .limit(5)
+        .lean(),
+
+      Player.find(filter)
+        .select("name country wickets")
+        .sort({ wickets: -1 })
+        .limit(5)
+        .lean(),
+
+      Player.find(filter)
+        .select("name country average")
+        .sort({ average: -1 })
+        .limit(5)
+        .lean(),
+
+      Player.find(filter)
+        .select("name country strikeRate")
+        .sort({ strikeRate: -1 })
+        .limit(5)
+        .lean(),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        overview: {
+          totalPlayers: totalPlayers,
+          totalCountries: distinctCountries.length,
+        },
+        roleDistribution: roleDistribution,
+        countryDistribution: countryDistribution,
+        topRunScorers: topRunScorers,
+        topWicketTakers: topWicketTakers,
+        topBattingAverages: topBattingAverages,
+        topStrikeRates: topStrikeRates,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
  * Searches players by case-insensitive regex matches on the optional
  * query parameters: name, country, role, and team.
  */
