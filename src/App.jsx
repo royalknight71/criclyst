@@ -10,6 +10,7 @@
  *   /teams/:id   - Detailed profile view for a single team (with squad)
  *   /matches     - Match database with status/format filters and sorting
  *   /matches/:id - Detailed profile view for a single match
+ *   /compare     - Side-by-side player comparison tool
  */
 
 import { Routes, Route } from "react-router-dom"
@@ -23,6 +24,7 @@ import Teams from "./pages/Teams"
 import TeamDetails from "./pages/TeamDetails"
 import Matches from "./pages/Matches"
 import MatchDetails from "./pages/MatchDetails"
+import Compare from "./pages/Compare"
 
 function App() {
   return (
@@ -37,6 +39,7 @@ function App() {
       <Route path="/teams/:id" element={<TeamDetails />} />
       <Route path="/matches" element={<Matches />} />
       <Route path="/matches/:id" element={<MatchDetails />} />
+      <Route path="/compare" element={<Compare />} />
     </Routes>
     <Footer />
     </>
