@@ -275,10 +275,9 @@ export const getTeamsById = async (req, res) => {
         message: "Invalid Team ID",
       });
     }
-    const team = await Team.findById(id).populate(
-      "players",
-      "name role country",
-    );
+    const team = await Team.findById(id)
+      .populate("captain", "name role country")
+      .populate("players", "name role country");
     if (!team) {
       return res.status(404).json({
         success: false,
@@ -315,28 +314,30 @@ export const createTeam = async (req, res) => {
       });
     }
     const players = req.body.players;
-    
-    if (players && !Array.isArray(players)) {
-        return res.status(400).json({
-            success: false,
-            message: "Players must be an array"
-        });
-    }
 
-    for (const id of players) {
-      if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (players !== undefined && players !== null) {
+      if (!Array.isArray(players)) {
         return res.status(400).json({
           success: false,
-          message: "Invalid Player ID",
+          message: "Players must be an array",
         });
       }
-      const player = await Player.findById(id);
 
-      if (!player) {
-        return res.status(400).json({
-          success: false,
-          message: "One or more players not found",
-        });
+      for (const id of players) {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid Player ID",
+          });
+        }
+        const player = await Player.findById(id);
+
+        if (!player) {
+          return res.status(400).json({
+            success: false,
+            message: "One or more players not found",
+          });
+        }
       }
     }
 
@@ -399,7 +400,7 @@ export const updateTeam = async (req, res) => {
 }
     const team = await Team.findByIdAndUpdate(id, req.body, {
       new: true,
-      runValidations: true,
+      runValidators: true,
     });
     if (!team) {
       return res.status(404).json({
@@ -442,6 +443,64 @@ export const deleteTeam = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Team deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * Returns the total number of team documents in the collection.
+ */
+export const countTeams = async (req, res) => {
+  try {
+    const count = await Team.countDocuments();
+    return res.status(200).json({
+      success: true,
+      count,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
+ * Searches teams by case-insensitive regex matches on the optional
+ * query parameters: name, country, and format.
+ */
+export const searchTeams = async (req, res) => {
+  try {
+    const filter = {};
+    const name = req.query.name;
+    const country = req.query.country;
+    const format = req.query.format;
+    if (name) {
+      filter.name = { $regex: name, $options: "i" };
+    }
+    if (country) {
+      filter.country = { $regex: country, $options: "i" };
+    }
+    if (format) {
+      filter.format = { $regex: format, $options: "i" };
+    }
+    const teams = await Team.find(filter).populate(
+      "captain",
+      "name role country"
+    );
+    if (teams.length === 0)
+      return res.status(404).json({
+        success: false,
+        message: "Team not found",
+      });
+    return res.status(200).json({
+      success: true,
+      data: teams,
     });
   } catch (error) {
     return res.status(500).json({

@@ -124,15 +124,9 @@ function TeamDetails() {
     );
   }
 
-  // Resolve the captain's display name: populated object, squad lookup,
-  // or a fallback when neither is available.
-  const captainFromSquad =
-    typeof team.captain === "string" &&
-    team.players?.find((p) => p._id === team.captain);
-
+  // Captain name comes directly from the populated backend field.
   const captainName =
     (typeof team.captain === "object" && team.captain?.name) ||
-    (captainFromSquad ? toTitleCase(captainFromSquad.name) : "") ||
     "N/A";
 
   const teamInfo = [
