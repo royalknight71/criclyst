@@ -3,83 +3,95 @@
  *
  * Searchable, format-filterable, paginated team directory backed by the API.
  * State:
- *   - search / format: filter inputs; both reset pagination to page 1 on change.
- *   - page / pagination: current page and server-side previous/next metadata.
+ *   - searchTerm / debouncedSearch: search input debounced by 500ms to
+ *     limit API calls.
+ *   - selectedFormat: format filter (e.g. "odi", "test", "t20i").
+ *   - page / totalPages / totalTeams: pagination state.
  *   - teams / loading / error: fetched data and request status.
  * Effects:
- *   - Debounces fetches by 400ms on any change of page, search or format.
- *   - Shows the full-page loading state only on the first load
- *     (tracked via the firstLoad ref) to avoid flicker on refetches.
+ *   - Debounces searchTerm into debouncedSearch.
+ *   - Fetches teams whenever page, debouncedSearch or selectedFormat changes.
  */
 
-import { useEffect, useState ,useRef} from "react";
+import { useEffect, useState } from "react";
 import { getTeams } from "../services/team.service.js";
-import TeamCard from "../components/team/TeamCard";
+import TeamGrid from "../components/team/TeamGrid.jsx";
+import TeamSearchBar from "../components/team/TeamSearchBar.jsx";
+import TeamFilters from "../components/team/TeamFilters.jsx";
+import Pagination from "../components/player/Pagination.jsx";
+import TeamSkeleton from "../components/team/TeamSkeleton.jsx";
 
 /**
- * Renders the team directory: hero header, inline search input,
- * format selector, team card grid and previous/next pagination.
- * Shows a loading message on first load and an error panel on failure.
+ * Renders the team directory: hero header, search bar, format filters,
+ * result count, team card grid and pagination. Shows a skeleton grid
+ * while loading, an error message on fetch failure, and an empty state
+ * when no teams match the current query.
  *
  * @returns {JSX.Element} The teams listing UI.
  */
 const Teams = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
 
-  const [search, setSearch] = useState("");
-  const [format, setFormat] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedFormat, setSelectedFormat] = useState("");
   const [page, setPage] = useState(1);
-  const [pagination, setPagination] = useState({});
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalTeams, setTotalTeams] = useState(0);
 
-const firstLoad = useRef(true);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+    }, 500);
 
-useEffect(() => {
-  const fetchTeams = async () => {
-    try {
-      if (firstLoad.current) {
-        setLoading(true);
-      }
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
-      setError("");
+  useEffect(() => {
+    async function fetchTeams() {
+      try {
+        const response = await getTeams(
+          page,
+          8,
+          debouncedSearch,
+          selectedFormat
+        );
 
-      const data = await getTeams(
-        page,
-        8,
-        search,
-        format
-      );
-
-      setTeams(data.data);
-      setPagination(data.pagination);
-
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch teams");
-    } finally {
-      if (firstLoad.current) {
+        setTeams(response.data);
+        setTotalPages(response.totalPages);
+        setTotalTeams(response.totalTeams);
+      } catch (err) {
+        setError(err.message);
+      } finally {
         setLoading(false);
-        firstLoad.current = false;
       }
     }
+    fetchTeams();
+  }, [page, debouncedSearch, selectedFormat]);
+
+  /** Reset to the first page and apply the new search term. */
+  const handleSearchChange = (value) => {
+    setPage(1);
+    setSearchTerm(value);
   };
 
-  const timer = setTimeout(() => {
-    fetchTeams();
-  }, 400);
-
-  return () => clearTimeout(timer);
-
-}, [page, search, format]);
+  /** Reset to the first page and apply the new format filter. */
+  const handleFormatChange = (value) => {
+    setPage(1);
+    setSelectedFormat(value);
+  };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#080d1c] px-6 py-20 text-white">
-        <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="text-lg text-slate-400">
-            Loading teams...
-          </p>
+      <main className="min-h-screen bg-[#0B1120] px-6 py-16 text-white">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, index) => (
+              <TeamSkeleton key={index} />
+            ))}
+          </div>
         </div>
       </main>
     );
@@ -87,7 +99,7 @@ useEffect(() => {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#080d1c] px-6 py-20 text-white">
+      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
         <div className="flex min-h-[50vh] items-center justify-center">
           <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
             {error}
@@ -98,7 +110,7 @@ useEffect(() => {
   }
 
   return (
-    <main className="min-h-screen bg-[#080d1c] px-6 py-16 text-white">
+    <main className="min-h-screen bg-[#0B1120] px-6 py-16 text-white">
 
       {/* ================= HERO ================= */}
 
@@ -122,139 +134,58 @@ useEffect(() => {
 
       </section>
 
-        <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-4 md:flex-row">
+      {/* ================= SEARCH & FILTERS ================= */}
 
-  {/* Search */}
-  <div
-    className="
-      flex flex-1 items-center
-      rounded-xl
-      border border-slate-700
-      bg-[#0f172a]
-      px-5
-      focus-within:border-cyan-400
-    "
-  >
+      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-4 md:flex-row">
 
-    <span className="mr-3 text-xl text-slate-500">
-      ⌕
-    </span>
+        <div className="flex-1">
+          <TeamSearchBar
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Search teams by name or country..."
+          />
+        </div>
 
-    <input
-      type="text"
-      value={search}
-      onChange={(e) => {
-        setSearch(e.target.value);
-        setPage(1);
-      }}
-      placeholder="Search teams by name or country..."
-      className="
-        w-full
-        bg-transparent
-        py-4
-        text-sm text-white
-        outline-none
-        placeholder:text-slate-500
-      "
-    />
+        <TeamFilters
+          value={selectedFormat}
+          onChange={handleFormatChange}
+        />
 
-  </div>
+      </div>
 
-
-  {/* Format */}
-  <select
-    value={format}
-    onChange={(e) => {
-      setFormat(e.target.value);
-      setPage(1);
-    }}
-    className="
-      rounded-xl
-      border border-slate-700
-      bg-[#0f172a]
-      px-5 py-4
-      text-sm text-slate-200
-      outline-none
-      focus:border-cyan-400
-      md:w-56
-    "
-  >
-    <option value="">All Formats</option>
-    <option value="odi">ODI</option>
-    <option value="test">Test</option>
-    <option value="t20i">T20I</option>
-  </select>
-
-</div>
       {/* ================= TEAM COUNT ================= */}
 
-      <div className="mx-auto mt-12 max-w-7xl text-sm text-slate-400">
+      <div className="mx-auto mt-8 max-w-7xl text-sm text-slate-400">
         Showing{" "}
-        <span className="font-semibold text-cyan-400">
+        <span className="font-bold text-cyan-400">
           {teams.length}
+        </span>{" "}
+        of{" "}
+        <span className="font-bold text-white">
+          {totalTeams}
         </span>{" "}
         Teams
       </div>
 
-
       {/* ================= TEAM GRID ================= */}
 
-      <section className="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="mx-auto mt-6 max-w-7xl">
+        <TeamGrid teams={teams} />
+      </div>
 
-        {teams.map((team) => (
-          <TeamCard
-            key={team._id}
-            team={team}
+      {/* ================= PAGINATION ================= */}
+
+      {totalPages > 1 && (
+        <div className="mt-14">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPrevious={() => setPage((prev) => prev - 1)}
+            onNext={() => setPage((prev) => prev + 1)}
           />
-        ))}
+        </div>
+      )}
 
-      </section>
-<div className="mt-10 flex items-center justify-center gap-6">
-
-  <button
-    disabled={!pagination.previous}
-    onClick={() => setPage(page - 1)}
-    className="
-      rounded-lg
-      border border-slate-700
-      px-5 py-2.5
-      text-sm text-slate-300
-      transition
-      hover:border-cyan-400
-      hover:text-cyan-400
-      disabled:cursor-not-allowed
-      disabled:opacity-30
-    "
-  >
-    ← Previous
-  </button>
-
-  <span className="text-sm text-slate-400">
-    Page{" "}
-    <span className="font-semibold text-cyan-400">
-      {page}
-    </span>
-  </span>
-
-  <button
-    disabled={!pagination.next}
-    onClick={() => setPage(page + 1)}
-    className="
-      rounded-lg
-      border border-slate-700
-      px-5 py-2.5
-      text-sm text-slate-300
-      transition
-      hover:border-cyan-400
-      hover:text-cyan-400
-      disabled:cursor-not-allowed
-      disabled:opacity-30
-    "
-  >
-    Next →
-  </button>
-
-</div>
     </main>
   );
 };

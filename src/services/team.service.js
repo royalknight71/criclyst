@@ -2,7 +2,7 @@
  * Team service.
  *
  * Encapsulates all team-related HTTP calls to the backend REST API
- * via the shared Axios instance. Each function maps to a GET endpoint
+ * via the shared Axios instance. Each function maps to an endpoint
  * under /teams and returns the unwrapped response payload.
  */
 
@@ -19,8 +19,8 @@ import api from "../api/axios";
  * @param {number} [limit=8] - Number of teams per page.
  * @param {string} [search=""] - Free-text search (team name or country).
  * @param {string} [format=""] - Match format filter ("odi", "test", "t20i").
- * @returns {Promise<Object>} Paginated response containing `data` (team list)
- *   and `pagination` metadata (previous/next links).
+ * @returns {Promise<Object>} Paginated response containing `data` (team list),
+ *   `totalPages` and `totalTeams`.
  */
 export const getTeams = async (
   page = 1,
@@ -59,4 +59,50 @@ export const getTeamById = async (id) => {
   const { data } = await api.get(`/teams/${id}`);
 
   return data.data;
+};
+
+/**
+ * Create a new team.
+ *
+ * Hits: POST /teams
+ *
+ * @async
+ * @param {Object} teamData - Team object to create (name, country, format, etc.).
+ * @returns {Promise<Object>} The created team object.
+ */
+export const createTeam = async (teamData) => {
+  const { data } = await api.post("/teams", teamData);
+
+  return data.data;
+};
+
+/**
+ * Update an existing team by ID.
+ *
+ * Hits: PATCH /teams/:id
+ *
+ * @async
+ * @param {string} id - Unique identifier of the team to update.
+ * @param {Object} teamData - Fields to update.
+ * @returns {Promise<Object>} The updated team object.
+ */
+export const updateTeam = async (id, teamData) => {
+  const { data } = await api.patch(`/teams/${id}`, teamData);
+
+  return data.data;
+};
+
+/**
+ * Delete a team by ID.
+ *
+ * Hits: DELETE /teams/:id
+ *
+ * @async
+ * @param {string} id - Unique identifier of the team to delete.
+ * @returns {Promise<Object>} Response with success message.
+ */
+export const deleteTeam = async (id) => {
+  const { data } = await api.delete(`/teams/${id}`);
+
+  return data;
 };
