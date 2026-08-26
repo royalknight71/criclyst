@@ -1,19 +1,5 @@
-/**
- * Root application component.
- * Renders the shared layout (Navbar and Footer) around the routed page content.
- * Defines the top-level routes:
- *   /            - Home dashboard (live/upcoming/recent matches, stats, top players)
- *   /players     - Searchable, paginated player directory
- *   /players/:id - Detailed profile view for a single player
- *   /analytics   - Charts and visual insights into the squad
- *   /teams       - Team database with search and format filters
- *   /teams/:id   - Detailed profile view for a single team (with squad)
- *   /matches     - Match database with status/format filters and sorting
- *   /matches/:id - Detailed profile view for a single match
- *   /compare     - Side-by-side player comparison tool
- */
-
 import { Routes, Route } from "react-router-dom"
+import { AuthProvider } from "./context/AuthContext"
 import Home from "./pages/Home"
 import PlayerDetails from "./pages/PlayerDetails"
 import Navbar from "./components/layout/Navbar"
@@ -25,10 +11,12 @@ import TeamDetails from "./pages/TeamDetails"
 import Matches from "./pages/Matches"
 import MatchDetails from "./pages/MatchDetails"
 import Compare from "./pages/Compare"
+import Login from "./pages/Login"
+import Register from "./pages/Register"
 
 function App() {
   return (
-    <>
+    <AuthProvider>
     <Navbar/>
     <Routes>
       <Route path='/' element={<Home/>}/>
@@ -40,9 +28,11 @@ function App() {
       <Route path="/matches" element={<Matches />} />
       <Route path="/matches/:id" element={<MatchDetails />} />
       <Route path="/compare" element={<Compare />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
     </Routes>
     <Footer />
-    </>
+    </AuthProvider>
   )
 }
 

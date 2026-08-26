@@ -118,7 +118,12 @@ export const loginUser=async (req,res)=>{
                                 {
                                 expiresIn: 15*60
                             });
-        res.cookie("token",token)
+        res.cookie("token",token,{
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            maxAge: 15 * 60 * 1000
+        })
         res.status(200).json({
             success:true,
             message:"Login Successful",

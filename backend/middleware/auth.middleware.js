@@ -17,8 +17,7 @@ import redisClient from '../config/redis.js';
 export const userAuth=async (req,res,next)=>{
     try{
         const {token}=req.cookies
-        console.log(req.cookies);
-        
+
         if(!token){
             return res.status(401).json({
                 success:false,
@@ -26,12 +25,18 @@ export const userAuth=async (req,res,next)=>{
             });
         }
 
-        const isBlocked=await redisClient.exists(token)
-        if (isBlocked) {
-            return res.status(401).json({
-                success: false,
-                message: "Session expired. Please login again."
-            });
+        try{
+            const isBlocked=await redisClient.exists(token)
+            if (isBlocked) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Session expired. Please login again."
+                });
+            }
+        }
+        catch(redisError){
+            // Redis unavailable — allow the request through rather than
+            // blocking all authenticated traffic.
         }
 
         const payload=jwt.verify(token,process.env.JWT_SECRET);
