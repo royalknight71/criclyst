@@ -18,6 +18,7 @@ import {
 
 
 import { MdSportsCricket } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 /**
  * AIInsight component.
@@ -35,6 +36,7 @@ import { MdSportsCricket } from "react-icons/md";
  *   supplied.
  */
 function AIInsight ({player}){
+    const navigate = useNavigate();
     if (!player) return null;
     const {
     runs,
@@ -126,7 +128,9 @@ else {
 
 
 return (
-  <div className="group bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-6 shadow-xl h-full flex flex-col justify-between
+  <div
+    onClick={() => navigate(`/players/${player._id}`)}
+    className="group bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-6 shadow-xl h-full flex flex-col justify-between cursor-pointer
   
 transition-all
 duration-300

@@ -56,6 +56,51 @@ export const getTopPlayers = async (req, res) => {
 };
 
 /**
+ * Returns the top performer for each key metric (best batsman, best
+ * bowler, best average, best strike rate). Used by the Home page
+ * performance highlights section. Filters out players with zero/null
+ * values so that invalid entries don't become "best".
+ */
+export const getHomeHighlights = async (req, res) => {
+  try {
+    const [bestBatsman, bestBowler, bestAverage, bestStrikeRate] =
+      await Promise.all([
+        Player.findOne({ runs: { $gt: 0 } })
+          .sort({ runs: -1 })
+          .select("name country role runs image")
+          .lean(),
+        Player.findOne({ wickets: { $gt: 0 } })
+          .sort({ wickets: -1 })
+          .select("name country role wickets image")
+          .lean(),
+        Player.findOne({ average: { $gt: 0 } })
+          .sort({ average: -1 })
+          .select("name country role average image")
+          .lean(),
+        Player.findOne({ strikeRate: { $gt: 0 } })
+          .sort({ strikeRate: -1 })
+          .select("name country role strikeRate image")
+          .lean(),
+      ]);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        bestBatsman: bestBatsman || null,
+        bestBowler: bestBowler || null,
+        bestAverage: bestAverage || null,
+        bestStrikeRate: bestStrikeRate || null,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+/**
  * Returns a paginated, sorted list of players with optional filtering,
  * field selection, and text search.
  *

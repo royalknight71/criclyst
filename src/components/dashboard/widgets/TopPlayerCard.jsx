@@ -6,6 +6,7 @@
  * statistics (runs, matches, wickets, rank), and a profile link.
  */
 
+import { useNavigate } from "react-router-dom";
 import {
   FaArrowRight,
   FaFlag,
@@ -59,6 +60,8 @@ const medals = [
  * @returns {JSX.Element} The rendered top player card.
  */
 function TopPlayerCard({ player, index }) {
+  const navigate = useNavigate();
+
   const badge =
     index < 3
       ? medals[index]
@@ -69,7 +72,10 @@ function TopPlayerCard({ player, index }) {
         };
 
   return (
-    <div className="group rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-xl hover:shadow-cyan-500/10">
+    <div
+      onClick={() => navigate(`/players/${player._id}`)}
+      className="group cursor-pointer rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-xl hover:shadow-cyan-500/10"
+    >
 
       {/* Header */}
 
@@ -185,7 +191,13 @@ function TopPlayerCard({ player, index }) {
 
         </p>
 
-        <button className="flex items-center gap-2 rounded-xl cursor-pointer border border-cyan-400 px-5 py-2 font-medium text-cyan-300 transition-all duration-300 hover:bg-cyan-400 hover:text-slate-900">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/players/${player._id}`);
+          }}
+          className="flex items-center gap-2 rounded-xl cursor-pointer border border-cyan-400 px-5 py-2 font-medium text-cyan-300 transition-all duration-300 hover:bg-cyan-400 hover:text-slate-900"
+        >
 
           View Profile
 

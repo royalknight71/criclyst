@@ -6,6 +6,7 @@
  * and batting style.
  */
 
+import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
 
 /**
@@ -22,6 +23,7 @@ import { FaUserCircle } from "react-icons/fa";
  *   player is supplied.
  */
 function PlayerSummaryCard({player}){
+    const navigate = useNavigate();
     if(!player)
         return null;
     const countryFlags = {
@@ -58,7 +60,10 @@ function PlayerSummaryCard({player}){
             .join(" ");
         const flag = countryFlags[country.toLowerCase()] || "🏏";
     return (
-        <div className="h-full rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-cyan-500/15 mt-auto">
+        <div
+            onClick={() => navigate(`/players/${player._id}`)}
+            className="h-full cursor-pointer rounded-2xl border border-slate-800 bg-slate-900 p-8 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400/40 hover:shadow-cyan-500/15 mt-auto"
+        >
 
             {/* Profile */}
             <div className="flex flex-col items-center">

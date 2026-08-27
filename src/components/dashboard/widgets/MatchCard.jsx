@@ -8,6 +8,7 @@
 
 import { FaCircle, FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 /** Converts a name to Title Case (e.g. "new zealand" -> "New Zealand"). */
 const formatName = (name = "") =>
@@ -48,6 +49,7 @@ const getShortName = (name = "") => {
  * @returns {JSX.Element} The rendered live match card.
  */
 function MatchCard({match}){
+  const navigate = useNavigate();
   return (
     <div className="group  bg-gradient-to-br
 from-slate-900
@@ -250,10 +252,13 @@ tracking-tight text-cyan-400">
 
       {/* Button */}
 
-      <button className="group mt-6 w-full cursor-pointer rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
+      <button
+        onClick={() => navigate(`/matches/${match._id}`)}
+        className="group mt-6 w-full cursor-pointer rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
        text-slate-900 transition-all duration-300 hover:bg-cyan-400
 hover:shadow-xl
-hover:shadow-cyan-500/30">
+hover:shadow-cyan-500/30"
+      >
 
         <span className="flex items-center justify-center gap-3">
 
