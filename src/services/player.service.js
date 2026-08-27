@@ -93,3 +93,18 @@ export const getPlayerById = async (id) => {
   const {data}=await api.get(`/players/${id}`);
   return data.data;
 }
+
+/**
+ * Fetch the top performer for each key metric for the Home page
+ * performance highlights section.
+ *
+ * Hits: GET /players/highlights
+ *
+ * @async
+ * @returns {Promise<Object>} Object containing bestBatsman, bestBowler,
+ *   bestAverage, and bestStrikeRate player objects (or null if none found).
+ */
+export const getHomeHighlights = async () => {
+  const { data } = await api.get("/players/highlights");
+  return data.data;
+};

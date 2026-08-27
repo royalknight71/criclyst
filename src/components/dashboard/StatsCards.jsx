@@ -51,24 +51,28 @@ function StatsCards() {
     value: statsData?.totalPlayers,
     subtitle: "Registered Players",
     icon: <FaUsers />,
+    to: "/players",
   },
   {
     title: "Teams",
     value: statsData?.totalTeams,
     subtitle: "Registered Teams",
     icon: <FaPeopleGroup />,
+    to: "/teams",
   },
   {
     title: "Matches",
     value: statsData?.totalMatches,
     subtitle: "Matches Played",
     icon: <MdSportsCricket />,
+    to: "/matches",
   },
   {
     title: "Live",
     value: statsData?.liveMatches,
     subtitle: "Live Matches",
     icon: <FaSignal />,
+    to: "/matches",
   },
 ];
         if(loading)

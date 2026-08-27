@@ -13,7 +13,7 @@ import StatsCards from "../components/dashboard/StatsCards";
 import LiveMatches from "../components/dashboard/LiveMatches";
 import UpcomingMatches from "../components/dashboard/UpcomingMatches";
 import RecentMatches from "../components/dashboard/RecentMatches";
-import TopPlayers from "../components/dashboard/TopPlayers";
+import PerformanceHighlights from "../components/dashboard/widgets/PerformanceHighlights";
 
 /**
  * Renders the full home dashboard layout.
@@ -30,7 +30,7 @@ function Home() {
       <LiveMatches />
       <UpcomingMatches />
       <RecentMatches />
-      <TopPlayers />
+      <PerformanceHighlights />
     </div>
   );
 }

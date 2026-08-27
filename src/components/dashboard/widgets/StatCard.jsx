@@ -5,6 +5,7 @@
  * formatted numeric value, and an optional subtitle in a hoverable card.
  */
 
+import { useNavigate } from "react-router-dom";
 
 /**
  * StatCard component.
@@ -16,24 +17,28 @@
  *   locale-aware number formatting when numeric).
  * @param {string} [props.subtitle] - Optional descriptive text below the value.
  * @param {React.ReactNode} props.icon - Icon element displayed beside the title.
+ * @param {string} [props.to] - Optional navigation path; makes the card clickable.
  * @returns {JSX.Element} The rendered statistic card.
  */
-function StatCard({title,value,subtitle,icon}){
+function StatCard({title,value,subtitle,icon,to}){
+    const navigate = useNavigate();
     return (
 <div
-className="
-group
-rounded-3xl
-bg-slate-900
-border
-border-slate-700
-p-7
-transition-all
-duration-300
-hover:-translate-y-2
-hover:border-cyan-400/40
-hover:shadow-[0_0_40px_rgba(6,182,212,0.12)]
-"
+    onClick={to ? () => navigate(to) : undefined}
+    className={`
+        group
+        rounded-3xl
+        bg-slate-900
+        border
+        border-slate-700
+        p-7
+        transition-all
+        duration-300
+        hover:-translate-y-2
+        hover:border-cyan-400/40
+        hover:shadow-[0_0_40px_rgba(6,182,212,0.12)]
+        ${to ? "cursor-pointer" : ""}
+    `}
 >
            <div className="flex items-center gap-3 hover:bg-slate-800/80">
 

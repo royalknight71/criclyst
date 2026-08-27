@@ -8,6 +8,7 @@
 
 import { FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { FaCalendarAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 /** Converts a name to Title Case (e.g. "sri lanka" -> "Sri Lanka"). */
 const formatName = (name = "") =>
@@ -51,6 +52,7 @@ const getShortName = (name = "") => {
  * @returns {JSX.Element} The rendered upcoming match card.
  */
 function UpcomingMatchCard({ match }) {
+  const navigate = useNavigate();
   const matchDate = new Date(match.matchDate);
 
   const formattedDate = matchDate.toLocaleDateString("en-IN", {
@@ -196,7 +198,10 @@ function UpcomingMatchCard({ match }) {
 
       {/* Button */}
 
-      <button className="mt-6 flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-cyan-500 py-3 text-lg font-semibold text-slate-900 transition-all duration-300 hover:bg-cyan-400">
+      <button
+        onClick={() => navigate(`/matches/${match._id}`)}
+        className="mt-6 flex w-full cursor-pointer items-center justify-center gap-3 rounded-2xl bg-cyan-500 py-3 text-lg font-semibold text-slate-900 transition-all duration-300 hover:bg-cyan-400"
+      >
 
         View Fixture
 
