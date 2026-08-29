@@ -149,22 +149,28 @@ export const loginUser=async (req,res)=>{
  */
 export const logoutUser=async (req,res)=>{
     try{
-        //res.cookie("token",null,{expires:new Date(Date.now())})
         const {token}=req.cookies;
         if(!token)
             throw new Error("Invalid Token")
 
         const payload = jwt.verify(token, process.env.JWT_SECRET);
-        // const payload=jwt.decode(token)
-        // console.log(payload);
         
-         await redisClient.set(token,"blocked")
-         await redisClient.expireAt(token,payload.exp)
+        try{
+            await redisClient.set(token,"blocked")
+            await redisClient.expireAt(token,payload.exp)
+        }catch(redisError){
+            // Redis unavailable — still allow logout to succeed
+        }
 
         res.clearCookie("token");
-        return res.status(200).send("Logout Successfully")
+        return res.status(200).json({
+            success: true,
+            message: "Logout Successfully"
+        })
     }
     catch(error){
+        // Ensure cookie is cleared even on error
+        res.clearCookie("token");
         return res.status(500).json({
             success: false,
             message: error.message

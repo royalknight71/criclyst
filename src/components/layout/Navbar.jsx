@@ -71,11 +71,17 @@ function Navbar() {
         </NavLink>
 
           <NavLink
-          to="/analytics"
-         className={navLinkClass}
+           to="/analytics"
+          className={navLinkClass}
         >
-          Analytics
+           Analytics
         </NavLink>
+
+          {user && (
+            <NavLink to="/favorites" className={navLinkClass}>
+              Favorites
+            </NavLink>
+          )}
 
       </div>
 

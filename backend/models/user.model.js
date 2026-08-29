@@ -28,6 +28,14 @@ const userSchema=new mongoose.Schema({
         required: true,
         trim: true,
         minlength:8
+    },
+    // Player favorites (watchlist) - stores only references to Player collection
+    favorites:{
+        type: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Player"
+        }],
+        default: []
     }
 },{
     timestamps: true

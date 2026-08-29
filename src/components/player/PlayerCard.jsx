@@ -37,7 +37,7 @@ import {TbTargetArrow} from "react-icons/tb"
  * @param {number|string} [props.player.jerseyNumber] - Jersey number.
  * @returns {JSX.Element} The player card element.
  */
-function PlayerCard({ player }) {
+function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
   const navigate = useNavigate();
 
   const formatText = (text = "") =>
@@ -312,20 +312,31 @@ function PlayerCard({ player }) {
               mt-5
               flex
               items-center
-              justify-end
+              justify-between
               gap-2
               text-sm
               font-semibold
               text-cyan-400
               transition-all
               duration-300
-              group-hover:gap-3
             "
           >
-            View Profile
-
-            <FaArrowRight />
-
+            {showFavoriteAction && onUnfavorite ? (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onUnfavorite(player._id);
+                }}
+                className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-500 hover:text-white"
+              >
+                Remove
+              </button>
+            ) : (
+              <span />
+            )}
+            <span className="flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+              View Profile <FaArrowRight />
+            </span>
           </div>
 
         </div>
