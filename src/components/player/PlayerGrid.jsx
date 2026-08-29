@@ -14,7 +14,7 @@ import PlayerCard from "./PlayerCard";
  * @param {Array<object>} props.players - List of player objects to render; each must have an `_id` used as the React key.
  * @returns {JSX.Element} The grid of player cards.
  */
-function PlayerGrid({ players }) {
+function PlayerGrid({ players, onUnfavorite, showFavoriteAction = false }) {
   return (   
     <div
   className="
@@ -31,6 +31,8 @@ function PlayerGrid({ players }) {
         <PlayerCard
           key={player._id}
           player={player}
+          onUnfavorite={onUnfavorite}
+          showFavoriteAction={showFavoriteAction}
         />
       ))}
     </div>

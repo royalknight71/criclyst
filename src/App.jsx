@@ -13,6 +13,8 @@ import MatchDetails from "./pages/MatchDetails"
 import Compare from "./pages/Compare"
 import Login from "./pages/Login"
 import Register from "./pages/Register"
+import Favorites from "./pages/Favorites"
+import ProtectedRoute from "./components/common/ProtectedRoute"
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
       <Route path="/matches" element={<Matches />} />
       <Route path="/matches/:id" element={<MatchDetails />} />
       <Route path="/compare" element={<Compare />} />
+      <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>

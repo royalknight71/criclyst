@@ -5,6 +5,7 @@
  * and count endpoints.
  */
 import Player from "../models/player.model.js";
+import User from "../models/user.model.js";
 import mongoose from "mongoose";
 
 /**
@@ -526,6 +527,9 @@ export const deletePlayersById = async (req, res) => {
         message: "Player not found",
       });
     }
+    // Clean up favorites references (orphaned handling)
+    await User.updateMany({ favorites: id }, { $pull: { favorites: id } });
+
     return res.status(200).json({
       success: true,
       message: "Player deleted successfully",

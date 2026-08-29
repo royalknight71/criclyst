@@ -6,6 +6,7 @@
 import express from 'express';
 import playerRoutes from './routes/player.routes.js';
 import userRoutes from './routes/user.routes.js';
+import favoriteRoutes from './routes/favorite.routes.js';
 import teamRoute from './routes/team.routes.js';
 import matchRoute from './routes/match.routes.js'
 import dashboardRoute from './routes/dashboard.routes.js'
@@ -24,6 +25,7 @@ app.use(cors({
 app.use(express.json());
 app.use(logger);
 
+app.use("/api/users/favorites", favoriteRoutes);
 app.use("/api/users",userRoutes);
 
 app.use("/api/players",playerRoutes);
