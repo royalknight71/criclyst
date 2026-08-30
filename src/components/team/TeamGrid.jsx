@@ -14,7 +14,7 @@ import TeamCard from "./TeamCard";
  * @param {Array<object>} props.teams - List of team objects to render; each must have an `_id` used as the React key.
  * @returns {JSX.Element} The grid of team cards.
  */
-function TeamGrid({ teams }) {
+function TeamGrid({ teams, onUnfavorite, showFavoriteAction = false }) {
   return (
     <div
       className="
@@ -30,6 +30,8 @@ function TeamGrid({ teams }) {
         <TeamCard
           key={team._id}
           team={team}
+          onUnfavorite={onUnfavorite}
+          showFavoriteAction={showFavoriteAction}
         />
       ))}
     </div>

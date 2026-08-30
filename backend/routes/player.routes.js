@@ -4,14 +4,14 @@
  * listing (with pagination/filter/search), creation, top players, count,
  * search, and per-ID read/update/delete operations.
  */
+import { userAuth } from "../middleware/auth.middleware.js";
+import { adminAuth } from "../middleware/admin.middleware.js";
 import express from "express";
 import {createPlayer,getTopPlayers,getAllPlayers,countPlayers,
     searchPlayers,searchPlayersById,deletePlayersById,updatePlayersById,getPlayerAnalytics,getHomeHighlights} from "../controllers/player.controller.js";
 const router=express.Router();
 
 router.get("/",getAllPlayers);
-
-router.post("/",createPlayer);
 
 router.get("/top",getTopPlayers);
 router.get("/highlights",getHomeHighlights);
@@ -20,8 +20,8 @@ router.get("/search",searchPlayers);
 router.get("/analytics",getPlayerAnalytics);
 router.get("/:id",searchPlayersById)
 
-router.delete("/:id",deletePlayersById)
-router.patch("/:id",updatePlayersById)
-
+router.post("/", userAuth, adminAuth, createPlayer);
+router.patch("/:id", userAuth, adminAuth, updatePlayersById);
+router.delete("/:id", userAuth, adminAuth, deletePlayersById);
 
 export default router;

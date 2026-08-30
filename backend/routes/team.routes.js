@@ -4,6 +4,8 @@
  * listing (with pagination/filter/search), count, search, per-ID read,
  * and create/update/delete operations.
  */
+import { userAuth } from "../middleware/auth.middleware.js";
+import { adminAuth } from "../middleware/admin.middleware.js";
 import express from "express";
 import {
   getAllTeams,
@@ -17,13 +19,13 @@ import {
 const router = express.Router();
 
 router.get("/", getAllTeams);
-router.post("/", createTeam);
 
 router.get("/count", countTeams);
 router.get("/search", searchTeams);
 
 router.get("/:id", getTeamsById);
-router.patch("/:id", updateTeam);
-router.delete("/:id", deleteTeam);
+router.post("/", userAuth, adminAuth, createTeam);
+router.patch("/:id", userAuth, adminAuth, updateTeam);
+router.delete("/:id", userAuth, adminAuth, deleteTeam);
 
 export default router;

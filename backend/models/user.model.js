@@ -29,13 +29,26 @@ const userSchema=new mongoose.Schema({
         trim: true,
         minlength:8
     },
-    // Player favorites (watchlist) - stores only references to Player collection
+    // Player/Team/Match favorites (watchlist) - stores references to respective collections
     favorites:{
-        type: [{
+        players: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Player"
         }],
-        default: []
+        teams: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Team"
+        }],
+        matches: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Match"
+        }]
+    },
+    // User role for authorization
+    role:{
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
     }
 },{
     timestamps: true

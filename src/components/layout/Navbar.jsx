@@ -70,12 +70,18 @@ function Navbar() {
           Compare
         </NavLink>
 
-          <NavLink
-           to="/analytics"
-          className={navLinkClass}
-        >
-           Analytics
+<NavLink
+            to="/analytics"
+           className={navLinkClass}
+         >
+            Analytics
         </NavLink>
+
+          {user?.role === "admin" && (
+            <NavLink to="/admin" className={navLinkClass}>
+              Admin
+            </NavLink>
+          )}
 
           {user && (
             <NavLink to="/favorites" className={navLinkClass}>
