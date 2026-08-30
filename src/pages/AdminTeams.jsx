@@ -15,7 +15,8 @@ function AdminTeams() {
     const [showForm, setShowForm] = useState(false);
     const [form, setForm] = useState({
         name: "", country: "", format: "odi", coach: "", ranking: 1,
-        founded: 2000, captain: "", players: [], description: ""
+        founded: 2000, captain: "", players: [], description: "",
+        logo: "", homeGround: "", isActive: true
     });
     const [error, setError] = useState(null);
 
@@ -50,7 +51,8 @@ function AdminTeams() {
         setEditingTeam(null);
         setForm({
             name: "", country: "", format: "odi", coach: "", ranking: 1,
-            founded: 2000, captain: "", players: [], description: ""
+            founded: 2000, captain: "", players: [], description: "",
+            logo: "", homeGround: "", isActive: true
         });
         setShowForm(true);
         setError(null);
@@ -63,7 +65,9 @@ function AdminTeams() {
             coach: t.coach || "", ranking: t.ranking || 1, founded: t.founded || 2000,
             captain: t.captain?._id || t.captain || "",
             players: (t.players || []).map((p) => (typeof p === "object" ? p._id : p)),
-            description: t.description || ""
+            description: t.description || "",
+            logo: t.logo || "", homeGround: t.homeGround || "",
+            isActive: t.isActive !== undefined ? t.isActive : true
         });
         setShowForm(true);
         setError(null);
@@ -139,11 +143,13 @@ function AdminTeams() {
                             </select>
                             <input required placeholder="Coach" value={form.coach} onChange={(e) => setForm({ ...form, coach: e.target.value })} className={inputCls} />
                             <input type="number" required placeholder="Ranking (1-20)" min="1" max="20" value={form.ranking} onChange={(e) => setForm({ ...form, ranking: parseInt(e.target.value) || 1 })} className={inputCls} />
-                            <input type="number" required placeholder="Founded" min="1800" value={form.founded} onChange={(e) => setForm({ ...form, founded: parseInt(e.target.value) || 2000 })} className={inputCls} />
+                            <input type="number" required placeholder="Founded" min="1800" max={new Date().getFullYear()} value={form.founded} onChange={(e) => setForm({ ...form, founded: parseInt(e.target.value) || 2000 })} className={inputCls} />
+                            <input placeholder="Logo URL" value={form.logo} onChange={(e) => setForm({ ...form, logo: e.target.value })} className={inputCls} />
+                            <input placeholder="Home Ground" value={form.homeGround} onChange={(e) => setForm({ ...form, homeGround: e.target.value })} className={inputCls} />
 
                             <div className="sm:col-span-2 lg:col-span-3">
                                 <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">Captain</label>
-                                <select value={form.captain} onChange={(e) => setForm({ ...form, captain: e.target.value })} className={inputCls + " w-full"}>
+                                <select required value={form.captain} onChange={(e) => setForm({ ...form, captain: e.target.value })} className={inputCls + " w-full"}>
                                     <option value="">-- Select Captain --</option>
                                     {allPlayers.map((p) => (
                                         <option key={p._id} value={p._id}>{p.name} ({p.country})</option>
@@ -169,7 +175,14 @@ function AdminTeams() {
 
                             <div className="sm:col-span-2 lg:col-span-3">
                                 <textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })}
-                                    rows={2} className={inputCls + " w-full resize-none"} />
+                                    rows={2} maxLength={300} className={inputCls + " w-full resize-none"} />
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} className="accent-green-500" />
+                                    <span className="text-sm text-white">Active</span>
+                                </label>
                             </div>
 
                             <div className="flex gap-3 sm:col-span-2 lg:col-span-3">

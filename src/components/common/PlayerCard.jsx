@@ -7,7 +7,6 @@
  * and both for all-rounders.
  */
 
-import React from 'react'
 import { NavLink} from 'react-router-dom'
 
 /**
@@ -18,11 +17,9 @@ import { NavLink} from 'react-router-dom'
  * @param {string} props.role - Player role ("Batsman", "Wicket Keeper", "Bowler", or all-rounder).
  * @param {number|string} props.runs - Total runs scored.
  * @param {number|string} props.wickets - Total wickets taken.
- * @param {number|string} props.economyRate - Bowling economy rate.
- * @param {string} props.BBI - Best bowling in an innings.
  * @returns {JSX.Element} The player card link element.
  */
-function PlayerCard({ name,image, runs, role , wickets, economyRate,BBI}) {
+function PlayerCard({ name,image, runs, role , wickets}) {
   return (
       <NavLink
         to={`/player/${name.toLowerCase().replaceAll(" ", "-")}`}

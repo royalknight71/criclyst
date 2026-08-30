@@ -528,7 +528,7 @@ export const deletePlayersById = async (req, res) => {
       });
     }
     // Clean up favorites references (orphaned handling)
-    await User.updateMany({ favorites: id }, { $pull: { favorites: id } });
+    await User.updateMany({ "favorites.players": id }, { $pull: { "favorites.players": id } });
 
     return res.status(200).json({
       success: true,
@@ -553,7 +553,7 @@ export const updatePlayersById = async (req, res) => {
     if (!check) {
       return res.status(400).json({
         success: false,
-        message: "Player not found",
+        message: "Invalid Player ID",
       });
     }
     const player = await Player.findByIdAndUpdate(id, req.body, {

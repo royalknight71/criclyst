@@ -89,7 +89,7 @@ function TopPlayerCard({ player, index }) {
 
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-cyan-600 text-4xl font-bold text-slate-900 shadow-lg">
 
-              {player.name.charAt(0).toUpperCase()}
+              {(player.name || "").charAt(0).toUpperCase()}
 
             </div>
 

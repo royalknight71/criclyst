@@ -49,16 +49,16 @@ function PlayerSummaryCard({player}){
             battingStyle,
         } = player;
 
-        const formattedName = name
+        const formattedName = (name || "")
             .split(" ")
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
 
-            const formattedCountry = country
+            const formattedCountry = (country || "")
             .split(" ")
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
-        const flag = countryFlags[country.toLowerCase()] || "🏏";
+        const flag = countryFlags[(country || "").toLowerCase()] || "🏏";
     return (
         <div
             onClick={() => navigate(`/players/${player._id}`)}

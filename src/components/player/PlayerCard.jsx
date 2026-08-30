@@ -16,9 +16,7 @@ import {
   FaChartLine,
 } from "react-icons/fa6";
 import { GiCricketBat } from "react-icons/gi";
-import { GiCricket } from "react-icons/gi";      // Cricket ball
-import { PiCricketBold } from "react-icons/pi";
-import {TbTargetArrow} from "react-icons/tb"
+import { TbTargetArrow } from "react-icons/tb";
 
 /**
  * Renders an interactive player card that navigates to the player's profile on click.

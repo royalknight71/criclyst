@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { getMatches, createMatch, updateMatch, deleteMatch } from "../services/match.service";
 import { getTeams } from "../services/team.service";
+import { getPlayers } from "../services/player.service";
 
 function AdminMatches() {
     const [matches, setMatches] = useState([]);
     const [allTeams, setAllTeams] = useState([]);
+    const [allPlayers, setAllPlayers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -24,6 +26,7 @@ function AdminMatches() {
 
     useEffect(() => {
         getTeams(1, 50).then((d) => setAllTeams(d.data || [])).catch(() => {});
+        getPlayers(1, 100).then((d) => setAllPlayers(d.data || [])).catch(() => {});
     }, []);
 
     async function fetchMatches() {
@@ -69,10 +72,10 @@ function AdminMatches() {
         e.preventDefault();
         setError(null);
         const payload = { ...form };
-        if (!payload.tossWinner) delete payload.tossWinner;
-        if (!payload.tossDecision) delete payload.tossDecision;
-        if (!payload.winner) delete payload.winner;
-        if (!payload.manOfTheMatch) delete payload.manOfTheMatch;
+        if (!payload.tossWinner) payload.tossWinner = null;
+        if (!payload.tossDecision) payload.tossDecision = null;
+        if (!payload.winner) payload.winner = null;
+        if (!payload.manOfTheMatch) payload.manOfTheMatch = null;
         try {
             if (editingMatch) {
                 await updateMatch(editingMatch._id, payload);
@@ -196,6 +199,24 @@ function AdminMatches() {
                                     <div className="sm:col-span-2">
                                         <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">Result</label>
                                         <input required placeholder="e.g. India won by 5 wickets" value={form.result} onChange={(e) => setForm({ ...form, result: e.target.value })} className={inputCls + " w-full"} />
+                                    </div>
+                                    <div className="sm:col-span-2 lg:col-span-3">
+                                        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">Man of the Match</label>
+                                        <select value={form.manOfTheMatch} onChange={(e) => setForm({ ...form, manOfTheMatch: e.target.value })} className={inputCls + " w-full"}>
+                                            <option value="">-- None --</option>
+                                            {allPlayers
+                                                .filter((p) => {
+                                                    const teamAObj = allTeams.find((t) => t._id === form.teamA);
+                                                    const teamBObj = allTeams.find((t) => t._id === form.teamB);
+                                                    const squadA = (teamAObj?.players || []).map((pl) => typeof pl === "object" ? pl._id : pl);
+                                                    const squadB = (teamBObj?.players || []).map((pl) => typeof pl === "object" ? pl._id : pl);
+                                                    return squadA.includes(p._id) || squadB.includes(p._id);
+                                                })
+                                                .map((p) => (
+                                                    <option key={p._id} value={p._id}>{p.name} ({p.country})</option>
+                                                ))
+                                            }
+                                        </select>
                                     </div>
                                 </>
                             )}

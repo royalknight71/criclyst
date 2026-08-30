@@ -32,7 +32,6 @@ function UpcomingMatches() {
     {
       try{
         const response=await getUpcomingMatches()
-        console.log(response);
         setMatches(response)
         
       }

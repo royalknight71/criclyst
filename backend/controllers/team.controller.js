@@ -7,6 +7,8 @@
 import Team from "../models/team.model.js";
 import mongoose from "mongoose";
 import Player from "../models/player.model.js";
+import User from "../models/user.model.js";
+import Match from "../models/match.model.js";
 
 /**
  * Returns a paginated, sorted list of teams with optional filtering,
@@ -440,6 +442,11 @@ export const deleteTeam = async (req, res) => {
         message: "Team Not Found",
       });
     }
+    // Clean up favorites references
+    await User.updateMany({ "favorites.teams": id }, { $pull: { "favorites.teams": id } });
+    // Clean up match references to this team
+    await Match.deleteMany({ $or: [{ teamA: id }, { teamB: id }] });
+
     return res.status(200).json({
       success: true,
       message: "Team deleted successfully",

@@ -153,7 +153,7 @@ export const logoutUser=async (req,res)=>{
     try{
         const {token}=req.cookies;
         if(!token)
-            throw new Error("Invalid Token")
+            return res.status(401).json({ success: false, message: "Not authenticated" });
 
         const payload = jwt.verify(token, process.env.JWT_SECRET);
         
@@ -164,7 +164,12 @@ export const logoutUser=async (req,res)=>{
             // Redis unavailable — still allow logout to succeed
         }
 
-        res.clearCookie("token");
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/"
+        });
         return res.status(200).json({
             success: true,
             message: "Logout Successfully"
@@ -172,7 +177,12 @@ export const logoutUser=async (req,res)=>{
     }
     catch(error){
         // Ensure cookie is cleared even on error
-        res.clearCookie("token");
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/"
+        });
         return res.status(500).json({
             success: false,
             message: error.message
@@ -214,12 +224,12 @@ export const deleteProfile=async (req,res)=>{
         if (!user) {
             return res.status(404).json({
                 success: false,
-                message: "Player not found"
+                message: "User not found"
             });
         }
         return res.status(200).json({
             success: true,
-            message: "Player deleted successfully"
+            message: "User deleted successfully"
         }); 
     }
     catch(error){
@@ -237,6 +247,15 @@ export const deleteProfile=async (req,res)=>{
 export const updateProfile=async (req,res)=>{
     try{
         const { name, email } = req.body;
+        if (email && !validator.isEmail(email)) {
+            return res.status(400).json({ success: false, message: "Invalid email format" });
+        }
+        if (email) {
+            const existing = await User.findOne({ email, _id: { $ne: req.user._id } });
+            if (existing) {
+                return res.status(400).json({ success: false, message: "Email already in use" });
+            }
+        }
         const user=await User.findByIdAndUpdate(req.user._id,{name,email},{
             new:true,
             runValidators:true
