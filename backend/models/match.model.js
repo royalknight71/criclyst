@@ -53,13 +53,14 @@ const matchSchema=new mongoose.Schema({
     tossWinner:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Team",
-        required:true
+        default: null
     },
     // Decision made by the toss winner (bat or bowl)
     tossDecision:{
         type:String,
         lowercase:true,
-        enum:['bat','bowl']
+        enum:['bat','bowl'],
+        default: null
     },
     // Free-text result summary (e.g., "India won by 5 runs")
     result:{

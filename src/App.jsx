@@ -15,6 +15,9 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Favorites from "./pages/Favorites"
 import AdminDashboard from "./pages/AdminDashboard"
+import AdminPlayers from "./pages/AdminPlayers"
+import AdminTeams from "./pages/AdminTeams"
+import AdminMatches from "./pages/AdminMatches"
 import ProtectedRoute from "./components/common/ProtectedRoute"
 import AdminRoute from "./components/common/AdminRoute"
 
@@ -34,6 +37,9 @@ function App() {
       <Route path="/compare" element={<Compare />} />
       <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+      <Route path="/admin/players" element={<AdminRoute><AdminPlayers /></AdminRoute>} />
+      <Route path="/admin/teams" element={<AdminRoute><AdminTeams /></AdminRoute>} />
+      <Route path="/admin/matches" element={<AdminRoute><AdminMatches /></AdminRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
     </Routes>

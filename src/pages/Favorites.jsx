@@ -339,27 +339,3 @@ function MatchFavoriteCard({ match, onUnfavorite }) {
 }
 
 export default Favorites;
-
-const statusBadge = {
-    live: "border-red-500/30 bg-red-500/10 text-red-300",
-    upcoming: "border-cyan-500/30 bg-cyan-500/10 text-cyan-300",
-    completed: "border-green-500/30 bg-green-500/10 text-green-300",
-};
-
-function toTitleCase(value = "") {
-    return (value || "")
-        .split(" ")
-        .filter(Boolean)
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(" ");
-}
-
-function getShortName(name = "") {
-    const teams = {
-        india: "IND", australia: "AUS", england: "ENG", pakistan: "PAK",
-        "new zealand": "NZ", "south africa": "SA", "sri lanka": "SL",
-        bangladesh: "BAN", afghanistan: "AFG", ireland: "IRE", "west indies": "WI",
-    };
-    if (!name) return "---";
-    return teams[name.toLowerCase()] || name.slice(0, 3).toUpperCase();
-}

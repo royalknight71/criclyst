@@ -125,3 +125,30 @@ export const getMatchById = async (id) => {
 
     return data.data;
 };
+
+/**
+ * Create a new match (admin only).
+ * Hits: POST /matches
+ */
+export const createMatch = async (matchData) => {
+    const { data } = await api.post("/matches", matchData);
+    return data.data;
+};
+
+/**
+ * Update an existing match by ID (admin only).
+ * Hits: PATCH /matches/:id
+ */
+export const updateMatch = async (id, matchData) => {
+    const { data } = await api.patch(`/matches/${id}`, matchData);
+    return data.data;
+};
+
+/**
+ * Delete a match by ID (admin only).
+ * Hits: DELETE /matches/:id
+ */
+export const deleteMatch = async (id) => {
+    const { data } = await api.delete(`/matches/${id}`);
+    return data;
+};

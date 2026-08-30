@@ -234,13 +234,15 @@ function MatchDetails() {
       value: formattedDate,
       icon: FaCalendarDays,
     },
-    {
-      label: "Toss",
-      value: `${toTitleCase(match.tossWinner?.name)} chose ${
-        match.tossDecision || "--"
-      }`,
-      icon: FaCoins,
-    },
+    ...(match.tossWinner
+      ? [
+          {
+            label: "Toss",
+            value: `${toTitleCase(match.tossWinner.name)} chose ${match.tossDecision}`,
+            icon: FaCoins,
+          },
+        ]
+      : []),
     {
       label: "Status",
       value: toTitleCase(match.status),

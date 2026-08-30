@@ -389,27 +389,29 @@ export const createMatch = async (req, res) => {
 
     const tossWinner = req.body.tossWinner;
 
-    if (!mongoose.Types.ObjectId.isValid(tossWinner)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Toss Winner Id",
-      });
-    }
-    const tossWinnerExists = await Team.findById(tossWinner);
-    if (!tossWinnerExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Toss Winner Does Not Exists",
-      });
-    }
-    if (
-      tossWinner.toString() !== teamA.toString() &&
-      tossWinner.toString() !== teamB.toString()
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Toss Winner should be Team A or Team B",
-      });
+    if (tossWinner) {
+      if (!mongoose.Types.ObjectId.isValid(tossWinner)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Toss Winner Id",
+        });
+      }
+      const tossWinnerExists = await Team.findById(tossWinner);
+      if (!tossWinnerExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Toss Winner Does Not Exists",
+        });
+      }
+      if (
+        tossWinner.toString() !== teamA.toString() &&
+        tossWinner.toString() !== teamB.toString()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Toss Winner should be Team A or Team B",
+        });
+      }
     }
   //  const winner = req.body.winner;
     if (winner) {
@@ -630,29 +632,31 @@ export const updateMatch = async (req, res) => {
     });
 }
 
-    const tossWinner = req.body.tossWinner || existingMatch.tossWinner;
+    const tossWinner = req.body.tossWinner !== undefined ? req.body.tossWinner : existingMatch.tossWinner;
 
-    if (!mongoose.Types.ObjectId.isValid(tossWinner)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid Toss Winner Id",
-      });
-    }
-    const tossWinnerExists = await Team.findById(tossWinner);
-    if (!tossWinnerExists) {
-      return res.status(400).json({
-        success: false,
-        message: "Toss Winner Does Not Exists",
-      });
-    }
-    if (
-      tossWinner.toString() !== teamA.toString() &&
-      tossWinner.toString() !== teamB.toString()
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Toss Winner should be Team A or Team B",
-      });
+    if (tossWinner) {
+      if (!mongoose.Types.ObjectId.isValid(tossWinner)) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid Toss Winner Id",
+        });
+      }
+      const tossWinnerExists = await Team.findById(tossWinner);
+      if (!tossWinnerExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Toss Winner Does Not Exists",
+        });
+      }
+      if (
+        tossWinner.toString() !== teamA.toString() &&
+        tossWinner.toString() !== teamB.toString()
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Toss Winner should be Team A or Team B",
+        });
+      }
     }
   //  const winner = req.body.winner;
     if (winner) {
