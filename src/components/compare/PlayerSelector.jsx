@@ -17,6 +17,7 @@ import {
   FaLocationDot,
   FaRotate,
 } from "react-icons/fa6";
+import CountryFlag from "../common/CountryFlag";
 
 /** Converts an API-stored lowercase string into Title Case. */
 const toTitleCase = (value) =>
@@ -147,6 +148,7 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
             </p>
             <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
               <FaLocationDot className="text-cyan-400" />
+              <CountryFlag country={selected.country} className="text-base" />
               {toTitleCase(selected.country)}
             </p>
           </div>
@@ -238,6 +240,7 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
                             {toTitleCase(player.name)}
                           </span>
                           <span className="mt-0.5 block truncate text-sm text-slate-400">
+                            <CountryFlag country={player.country} className="text-base mr-1" />
                             {toTitleCase(player.country)}
                           </span>
                         </span>

@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
 import { GiCricketBat } from "react-icons/gi";
 import { TbTargetArrow } from "react-icons/tb";
+import CountryFlag from "../common/CountryFlag";
 
 /** Converts an API-stored lowercase string into Title Case. */
 const toTitleCase = (value) =>
@@ -139,6 +140,7 @@ function PlayerHeader({ player }) {
 
       <p className="mt-2 flex items-center gap-1.5 text-slate-400">
         <FaLocationDot className="text-cyan-400" />
+        <CountryFlag country={player.country} className="text-base" />
         {toTitleCase(player.country)}
       </p>
 
@@ -229,8 +231,8 @@ function ComparisonCard({ player1, player2, onReset }) {
         <StatSection title="General Information" icon={FaLocationDot}>
           <StatRow
             label="Country"
-            value1={toTitleCase(player1.country)}
-            value2={toTitleCase(player2.country)}
+            value1={<><CountryFlag country={player1.country} className="text-base mr-1" />{toTitleCase(player1.country)}</>}
+            value2={<><CountryFlag country={player2.country} className="text-base mr-1" />{toTitleCase(player2.country)}</>}
             leader={null}
           />
           <StatRow

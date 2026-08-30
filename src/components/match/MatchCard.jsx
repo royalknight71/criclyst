@@ -3,8 +3,8 @@
  *
  * Clickable card for the Matches listing page. Displays any match
  * regardless of status: status badge, format badge, team A vs team B
- * short-name circles, venue and formatted date. Clicking the card
- * navigates to /matches/:id.
+ * rectangular flag emblems, venue and formatted date. Clicking the
+ * card navigates to /matches/:id.
  */
 
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import {
   FaCalendarDays,
   FaTrophy,
 } from "react-icons/fa6";
+import CountryFlag from "../common/CountryFlag";
 
 /** Converts a name to Title Case (e.g. "south africa" -> "South Africa"). */
 const formatName = (name = "") =>
@@ -21,31 +22,6 @@ const formatName = (name = "") =>
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-
-/**
- * Maps a team name to its cricket abbreviation (e.g. "India" -> "IND").
- * Falls back to the first three letters, uppercased; returns "---" when
- * the name is missing.
- */
-const getShortName = (name = "") => {
-  const teams = {
-    india: "IND",
-    australia: "AUS",
-    england: "ENG",
-    pakistan: "PAK",
-    "new zealand": "NZ",
-    "south africa": "SA",
-    "sri lanka": "SL",
-    bangladesh: "BAN",
-    afghanistan: "AFG",
-    ireland: "IRE",
-    "west indies": "WI",
-  };
-
-  if (!name) return "---";
-
-  return teams[name.toLowerCase()] || name.slice(0, 3).toUpperCase();
-};
 
 /** Badge styling per match status, consistent with dashboard widgets. */
 const statusBadge = {
@@ -112,10 +88,8 @@ function MatchCard({ match }) {
       {/* Teams */}
       <div className="grid grid-cols-[1fr_auto_1fr] items-center">
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
-            <span className="text-xl font-bold text-cyan-400">
-              {getShortName(match.teamA?.name)}
-            </span>
+          <div className="mx-auto mb-3 aspect-[3/2] w-13 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
+            <CountryFlag country={match.teamA?.country} className="team-flag-logo" />
           </div>
           <h3 className="truncate text-base font-bold capitalize text-white">
             {formatName(match.teamA?.name)}
@@ -125,10 +99,8 @@ function MatchCard({ match }) {
         <div className="px-4 text-2xl font-black text-slate-600">VS</div>
 
         <div className="text-center">
-          <div className="mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-full border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
-            <span className="text-xl font-bold text-cyan-400">
-              {getShortName(match.teamB?.name)}
-            </span>
+          <div className="mx-auto mb-3 aspect-[3/2] w-13 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
+            <CountryFlag country={match.teamB?.country} className="team-flag-logo" />
           </div>
           <h3 className="truncate text-base font-bold capitalize text-white">
             {formatName(match.teamB?.name)}

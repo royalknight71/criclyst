@@ -15,6 +15,7 @@ import {
   FaRankingStar,
 } from "react-icons/fa6";
 import { IoTrendingUp } from "react-icons/io5";
+import CountryFlag from "../../common/CountryFlag";
 
 /** Normalizes text casing to Title Case (e.g. "VIRAT" -> "Virat"). */
 const formatText = (text = "") =>
@@ -117,6 +118,7 @@ function TopPlayerCard({ player, index }) {
 
               <FaFlag className="text-cyan-400" />
 
+              <CountryFlag country={player.country} className="text-base" />
               <span>{formatText(player.country)}</span>
 
             </div>

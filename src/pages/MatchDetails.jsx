@@ -25,6 +25,7 @@ import {
   FaCoins,
   FaCircleInfo,
 } from "react-icons/fa6";
+import CountryFlag from "../components/common/CountryFlag";
 
 /** Converts a name to Title Case ("wankhede stadium" -> "Wankhede Stadium"). */
 const toTitleCase = (value = "") =>
@@ -33,31 +34,6 @@ const toTitleCase = (value = "") =>
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(" ");
-
-/**
- * Maps a team name to its cricket abbreviation (e.g. "India" -> "IND").
- * Falls back to the first three letters, uppercased; returns "---" when
- * the name is missing.
- */
-const getShortName = (name = "") => {
-  const teams = {
-    india: "IND",
-    australia: "AUS",
-    england: "ENG",
-    pakistan: "PAK",
-    "new zealand": "NZ",
-    "south africa": "SA",
-    "sri lanka": "SL",
-    bangladesh: "BAN",
-    afghanistan: "AFG",
-    ireland: "IRE",
-    "west indies": "WI",
-  };
-
-  if (!name) return "---";
-
-  return teams[name.toLowerCase()] || name.slice(0, 3).toUpperCase();
-};
 
 /** Badge styling per match status. */
 const statusBadge = {
@@ -352,17 +328,16 @@ function MatchDetails() {
               className="group mx-auto flex flex-col items-center text-center"
             >
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-xl" />
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-cyan-400 bg-[#0b1322] transition-transform duration-300 group-hover:scale-105">
-                  <span className="text-2xl font-black text-cyan-400">
-                    {getShortName(match.teamA?.name)}
-                  </span>
+                <div className="absolute inset-0 rounded-lg bg-cyan-400/20 blur-xl" />
+                <div className="relative aspect-[3/2] w-24 overflow-hidden rounded-lg border-2 border-cyan-400 bg-[#0b1322] transition-transform duration-300 group-hover:scale-105">
+                  <CountryFlag country={match.teamA?.country} className="team-flag-logo" />
                 </div>
               </div>
               <h2 className="mt-4 text-lg font-bold capitalize text-white transition-colors duration-300 group-hover:text-cyan-400 sm:text-xl">
                 {toTitleCase(match.teamA?.name)}
               </h2>
               <p className="mt-1 text-sm capitalize text-slate-400">
+                <CountryFlag country={match.teamA?.country} className="text-base mr-1" />
                 {toTitleCase(match.teamA?.country)}
               </p>
             </button>
@@ -377,17 +352,16 @@ function MatchDetails() {
               className="group mx-auto flex flex-col items-center text-center"
             >
               <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-purple-400/20 blur-xl" />
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-purple-400 bg-[#0b1322] transition-transform duration-300 group-hover:scale-105">
-                  <span className="text-2xl font-black text-purple-400">
-                    {getShortName(match.teamB?.name)}
-                  </span>
+                <div className="absolute inset-0 rounded-lg bg-purple-400/20 blur-xl" />
+                <div className="relative aspect-[3/2] w-24 overflow-hidden rounded-lg border-2 border-purple-400 bg-[#0b1322] transition-transform duration-300 group-hover:scale-105">
+                  <CountryFlag country={match.teamB?.country} className="team-flag-logo" />
                 </div>
               </div>
               <h2 className="mt-4 text-lg font-bold capitalize text-white transition-colors duration-300 group-hover:text-purple-400 sm:text-xl">
                 {toTitleCase(match.teamB?.name)}
               </h2>
               <p className="mt-1 text-sm capitalize text-slate-400">
+                <CountryFlag country={match.teamB?.country} className="text-base mr-1" />
                 {toTitleCase(match.teamB?.country)}
               </p>
             </button>

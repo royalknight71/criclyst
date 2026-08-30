@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+/**
+ * .team-flag-logo
+ * "Flag display" helper for CountryFlag (the flag-icons `.fi` span).
+ *
+ * flag-icons paints the flag as a `background-image` with
+ * `background-size: contain`, so forcing the span to fill its rectangular
+ * container lets each flag render in its natural aspect ratio, centered,
+ * undistorted and clipped only by the container's rounded corners.
+ *
+ * `!important` is required: flag-icons CSS is imported unlayered AFTER
+ * index.css in main.jsx, so plain utilities would lose the cascade.
+ */
+.team-flag-logo {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/**
+ * .fi-wi — custom West Indies cricket emblem.
+ * flag-icons has no West Indies flag (it is a multinational cricket team,
+ * not a country), so we render the maroon + gold Cricket West Indies
+ * identity via the project's own bundled asset instead of any individual
+ * Caribbean nation's flag.
+ */
+.fi-wi {
+  background-image: url("./assets/west-indies.svg");
+}

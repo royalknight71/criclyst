@@ -6,8 +6,8 @@
  * format badge, plus captain/coach details and a "View Team" button.
  */
 
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import CountryFlag from "../common/CountryFlag";
 
 /**
  * Renders an individual team card with logo, metadata and staff details.
@@ -22,7 +22,6 @@ import { useNavigate } from "react-router-dom";
  * @returns {JSX.Element} The team card element.
  */
 const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
-  const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
 
   return (
@@ -48,30 +47,19 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
         "
       />
 
-      {/* Logo */}
+      {/* Flag as rectangular team emblem */}
       <div
         className="
-          mx-auto mb-5
-          flex h-28 w-28
-          items-center justify-center
+          relative mx-auto mb-5
+          aspect-[3/2] w-20
           overflow-hidden
-          rounded-full
-          border border-slate-600
+          rounded-lg
+          border border-cyan-500/25
           bg-[#0b1322]
+          shadow-[0_0_24px_rgba(0,217,255,0.08)]
         "
       >
-        {!imageError && team.logo ? (
-          <img
-            src={team.logo}
-            alt={team.name}
-            className="h-20 w-20 object-contain"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <span className="text-4xl font-bold text-cyan-400">
-            {team.name?.charAt(0).toUpperCase()}
-          </span>
-        )}
+        <CountryFlag country={team.country} className="team-flag-logo" />
       </div>
 
       {/* Team Info */}
@@ -82,6 +70,7 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
         </h2>
 
         <p className="mt-1 text-sm capitalize text-slate-400">
+          <CountryFlag country={team.country} className="text-base mr-1" />
           {team.country}
         </p>
 

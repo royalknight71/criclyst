@@ -20,6 +20,7 @@ import { FaLocationDot } from "react-icons/fa6";
 import { GiCricketBat } from "react-icons/gi";
 import { PiCricketBold } from "react-icons/pi";
 import { TbTargetArrow } from "react-icons/tb";
+import CountryFlag from "../components/common/CountryFlag";
 import { FaShieldHalved, FaChartLine, FaArrowRight } from "react-icons/fa6";
 /**
  * Renders the player profile page.
@@ -313,6 +314,7 @@ return (
 
             <FaLocationDot className="text-cyan-400" />
 
+            <CountryFlag country={player.country} className="text-xl" />
             <span>{formattedCountryName}</span>
 
           </div>

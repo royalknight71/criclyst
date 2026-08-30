@@ -25,6 +25,7 @@ import {
   FaCalendarDays,
   FaHouse,
 } from "react-icons/fa6";
+import CountryFlag from "../components/common/CountryFlag";
 
 /**
  * Converts a free-form string into Title Case ("india" -> "India").
@@ -313,6 +314,7 @@ function TeamDetails() {
             {/* Country */}
             <div className="mt-4 flex items-center gap-2 text-lg capitalize text-slate-400">
               <FaLocationDot className="text-cyan-400" />
+              <CountryFlag country={team.country} className="text-xl" />
               <span>{toTitleCase(team.country)}</span>
             </div>
 
@@ -476,6 +478,7 @@ function TeamDetails() {
                   {/* Country */}
                   <div className="mt-2 flex items-center gap-2 text-sm capitalize text-slate-400">
                     <FaLocationDot className="text-cyan-400" />
+                    <CountryFlag country={player.country} className="text-base" />
                     <span>{toTitleCase(player.country)}</span>
                   </div>
                 </button>

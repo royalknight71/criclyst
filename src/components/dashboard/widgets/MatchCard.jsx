@@ -9,6 +9,7 @@
 import { FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import CountryFlag from "../../common/CountryFlag";
 
 /** Converts a name to Title Case (e.g. "new zealand" -> "New Zealand"). */
 const formatName = (name = "") =>
@@ -16,28 +17,6 @@ const formatName = (name = "") =>
     .split(" ")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
-
-/**
- * Maps a full country name to its cricket abbreviation (e.g. "India" -> "IND").
- * Falls back to the first three letters, uppercased, for unknown teams.
- */
-const getShortName = (name = "") => {
-  const teams = {
-    "india": "IND",
-    "new zealand": "NZ",
-    "australia": "AUS",
-    "england": "ENG",
-    "pakistan": "PAK",
-    "south africa": "SA",
-    "sri lanka": "SL",
-    "bangladesh": "BAN",
-    "afghanistan": "AFG",
-    "ireland": "IRE",
-    "west indies": "WI",
-  };
-
-  return teams[name.toLowerCase()] || name.substring(0, 3).toUpperCase();
-};
 
 /**
  * MatchCard component.
@@ -88,16 +67,13 @@ transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:sha
 
         <div className="text-center">
 
-          <div className="w-22
-h-22
-rounded-full
-border-2
+          <div className="aspect-[3/2] w-14
+rounded-md
+border
 border-cyan-500/40
-bg-slate-900 flex items-center justify-center mx-auto mb-3">
+bg-slate-900 mx-auto mb-3 overflow-hidden">
 
-            <span className="text-2xl font-bold text-cyan-400">
-              {getShortName(match.teamA?.name)}
-            </span>
+            <CountryFlag country={match.teamA?.country} className="team-flag-logo" />
 
           </div>
 
@@ -129,16 +105,13 @@ text-slate-600 ">
 
         <div className="text-center">
 
-          <div className="w-22
-h-22
-rounded-full
-border-2
+          <div className="aspect-[3/2] w-14
+rounded-md
+border
 border-cyan-500/40
-bg-slate-900  flex items-center justify-center mx-auto mb-3">
+bg-slate-900  mx-auto mb-3 overflow-hidden">
 
-            <span className="text-2xl font-bold text-cyan-400">
-              {getShortName(match.teamB?.name)}
-            </span>
+            <CountryFlag country={match.teamB?.country} className="team-flag-logo" />
 
           </div>
 

@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa6";
 import { GiCricketBat } from "react-icons/gi";
 import { TbTargetArrow } from "react-icons/tb";
+import CountryFlag from "../common/CountryFlag";
 
 /**
  * Renders an interactive player card that navigates to the player's profile on click.
@@ -165,6 +166,7 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
 
             <div className="mt-1 flex items-center gap-2 text-sm text-slate-400">
               <FaLocationDot className="text-cyan-400" />
+              <CountryFlag country={player.country} className="text-base" />
               {formatText(player.country)}
             </div>
 

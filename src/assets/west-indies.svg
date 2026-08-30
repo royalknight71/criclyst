@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" width="60" height="40" role="img" aria-label="West Indies Cricket">
+  <!-- Maroon field -->
+  <rect width="60" height="40" fill="#7A1C34"/>
+  <!-- Gold sunburst rays bleeding toward the corners -->
+  <g stroke="#EEAF2A" stroke-width="2" stroke-linecap="round">
+    <line transform="rotate(0 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(22.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(45 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(67.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(90 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(112.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(135 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(157.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(180 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(202.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(225 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(247.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(270 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(292.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+    <line transform="rotate(315 30 20)" x1="30" y1="13.5" x2="30" y2="19"/>
+    <line transform="rotate(337.5 30 20)" x1="30" y1="14" x2="30" y2="18"/>
+  </g>
+  <!-- Gold sun disc -->
+  <circle cx="30" cy="20" r="12.5" fill="#EEAF2A"/>
+  <!-- Bold WI monogram -->
+  <text x="30" y="23.2" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="12" font-weight="900" text-anchor="middle" fill="#7A1C34" letter-spacing="0.5">WI</text>
+</svg>

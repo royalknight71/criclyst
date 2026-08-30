@@ -8,6 +8,7 @@
 
 import { useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import CountryFlag from "../../common/CountryFlag";
 
 /**
  * PlayerSummaryCard component.
@@ -26,18 +27,6 @@ function PlayerSummaryCard({player}){
     const navigate = useNavigate();
     if(!player)
         return null;
-    const countryFlags = {
-    india: "🇮🇳",
-    england: "🇬🇧",
-    australia: "🇦🇺",
-    pakistan: "🇵🇰",
-    newzealand: "🇳🇿",
-    southafrica: "🇿🇦",
-    srilanka: "🇱🇰",
-    bangladesh: "🇧🇩",
-    afghanistan: "🇦🇫",
-    westindies: "🏝️",
-};
         const {
             name,
             country,
@@ -58,7 +47,6 @@ function PlayerSummaryCard({player}){
             .split(" ")
             .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
-        const flag = countryFlags[(country || "").toLowerCase()] || "🏏";
     return (
         <div
             onClick={() => navigate(`/players/${player._id}`)}
@@ -78,7 +66,8 @@ function PlayerSummaryCard({player}){
 </span>
 
                 <p className="mt-1 text-sm text-slate-400">
-                   {flag} {formattedCountry} • {role}
+                   <CountryFlag country={country} className="text-base mr-1" />
+                   {formattedCountry} • {role}
                 </p>
 
             </div>

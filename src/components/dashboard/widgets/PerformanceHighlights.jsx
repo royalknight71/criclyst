@@ -17,6 +17,7 @@ import {
 import { GiCricketBat } from "react-icons/gi";
 import { TbTargetArrow } from "react-icons/tb";
 import { PiCricketBold } from "react-icons/pi";
+import CountryFlag from "../../common/CountryFlag";
 
 /** Normalizes text to Title Case. */
 const formatText = (text = "") =>
@@ -131,6 +132,7 @@ function HighlightCard({
           </h3>
           <div className="mt-1 flex items-center gap-1 text-sm text-slate-400">
             <FaLocationDot className="text-cyan-400 flex-shrink-0" />
+            <CountryFlag country={player.country} className="text-base flex-shrink-0" />
             <span className="truncate">{formatText(player.country)}</span>
           </div>
           <span
