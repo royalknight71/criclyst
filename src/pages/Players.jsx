@@ -61,7 +61,7 @@ useEffect(() => {
       const response = await getPlayers(
   page,
   8,
-  searchTerm,
+  debouncedSearch,
   selectedRole
 );
 

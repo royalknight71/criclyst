@@ -60,37 +60,6 @@ export function isBatsman(player) {
 }
 
 /**
- * Format a number using locale-aware thousands separators
- * (e.g. 14085 becomes "14,085").
- *
- * @param {number} num - The number to format.
- * @returns {string} The locale-formatted number string.
- */
-export function formatNumber(num) {
-    return num.toLocaleString();
-}
-
-/**
- * Check whether a player's role is "Bowler".
- *
- * @param {Object} player - Player object with a `role` field.
- * @returns {boolean} True if the player is a bowler.
- */
-export function isBowler(player) {
-    return player.role === "Bowler";
-}
-
-/**
- * Check whether a player's role is "Batsman".
- *
- * @param {Object} player - Player object with a `role` field.
- * @returns {boolean} True if the player is a batsman.
- */
-export function isBatsman(player) {
-    return player.role === "Batsman";
-}
-
-/**
  * Map a playing role to a display color used for badges and charts.
  *
  * @param {string} role - Player role ("Batsman", "Bowler", "All-Rounder", "Wicket Keeper").

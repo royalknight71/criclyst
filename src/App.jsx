@@ -42,6 +42,15 @@ function App() {
       <Route path="/admin/matches" element={<AdminRoute><AdminMatches /></AdminRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="*" element={
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+          <h1 className="text-6xl font-black text-white mb-4">404</h1>
+          <p className="text-xl text-slate-400 mb-8">Page not found</p>
+          <a href="/" className="rounded-xl bg-cyan-500 px-6 py-3 font-semibold text-white transition hover:bg-cyan-400">
+            Go Home
+          </a>
+        </div>
+      } />
     </Routes>
     <Footer />
     </AuthProvider>

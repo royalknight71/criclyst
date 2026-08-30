@@ -8,6 +8,7 @@ import mongoose from "mongoose";
 import Match from "../models/match.model.js";
 import Team from "../models/team.model.js";
 import Player from "../models/player.model.js";
+import User from "../models/user.model.js";
 
 /**
  * Population configuration shared by list and detail endpoints.
@@ -500,6 +501,9 @@ export const deleteMatch = async (req, res) => {
         message: "Match Not Found",
       });
     }
+    // Clean up favorites references
+    await User.updateMany({ "favorites.matches": id }, { $pull: { "favorites.matches": id } });
+
     return res.status(200).json({
         success: true,
         message: "Match deleted successfully",
@@ -536,14 +540,14 @@ export const updateMatch = async (req, res) => {
         message: "Match Not Found",
       });
     }
-    const teamA = req.body.teamA|| existingMatch.teamA;
-    const teamB = req.body.teamB|| existingMatch.teamB;
+    const teamA = req.body.teamA ?? existingMatch.teamA;
+    const teamB = req.body.teamB ?? existingMatch.teamB;
    // const { status, winner, result, manOfTheMatch } = req.body;
-   const status=req.body.status|| existingMatch.status;
-   const winner=req.body.winner|| existingMatch.winner;
+   const status=req.body.status?? existingMatch.status;
+   const winner=req.body.winner?? existingMatch.winner;
    const result=req.body.result ?? existingMatch.result;
-   const manOfTheMatch=req.body.manOfTheMatch|| existingMatch.manOfTheMatch;
-   const date=req.body.matchDate||existingMatch.matchDate
+   const manOfTheMatch=req.body.manOfTheMatch?? existingMatch.manOfTheMatch;
+   const date=req.body.matchDate??existingMatch.matchDate
     if(status==="upcoming")
     {
       if(winner||manOfTheMatch||result)
@@ -603,7 +607,7 @@ export const updateMatch = async (req, res) => {
         message: "Invalid Team ID",
       });
     }
-    if (teamA.toString === teamB.toString())
+    if (teamA.toString() === teamB.toString())
       return res.status(400).json({
         success: false,
         message: "Both Teams need to be different",
@@ -713,7 +717,7 @@ export const updateMatch = async (req, res) => {
     }
     const match=await Match.findByIdAndUpdate(id,req.body,{
       new:true,
-      runValidations:true
+      runValidators:true
     })
     return res.status(200).json({
       success:true,

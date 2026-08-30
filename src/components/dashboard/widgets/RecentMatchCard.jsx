@@ -107,7 +107,7 @@ function RecentMatchCard({ match }) {
           </h3>
 
           <p className="mt-2 text-3xl font-extrabold text-cyan-400">
-            {match.scorecard.teamAScore}
+            {match.scorecard?.teamAScore}
           </p>
 
         </div>
@@ -131,7 +131,7 @@ function RecentMatchCard({ match }) {
           </h3>
 
           <p className="mt-2 text-3xl font-extrabold text-cyan-400">
-            {match.scorecard.teamBScore}
+            {match.scorecard?.teamBScore}
           </p>
 
         </div>

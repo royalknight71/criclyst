@@ -6,8 +6,6 @@
  * satellite-dish icon, explanatory text, and a pulsing monitoring badge.
  */
 
-import { MdSportsCricket } from "react-icons/md";
-import { FiRefreshCw } from "react-icons/fi";
 import { FaSatelliteDish } from "react-icons/fa";
 
 /**

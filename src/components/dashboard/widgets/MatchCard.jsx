@@ -6,7 +6,7 @@
  * rate, match result, and a call-to-action to open the match center.
  */
 
-import { FaCircle, FaLocationDot, FaArrowRight } from "react-icons/fa6";
+import { FaLocationDot, FaArrowRight } from "react-icons/fa6";
 import { MdSportsCricket } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
@@ -72,7 +72,7 @@ transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:sha
 
         <div className="text-slate-400 font-medium">
 
-          {match.format.toUpperCase()} • {match.scorecard.overs} Overs
+          {match.format?.toUpperCase()} • {match.scorecard?.overs} Overs
 
         </div>
 
@@ -102,13 +102,13 @@ bg-slate-900 flex items-center justify-center mx-auto mb-3">
           </div>
 
           <h2 className="text-xl font-bold text-white">
-            {formatName(match.teamA.name)}
+            {formatName(match.teamA?.name)}
           </h2>
 
           <p className="mt-2 text-5xl
 font-black
 tracking-tight text-cyan-400">
-            {match.scorecard.teamAScore}
+            {match.scorecard?.teamAScore}
           </p>
 
         </div>
@@ -143,13 +143,13 @@ bg-slate-900  flex items-center justify-center mx-auto mb-3">
           </div>
 
           <h2 className="text-xl font-bold text-white">
-            {formatName(match.teamB.name)}
+            {formatName(match.teamB?.name)}
           </h2>
 
           <p className="mt-2 text-5xl
 font-black
 tracking-tight text-cyan-400">
-            {match.scorecard.teamBScore}
+            {match.scorecard?.teamBScore}
           </p>
 
         </div>
@@ -230,7 +230,7 @@ tracking-tight text-cyan-400">
 
           <h3 className="text-3xl font-bold text-white mt-2">
 
-            {match.scorecard.currentRunRate}
+            {match.scorecard?.currentRunRate}
 
           </h3>
 

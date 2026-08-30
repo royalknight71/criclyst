@@ -31,7 +31,6 @@ function TopPlayers() {
     {
       try{
         const response=await getTopPlayers()
-        console.log(response)
         setPlayers(response)
       }
       catch(error)
