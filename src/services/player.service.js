@@ -108,3 +108,30 @@ export const getHomeHighlights = async () => {
   const { data } = await api.get("/players/highlights");
   return data.data;
 };
+
+/**
+ * Create a new player (admin only).
+ * Hits: POST /players
+ */
+export const createPlayer = async (playerData) => {
+  const { data } = await api.post("/players", playerData);
+  return data.data;
+};
+
+/**
+ * Update an existing player by ID (admin only).
+ * Hits: PATCH /players/:id
+ */
+export const updatePlayer = async (id, playerData) => {
+  const { data } = await api.patch(`/players/${id}`, playerData);
+  return data.data;
+};
+
+/**
+ * Delete a player by ID (admin only).
+ * Hits: DELETE /players/:id
+ */
+export const deletePlayer = async (id) => {
+  const { data } = await api.delete(`/players/${id}`);
+  return data;
+};

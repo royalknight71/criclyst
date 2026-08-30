@@ -79,11 +79,28 @@ async function addFavoriteHandler(req, res, entityType) {
             });
         }
 
+        let updateQuery = { $addToSet: { [`favorites.${entityType}`]: id } };
+        let populateConfig;
+        if (entityType === "matches") {
+            populateConfig = {
+                path: `favorites.${entityType}`,
+                populate: [
+                    { path: "teamA", select: "name country logo" },
+                    { path: "teamB", select: "name country logo" },
+                    { path: "winner", select: "name country logo" },
+                    { path: "tossWinner", select: "name country logo" },
+                    { path: "manOfTheMatch", select: "name role" }
+                ]
+            };
+        } else {
+            populateConfig = `favorites.${entityType}`;
+        }
+
         const updatedUser = await User.findByIdAndUpdate(
             req.user._id,
-            { $addToSet: { [`favorites.${entityType}`]: id } },
+            updateQuery,
             { new: true }
-        ).populate(`favorites.${entityType}`);
+        ).populate(populateConfig);
 
         return res.status(200).json({
             success: true,
@@ -130,7 +147,16 @@ async function removeFavoriteHandler(req, res, entityType) {
             req.user._id,
             { $pull: { [`favorites.${entityType}`]: id } },
             { new: true }
-        ).populate(`favorites.${entityType}`);
+        ).populate(entityType === "matches" ? {
+            path: `favorites.${entityType}`,
+            populate: [
+                { path: "teamA", select: "name country logo" },
+                { path: "teamB", select: "name country logo" },
+                { path: "winner", select: "name country logo" },
+                { path: "tossWinner", select: "name country logo" },
+                { path: "manOfTheMatch", select: "name role" }
+            ]
+        } : `favorites.${entityType}`);
 
         return res.status(200).json({
             success: true,
@@ -145,10 +171,27 @@ async function removeFavoriteHandler(req, res, entityType) {
 
 /**
  * Generic get favorites handler.
+ * For matches, also populates nested teamA, teamB, winner, tossWinner, manOfTheMatch.
  */
 async function getFavoritesHandler(req, res, entityType) {
     try {
-        const user = await User.findById(req.user._id).populate(`favorites.${entityType}`);
+        let populateConfig;
+        if (entityType === "matches") {
+            populateConfig = {
+                path: `favorites.${entityType}`,
+                populate: [
+                    { path: "teamA", select: "name country logo" },
+                    { path: "teamB", select: "name country logo" },
+                    { path: "winner", select: "name country logo" },
+                    { path: "tossWinner", select: "name country logo" },
+                    { path: "manOfTheMatch", select: "name role" }
+                ]
+            };
+        } else {
+            populateConfig = `favorites.${entityType}`;
+        }
+
+        const user = await User.findById(req.user._id).populate(populateConfig);
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
@@ -219,7 +262,16 @@ export const getAllFavorites = async (req, res) => {
         const user = await User.findById(req.user._id)
             .populate("favorites.players")
             .populate("favorites.teams")
-            .populate("favorites.matches");
+            .populate({
+                path: "favorites.matches",
+                populate: [
+                    { path: "teamA", select: "name country logo" },
+                    { path: "teamB", select: "name country logo" },
+                    { path: "winner", select: "name country logo" },
+                    { path: "tossWinner", select: "name country logo" },
+                    { path: "manOfTheMatch", select: "name role" }
+                ]
+            });
         if (!user) {
             return res.status(404).json({ success: false, message: "User not found" });
         }
