@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
  * @param {string} [props.team.coach] - Coach name.
  * @returns {JSX.Element} The team card element.
  */
-const TeamCard = ({ team }) => {
+const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
   const [imageError, setImageError] = useState(false);
   const navigate = useNavigate();
 
@@ -127,27 +127,42 @@ const TeamCard = ({ team }) => {
 
       </div>
 
-      {/* View Team */}
-      <button
-        onClick={() => navigate(`/teams/${team._id}`)}
-        className="
-          mt-6 w-full
-          rounded-lg
-          border border-cyan-400
-          bg-transparent
-          py-2.5
-          text-sm font-semibold
-          text-cyan-400
-          transition-all duration-300
-          hover:bg-cyan-400
-          hover:text-slate-950
-        "
-      >
-        View Team
-        <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
-          →
-        </span>
-      </button>
+      {/* View Team & Favorite Action */}
+      <div className="mt-6 flex items-center justify-between gap-2">
+        {showFavoriteAction && onUnfavorite ? (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onUnfavorite(team._id);
+            }}
+            className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-semibold text-red-300 transition hover:bg-red-500 hover:text-white"
+          >
+            Remove
+          </button>
+        ) : (
+          <span />
+        )}
+        <button
+          onClick={() => navigate(`/teams/${team._id}`)}
+          className="
+            flex-1
+            rounded-lg
+            border border-cyan-400
+            bg-transparent
+            py-2.5
+            text-sm font-semibold
+            text-cyan-400
+            transition-all duration-300
+            hover:bg-cyan-400
+            hover:text-slate-950
+          "
+        >
+          View Team
+          <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
+            →
+          </span>
+        </button>
+      </div>
 
     </div>
   );

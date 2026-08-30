@@ -14,6 +14,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getMatchById } from "../services/match.service";
+import { checkMatchFavorite, addMatchFavorite, removeMatchFavorite } from "../services/favorite.service";
+import { useAuth } from "../context/AuthContext";
+import FavoriteButton from "../components/player/FavoriteButton";
 import {
   FaLocationDot,
   FaCalendarDays,
@@ -74,10 +77,15 @@ const statusBadge = {
 function MatchDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [match, setMatch] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [favError, setFavError] = useState(null);
+  const [favChecking, setFavChecking] = useState(false);
 
   useEffect(() => {
     const fetchMatch = async () => {
@@ -102,6 +110,61 @@ function MatchDetails() {
 
     fetchMatch();
   }, [id]);
+
+  useEffect(() => {
+    if (!user || !id) {
+        setIsFavorited(false);
+        return;
+    }
+    let cancelled = false;
+    const checkFav = async () => {
+        setFavChecking(true);
+        setFavError(null);
+        try {
+            const fav = await checkMatchFavorite(id);
+            if (!cancelled) setIsFavorited(fav);
+        } catch {
+            if (!cancelled) setIsFavorited(false);
+        } finally {
+            if (!cancelled) setFavChecking(false);
+        }
+    };
+    checkFav();
+    return () => { cancelled = true; };
+  }, [id, user]);
+
+  const handleToggleFavorite = async () => {
+    if (!user) {
+        navigate("/login");
+        return;
+    }
+    if (favLoading) return;
+    setFavLoading(true);
+    setFavError(null);
+    try {
+        if (isFavorited) {
+            await removeMatchFavorite(id);
+            setIsFavorited(false);
+        } else {
+            await addMatchFavorite(id);
+            setIsFavorited(true);
+        }
+    } catch (err) {
+        const status = err.response?.status;
+        const msg = err.response?.data?.message || "Failed to update favorites";
+        if (status === 401) {
+            navigate("/login");
+            return;
+        }
+        if (status === 409 && !isFavorited) {
+            setIsFavorited(true);
+            return;
+        }
+        setFavError(msg);
+    } finally {
+        setFavLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -256,6 +319,27 @@ function MatchDetails() {
             <span className="rounded-full bg-slate-700 px-4 py-1.5 text-xs font-semibold uppercase text-slate-300">
               {match.format}
             </span>
+          </div>
+
+          {/* Favorite Button */}
+          <div className="mt-8 flex flex-col items-center">
+            {!user ? (
+                <button
+                    onClick={() => navigate("/login")}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3 font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400"
+                >
+                    Login to add to Favorites
+                </button>
+            ) : (
+                <FavoriteButton
+                    isFavorited={isFavorited}
+                    loading={favLoading || favChecking}
+                    onToggle={handleToggleFavorite}
+                />
+            )}
+            {favError && (
+                <p className="mt-3 text-sm text-red-400">{favError}</p>
+            )}
           </div>
 
           {/* Teams */}

@@ -112,7 +112,8 @@ export const loginUser=async (req,res)=>{
         //jwt token generation
         const token = jwt.sign({
                                 id: existingUser._id,
-                                email: existingUser.email
+                                email: existingUser.email,
+                                role: existingUser.role
                                 },
                                 process.env.JWT_SECRET,
                                 {
@@ -130,7 +131,8 @@ export const loginUser=async (req,res)=>{
                 user: {
                     _id: existingUser._id,
                     name: existingUser.name,
-                    email: existingUser.email
+                    email: existingUser.email,
+                    role: existingUser.role
                 }
         })
     }
@@ -179,7 +181,7 @@ export const logoutUser=async (req,res)=>{
 }
 
 /**
- * Returns the authenticated user's profile (ID, name, email).
+ * Returns the authenticated user's profile (ID, name, email, role).
  * Relies on req.user being set by the auth middleware.
  */
 export const getProfile=async (req,res)=>{
@@ -190,7 +192,8 @@ export const getProfile=async (req,res)=>{
             data:{
                 _id: data._id,
                 name: data.name,
-                email: data.email
+                email: data.email,
+                role: data.role
             }
         });
     }
@@ -249,7 +252,8 @@ export const updateProfile=async (req,res)=>{
             user: {
                     _id: user._id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    role: user.role
                 }
         })
     }
