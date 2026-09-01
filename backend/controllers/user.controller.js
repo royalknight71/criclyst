@@ -11,6 +11,25 @@ import jwt from 'jsonwebtoken';
 import redisClient from '../config/redis.js';
 
 /**
+ * Builds the "token" auth cookie options.
+ * - Production: SameSite=None + Secure so the httpOnly JWT cookie round-trips
+ *   on cross-site XHR/fetch (frontend on criclyst.vercel.app -> backend on a
+ *   different origin). SameSite=Lax would be silently dropped by browsers on
+ *   cross-site API calls, causing 401 on every authenticated request.
+ * - Development: frontend and API are same-site (localhost) and non-HTTPS, so
+ *   keep SameSite=Lax and Secure off.
+ */
+function cookieOptions() {
+    const isProduction = process.env.NODE_ENV === "production";
+    return {
+        httpOnly: true,
+        secure: isProduction,
+        sameSite: isProduction ? "none" : "lax",
+        path: "/"
+    };
+}
+
+/**
  * Registers a new user.
  * Validates required fields, email format, and password strength; rejects
  * duplicate emails; stores the password as a bcrypt hash. Returns the
@@ -120,9 +139,7 @@ export const loginUser=async (req,res)=>{
                                 expiresIn: 15*60
                             });
         res.cookie("token",token,{
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
+            ...cookieOptions(),
             maxAge: 15 * 60 * 1000
         })
         res.status(200).json({
@@ -164,12 +181,7 @@ export const logoutUser=async (req,res)=>{
             // Redis unavailable — still allow logout to succeed
         }
 
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/"
-        });
+        res.clearCookie("token", cookieOptions());
         return res.status(200).json({
             success: true,
             message: "Logout Successfully"
@@ -177,12 +189,7 @@ export const logoutUser=async (req,res)=>{
     }
     catch(error){
         // Ensure cookie is cleared even on error
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-            path: "/"
-        });
+        res.clearCookie("token", cookieOptions());
         return res.status(500).json({
             success: false,
             message: error.message
