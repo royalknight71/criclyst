@@ -10,6 +10,7 @@ import app from "./app.js";
 import connectDB from "./config/db.js";
 import redisClient from "./config/redis.js";
 import * as cricketPolling from "./services/cricketPolling.service.js";
+import { initSocket } from "./config/socket.js";
 
 const initializeConnection = async () => {
     try {
@@ -33,10 +34,11 @@ const initializeConnection = async () => {
 
         const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    cricketPolling.start();
-});
+        const httpServer = app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+            initSocket(httpServer);
+            cricketPolling.start();
+        });
 
 process.on("SIGINT", () => {
     cricketPolling.stop();

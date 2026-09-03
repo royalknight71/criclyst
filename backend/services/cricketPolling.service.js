@@ -1,3 +1,4 @@
+import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
 
 const DEFAULT_POLL_INTERVAL_MS = 1800000; // 30 minutes
@@ -6,6 +7,9 @@ let latestData = null;
 let timerId = null;
 let isRunning = false;
 let pollCount = 0;
+
+const pollingEmitter = new EventEmitter();
+pollingEmitter.setMaxListeners(20);
 
 function getInterval() {
   const raw = process.env.CRICKET_API_POLL_INTERVAL_MS;
@@ -58,6 +62,10 @@ async function pollOnce() {
       `[cricketPolling] Poll #${pollCount} succeeded — ${matchCount} matches — ${changed ? "changed" : "unchanged"}`
     );
 
+    if (changed) {
+      pollingEmitter.emit("live:update", relevantNow);
+    }
+
     return { success: true, matchCount, changed, data };
   } catch (error) {
     console.error(`[cricketPolling] Poll #${pollCount} failed:`, error.message);
@@ -99,4 +107,4 @@ function getLatest() {
   return latestData;
 }
 
-export { start, stop, pollOnce, getLatest };
+export { start, stop, pollOnce, getLatest, pollingEmitter };
