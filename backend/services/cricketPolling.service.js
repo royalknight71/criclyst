@@ -22,10 +22,16 @@ function extractRelevantMatches(data) {
   if (!data || !Array.isArray(data.data)) return [];
   return data.data.map((m) => ({
     id: m.id,
+    name: m.name,
     status: m.status,
     matchType: m.matchType,
     score: m.score,
     teams: m.teams,
+    teamInfo: m.teamInfo,
+    venue: m.venue,
+    date: m.date,
+    matchStarted: m.matchStarted,
+    matchEnded: m.matchEnded,
   }));
 }
 
