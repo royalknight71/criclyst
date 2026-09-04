@@ -54,9 +54,11 @@ function initSocket(httpServer) {
 
     // --- Initial data sync (no API call, uses in-memory latest) ---
     const latest = getLatest();
-    if (latest && latest.relevant) {
-      socket.emit("live:matches", latest.relevant);
-    }
+    const hasData = latest && Array.isArray(latest.relevant) && latest.relevant.length > 0;
+    socket.emit("live:matches", {
+      matches: hasData ? latest.relevant : [],
+      available: latest !== null,
+    });
 
     // --- Join a match room ---
     socket.on("join:match", (payload) => {

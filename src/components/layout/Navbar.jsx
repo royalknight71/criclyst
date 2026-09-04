@@ -64,6 +64,13 @@ function Navbar() {
         </NavLink>
 
          <NavLink
+          to="/live-scores"
+         className={navLinkClass}
+        >
+          Live
+        </NavLink>
+
+         <NavLink
           to="/compare"
          className={navLinkClass}
         >

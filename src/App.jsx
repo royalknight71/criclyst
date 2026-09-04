@@ -18,6 +18,8 @@ import AdminDashboard from "./pages/AdminDashboard"
 import AdminPlayers from "./pages/AdminPlayers"
 import AdminTeams from "./pages/AdminTeams"
 import AdminMatches from "./pages/AdminMatches"
+import LiveScores from "./pages/LiveScores"
+import LiveMatchDetails from "./pages/LiveMatchDetails"
 import ProtectedRoute from "./components/common/ProtectedRoute"
 import AdminRoute from "./components/common/AdminRoute"
 
@@ -34,6 +36,8 @@ function App() {
       <Route path="/teams/:id" element={<TeamDetails />} />
       <Route path="/matches" element={<Matches />} />
       <Route path="/matches/:id" element={<MatchDetails />} />
+      <Route path="/live-scores" element={<LiveScores />} />
+      <Route path="/live/:matchId" element={<LiveMatchDetails />} />
       <Route path="/compare" element={<Compare />} />
       <Route path="/favorites" element={<ProtectedRoute><Favorites /></ProtectedRoute>} />
       <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

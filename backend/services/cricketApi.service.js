@@ -26,7 +26,39 @@ export async function fetchCurrentMatches() {
     const data = await response.json();
 
     if (data.status !== "success") {
-      const msg = data.message || "Unknown error from CricAPI";
+      const msg = data.reason || data.message || "Unknown error from CricAPI";
+      throw new Error(`CricAPI error: ${msg}`);
+    }
+
+    return data;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      throw new Error("CricAPI request timed out", { cause: error });
+    }
+    throw new Error(error.message, { cause: error });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function fetchMatchScorecard(matchId) {
+  const apiKey = getApiKey();
+  const url = `${CRICAPI_BASE_URL}/match_scorecard?apikey=${encodeURIComponent(apiKey)}&id=${encodeURIComponent(matchId)}`;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+
+    if (!response.ok) {
+      throw new Error(`CricAPI responded with status ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.status !== "success") {
+      const msg = data.reason || data.message || "Unknown error from CricAPI";
       throw new Error(`CricAPI error: ${msg}`);
     }
 
