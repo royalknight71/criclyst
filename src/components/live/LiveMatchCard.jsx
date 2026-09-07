@@ -23,6 +23,16 @@ const formatDate = (dateStr) => {
   }
 };
 
+function getMatchDisplayState(match) {
+  if (match.matchStarted === true && match.matchEnded !== true) return "live";
+  if (match.matchEnded === true) return "completed";
+  if (match.matchStarted === false) return "upcoming";
+  const s = (match.status || "").toLowerCase();
+  if (s.includes("live") || s.includes("in progress") || s.includes("innings break")) return "live";
+  if (s.includes("complete") || s.includes("result") || s.includes("won") || s.includes("tied") || s.includes("draw")) return "completed";
+  return "upcoming";
+}
+
 function LiveMatchCard({ match }) {
   const navigate = useNavigate();
   const teams = match.teams || [];
@@ -35,6 +45,8 @@ function LiveMatchCard({ match }) {
   const teamAScore = score.find((s) => s.inning?.startsWith(teams[0]));
   const teamBScore = score.find((s) => s.inning?.startsWith(teams[1]));
 
+  const displayState = getMatchDisplayState(match);
+
   return (
     <button
       type="button"
@@ -44,10 +56,22 @@ function LiveMatchCard({ match }) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
-          <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
-            Live
-          </span>
+          {displayState === "live" ? (
+            <>
+              <span className="h-2.5 w-2.5 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-red-400">
+                Live
+              </span>
+            </>
+          ) : displayState === "completed" ? (
+            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+              Completed
+            </span>
+          ) : (
+            <span className="text-xs font-semibold uppercase tracking-widest text-cyan-400">
+              Upcoming
+            </span>
+          )}
         </div>
         <span className="rounded-full bg-slate-700/60 px-3 py-1 text-xs font-semibold uppercase text-slate-300">
           {match.matchType || "--"}

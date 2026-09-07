@@ -1,7 +1,8 @@
 /**
  * Socket.IO setup module.
  * Attaches Socket.IO to the existing HTTP server, handles client connections,
- * match-room join/leave, and broadcasts polling updates to connected clients.
+ * match-room join/leave, and broadcasts live-score updates received from
+ * the Redis Pub/Sub layer.
  *
  * Event names:
  *   Server → Client:
@@ -13,7 +14,8 @@
  */
 
 import { Server } from "socket.io";
-import { getLatest, pollingEmitter } from "../services/cricketPolling.service.js";
+import { getLatest, getLastError } from "../services/cricketPolling.service.js";
+import { subscribeToLiveUpdates, isRedisAvailable } from "../services/redisPubSub.service.js";
 
 const CORS_ORIGINS = [
   "http://localhost:5173",
@@ -32,11 +34,11 @@ function isValidMatchId(id) {
 }
 
 /**
- * Find a single match from the latest relevant data by its id.
+ * Find a single match from the latest live matches data by its id.
  */
-function findMatchById(matchId, relevant) {
-  if (!Array.isArray(relevant)) return null;
-  return relevant.find((m) => m.id === matchId) || null;
+function findMatchById(matchId, matches) {
+  if (!Array.isArray(matches)) return null;
+  return matches.find((m) => m.id === matchId) || null;
 }
 
 function initSocket(httpServer) {
@@ -54,10 +56,17 @@ function initSocket(httpServer) {
 
     // --- Initial data sync (no API call, uses in-memory latest) ---
     const latest = getLatest();
-    const hasData = latest && Array.isArray(latest.relevant) && latest.relevant.length > 0;
+    const lastErr = getLastError();
+    const hasData = latest !== null;
+    const liveMatches = hasData && Array.isArray(latest.liveMatches) ? latest.liveMatches : [];
+
     socket.emit("live:matches", {
-      matches: hasData ? latest.relevant : [],
-      available: latest !== null,
+      matches: liveMatches,
+      available: hasData,
+      liveCount: liveMatches.length,
+      totalFetched: hasData && Array.isArray(latest.relevant) ? latest.relevant.length : 0,
+      lastError: lastErr,
+      fetchedAt: latest?.fetchedAt || null,
     });
 
     // --- Join a match room ---
@@ -73,8 +82,8 @@ function initSocket(httpServer) {
       console.log(`[socket] ${socket.id} joined ${room}`);
 
       // Send current data for this match if available
-      if (latest && latest.relevant) {
-        const match = findMatchById(matchId, latest.relevant);
+      if (latest && latest.liveMatches) {
+        const match = findMatchById(matchId, latest.liveMatches);
         if (match) {
           socket.emit("live:update", [match]);
         }
@@ -97,16 +106,16 @@ function initSocket(httpServer) {
     });
   });
 
-  // --- Polling update listener ---
-  pollingEmitter.on("live:update", (relevantMatches) => {
+  // --- Live update listener (via Redis Pub/Sub or in-process fallback) ---
+  subscribeToLiveUpdates((liveMatches) => {
     if (!io) return;
 
-    // Global broadcast
-    io.emit("live:update", relevantMatches);
+    // Global broadcast — only genuinely live matches
+    io.emit("live:update", liveMatches);
 
     // Per-match room broadcast (only send the relevant match to each room)
-    if (Array.isArray(relevantMatches)) {
-      for (const match of relevantMatches) {
+    if (Array.isArray(liveMatches)) {
+      for (const match of liveMatches) {
         if (match && match.id) {
           const room = matchRoom(match.id);
           io.to(room).emit("live:update", [match]);
