@@ -1,7 +1,9 @@
 /**
  * Application entry point.
- * Loads environment variables, connects to MongoDB (and optionally Redis),
- * and starts the Express server on the configured PORT.
+ * Loads environment variables, connects to MongoDB, optionally initializes
+ * Redis (for token blacklisting) and Redis Pub/Sub (for live-score event
+ * distribution), then starts the Express server with Socket.IO and cricket
+ * polling.
  */
 
 import "dotenv/config";
@@ -11,12 +13,14 @@ import connectDB from "./config/db.js";
 import redisClient from "./config/redis.js";
 import * as cricketPolling from "./services/cricketPolling.service.js";
 import { initSocket } from "./config/socket.js";
+import { initPubSub, shutdownPubSub } from "./services/redisPubSub.service.js";
 
 const initializeConnection = async () => {
     try {
         await connectDB();
         console.log("Connected to DB");
 
+        // --- Redis (legacy: token blacklisting, rate limiting) ---
         if (process.env.REDIS_ENABLED === "true") {
             try {
                 await redisClient.connect();
@@ -32,6 +36,14 @@ const initializeConnection = async () => {
             console.log("Redis disabled in development");
         }
 
+        // --- Redis Pub/Sub (live-score event distribution) ---
+        const pubSubStatus = await initPubSub();
+        if (pubSubStatus.publisher && pubSubStatus.subscriber) {
+            console.log("Redis Pub/Sub layer active");
+        } else {
+            console.warn("Redis Pub/Sub unavailable — using in-process EventEmitter fallback");
+        }
+
         const PORT = process.env.PORT || 3000;
 
         const httpServer = app.listen(PORT, () => {
@@ -40,13 +52,15 @@ const initializeConnection = async () => {
             cricketPolling.start();
         });
 
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
     cricketPolling.stop();
+    await shutdownPubSub();
     process.exit(0);
 });
 
-process.on("SIGTERM", () => {
+process.on("SIGTERM", async () => {
     cricketPolling.stop();
+    await shutdownPubSub();
     process.exit(0);
 });
     }

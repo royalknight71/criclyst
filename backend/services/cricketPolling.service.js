@@ -1,5 +1,6 @@
 import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
+import { publishLiveUpdates } from "./redisPubSub.service.js";
 
 const DEFAULT_POLL_INTERVAL_MS = 1800000; // 30 minutes
 
@@ -7,9 +8,51 @@ let latestData = null;
 let timerId = null;
 let isRunning = false;
 let pollCount = 0;
+let lastError = null;
 
+// Kept for backward compatibility / in-process fallback
 const pollingEmitter = new EventEmitter();
 pollingEmitter.setMaxListeners(20);
+
+/**
+ * Determine match state from CricAPI fields.
+ *
+ * Uses matchStarted / matchEnded booleans first, then falls back
+ * to the status string for edge-cases where the booleans are missing.
+ *
+ * @param {Object} match – raw match object from CricAPI
+ * @returns {"live"|"completed"|"upcoming"}
+ */
+export function getMatchState(match) {
+  if (!match) return "unknown";
+
+  // Explicit booleans are the most reliable signal
+  if (match.matchStarted === true && match.matchEnded !== true) {
+    return "live";
+  }
+  if (match.matchEnded === true) {
+    return "completed";
+  }
+  if (match.matchStarted === false) {
+    return "upcoming";
+  }
+
+  // Fallback: parse the status string
+  const s = (match.status || "").toLowerCase();
+  if (s.includes("live") || s.includes("in progress") || s.includes("innings break")) {
+    return "live";
+  }
+  if (s.includes("complete") || s.includes("result") || s.includes("won") || s.includes("tied") || s.includes("draw") || s.includes("abandon")) {
+    return "completed";
+  }
+
+  // If started flag is missing but score exists, treat as live
+  if (match.matchStarted === undefined && Array.isArray(match.score) && match.score.length > 0) {
+    return "live";
+  }
+
+  return "upcoming";
+}
 
 function getInterval() {
   const raw = process.env.CRICKET_API_POLL_INTERVAL_MS;
@@ -32,6 +75,7 @@ function extractRelevantMatches(data) {
     date: m.date,
     matchStarted: m.matchStarted,
     matchEnded: m.matchEnded,
+    matchState: getMatchState(m),
   }));
 }
 
@@ -50,30 +94,40 @@ async function pollOnce() {
 
   isRunning = true;
   pollCount++;
+  const startedAt = new Date().toISOString();
 
   try {
     const data = await fetchCurrentMatches();
     const matchCount = Array.isArray(data.data) ? data.data.length : 0;
     const relevantNow = extractRelevantMatches(data);
-    const changed = hasChanged(latestData?.relevant, relevantNow);
+    const liveMatches = relevantNow.filter((m) => m.matchState === "live");
+    const changed = hasChanged(latestData?.liveMatches, liveMatches);
 
+    lastError = null;
     latestData = {
       raw: data,
       relevant: relevantNow,
-      fetchedAt: new Date().toISOString(),
+      liveMatches,
+      fetchedAt: startedAt,
       pollCount,
+      liveCount: liveMatches.length,
+      lastError: null,
     };
 
     console.log(
-      `[cricketPolling] Poll #${pollCount} succeeded — ${matchCount} matches — ${changed ? "changed" : "unchanged"}`
+      `[cricketPolling] Poll #${pollCount} succeeded — ${matchCount} total, ${liveMatches.length} live — ${changed ? "changed" : "unchanged"}`
     );
 
     if (changed) {
-      pollingEmitter.emit("live:update", relevantNow);
+      // Publish through Redis Pub/Sub (falls back to in-process emitter if Redis unavailable)
+      publishLiveUpdates(liveMatches);
+      // Also emit on local EventEmitter for any in-process listeners
+      pollingEmitter.emit("live:update", liveMatches);
     }
 
-    return { success: true, matchCount, changed, data };
+    return { success: true, matchCount, liveCount: liveMatches.length, changed, data };
   } catch (error) {
+    lastError = error.message;
     console.error(`[cricketPolling] Poll #${pollCount} failed:`, error.message);
     return { success: false, error: error.message };
   } finally {
@@ -113,4 +167,8 @@ function getLatest() {
   return latestData;
 }
 
-export { start, stop, pollOnce, getLatest, pollingEmitter };
+function getLastError() {
+  return lastError;
+}
+
+export { start, stop, pollOnce, getLatest, getLastError, pollingEmitter };
