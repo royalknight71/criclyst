@@ -14,6 +14,7 @@ import redisClient from "./config/redis.js";
 import * as cricketPolling from "./services/cricketPolling.service.js";
 import { initSocket } from "./config/socket.js";
 import { initPubSub, shutdownPubSub } from "./services/redisPubSub.service.js";
+import { startNotificationConsumer, stopNotificationConsumer } from "./services/notificationConsumer.service.js";
 
 const initializeConnection = async () => {
     try {
@@ -50,16 +51,19 @@ const initializeConnection = async () => {
             console.log(`Server is running on port ${PORT}`);
             initSocket(httpServer);
             cricketPolling.start();
+            startNotificationConsumer();
         });
 
 process.on("SIGINT", async () => {
     cricketPolling.stop();
+    stopNotificationConsumer();
     await shutdownPubSub();
     process.exit(0);
 });
 
 process.on("SIGTERM", async () => {
     cricketPolling.stop();
+    stopNotificationConsumer();
     await shutdownPubSub();
     process.exit(0);
 });

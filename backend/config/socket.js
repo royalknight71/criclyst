@@ -14,8 +14,11 @@
  */
 
 import { Server } from "socket.io";
+import jwt from "jsonwebtoken";
 import { getLatest, getLastError } from "../services/cricketPolling.service.js";
 import { subscribeToLiveUpdates, isRedisAvailable } from "../services/redisPubSub.service.js";
+import { userRoom } from "../services/notificationDelivery.service.js";
+import Notification from "../models/notification.model.js";
 
 const CORS_ORIGINS = [
   "http://localhost:5173",
@@ -51,8 +54,57 @@ function initSocket(httpServer) {
     path: "/socket.io",
   });
 
+  // Authenticate socket connections via JWT cookie
+io.use((socket, next) => {
+    const cookieHeader = socket.handshake.headers.cookie || "";
+
+    const token = cookieHeader
+        .split(";")
+        .map((cookie) => cookie.trim())
+        .find((cookie) => cookie.startsWith("token="))
+        ?.split("=")
+        .slice(1)
+        .join("=")
+
+    // No token → anonymous connection is allowed
+    if (!token) {
+        socket.user = null;
+        return next();
+    }
+
+    try {
+        const decoded = jwt.verify(
+            decodeURIComponent(token),
+            process.env.JWT_SECRET
+        );
+
+        socket.user = decoded;
+        socket.userId = decoded.id;
+        return next();
+    } catch (error) {
+        // Invalid/stale token should not kill public live scores.
+        socket.user = null;
+        console.warn("[socket] Invalid JWT — continuing as anonymous");
+        return next();
+    }
+});
+
   io.on("connection", (socket) => {
     console.log(`[socket] Client connected: ${socket.id}`);
+
+    // Join user-specific room for notifications
+    if (socket.userId) {
+      const room = userRoom(socket.userId);
+      socket.join(room);
+      console.log(`[socket] ${socket.id} joined user room ${room}`);
+
+      // Send initial unread count
+      Notification.countDocuments({ userId: socket.userId, read: false })
+        .then((count) => {
+          socket.emit("notification:unread-count", { count });
+        })
+        .catch(() => {});
+    }
 
     // --- Initial data sync (no API call, uses in-memory latest) ---
     const latest = getLatest();
@@ -107,19 +159,22 @@ function initSocket(httpServer) {
   });
 
   // --- Live update listener (via Redis Pub/Sub or in-process fallback) ---
-  subscribeToLiveUpdates((liveMatches) => {
+  subscribeToLiveUpdates((allMatches) => {
     if (!io) return;
+
+    // Filter to only genuinely live matches for the live-score broadcast
+    const liveMatches = Array.isArray(allMatches)
+      ? allMatches.filter((m) => m && (m.matchState === "live" || (m.matchStarted === true && m.matchEnded !== true)))
+      : [];
 
     // Global broadcast — only genuinely live matches
     io.emit("live:update", liveMatches);
 
     // Per-match room broadcast (only send the relevant match to each room)
-    if (Array.isArray(liveMatches)) {
-      for (const match of liveMatches) {
-        if (match && match.id) {
-          const room = matchRoom(match.id);
-          io.to(room).emit("live:update", [match]);
-        }
+    for (const match of liveMatches) {
+      if (match && match.id) {
+        const room = matchRoom(match.id);
+        io.to(room).emit("live:update", [match]);
       }
     }
   });

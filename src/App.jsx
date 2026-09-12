@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom"
 import { AuthProvider } from "./context/AuthContext"
+import { NotificationProvider } from "./context/NotificationContext"
 import Home from "./pages/Home"
 import PlayerDetails from "./pages/PlayerDetails"
 import Navbar from "./components/layout/Navbar"
@@ -26,6 +27,7 @@ import AdminRoute from "./components/common/AdminRoute"
 function App() {
   return (
     <AuthProvider>
+    <NotificationProvider>
     <Navbar/>
     <Routes>
       <Route path='/' element={<Home/>}/>
@@ -57,6 +59,7 @@ function App() {
       } />
     </Routes>
     <Footer />
+    </NotificationProvider>
     </AuthProvider>
   )
 }

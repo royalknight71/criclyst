@@ -11,6 +11,8 @@ import teamRoute from './routes/team.routes.js';
 import matchRoute from './routes/match.routes.js'
 import dashboardRoute from './routes/dashboard.routes.js'
 import liveCricketRoute from './routes/liveCricket.routes.js'
+import notificationRoutes from './routes/notification.routes.js'
+import matchSubscriptionRoutes from './routes/matchSubscription.routes.js'
 import logger from './middleware/logger.middleware.js';
 import cookieParser from 'cookie-parser';
 import rateLimiter from './middleware/rateLimiter.js';
@@ -42,6 +44,8 @@ app.use("/api/matches",matchRoute)
 app.use("/api/dashboard",dashboardRoute)
 
 app.use("/api/live-cricket",liveCricketRoute)
+app.use("/api/notifications",notificationRoutes)
+app.use("/api/match-subscriptions",matchSubscriptionRoutes)
 
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Criclyst API")
