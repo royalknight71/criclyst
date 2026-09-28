@@ -323,6 +323,190 @@ describe("notificationConsumer", () => {
   });
 });
 
+// ─── Consumer Deduplication Tests (per-user) ────────────────────────────────
+
+describe("notificationConsumer deduplication", () => {
+  let processMatchEvents;
+  let Notification, MatchSubscription, deliverNotification;
+  let clearState;
+
+  beforeEach(async () => {
+    const consumerMod = await import("../services/notificationConsumer.service.js");
+    processMatchEvents = consumerMod.processMatchEvents;
+
+    const notifMod = await import("../models/notification.model.js");
+    Notification = notifMod.default;
+
+    const subMod = await import("../models/matchSubscription.model.js");
+    MatchSubscription = subMod.default;
+
+    const deliveryMod = await import("../services/notificationDelivery.service.js");
+    deliverNotification = deliveryMod.deliverNotification;
+
+    const detMod = await import("../services/notificationEventDetection.service.js");
+    clearState = detMod.clearState;
+    clearState();
+  });
+
+  it("TEST 1: same event + same user processed twice → only ONE notification", async () => {
+    const userId = "6650f1a1a1a1a1a1a1a1a1a1";
+    const matchId = "dedup-match-1";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId }]),
+      }),
+    });
+
+    let findOneCalls = 0;
+    Notification.findOne = () => ({
+      select: () => ({
+        lean: () => {
+          findOneCalls++;
+          if (findOneCalls <= 1) return Promise.resolve(null);
+          return Promise.resolve({ _id: "existing-notif" });
+        },
+      }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "First transition creates one notification");
+    assert.equal(createdDocs[0].userId, userId);
+    assert.equal(createdDocs[0].eventType, "MATCH_STARTED");
+
+    clearState();
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "Second identical transition deduplicated — still 1 notification");
+  });
+
+  it("TEST 2: same event + User A and User B → TWO notifications", async () => {
+    const userIdA = "6650f1a1a1a1a1a1a1a1a1a1";
+    const userIdB = "6650f1b2b2b2b2b2b2b2b2b2";
+    const matchId = "dedup-match-2";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId: userIdA }, { userId: userIdB }]),
+      }),
+    });
+
+    Notification.findOne = () => ({
+      select: () => ({ lean: () => Promise.resolve(null) }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 2, "Two notifications created (one per user)");
+    assert.equal(createdDocs[0].userId, userIdA, "First for User A");
+    assert.equal(createdDocs[1].userId, userIdB, "Second for User B");
+  });
+
+  it("TEST 3: existing notification for User A + same event for User B → User B still gets notified", async () => {
+    const userIdA = "6650f1a1a1a1a1a1a1a1a1a1";
+    const userIdB = "6650f1b2b2b2b2b2b2b2b2b2";
+    const matchId = "dedup-match-3";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId: userIdA }, { userId: userIdB }]),
+      }),
+    });
+
+    Notification.findOne = (query) => ({
+      select: () => ({
+        lean: () => {
+          if (query.userId === userIdA) return Promise.resolve({ _id: "existing-A" });
+          return Promise.resolve(null);
+        },
+      }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "Only User B gets a notification (User A already has one)");
+    assert.equal(createdDocs[0].userId, userIdB, "The notification belongs to User B");
+  });
+
+  it("TEST 4: different events for the same user → both notifications are created", async () => {
+    const userId = "6650f1a1a1a1a1a1a1a1a1a1";
+    const matchId = "multi-event-match";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId }]),
+      }),
+    });
+
+    Notification.findOne = () => ({
+      select: () => ({ lean: () => Promise.resolve(null) }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 45, w: 0, o: 9 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "MATCH_STARTED notification created");
+    assert.equal(createdDocs[0].eventType, "MATCH_STARTED");
+
+    clearState();
+    await processMatchEvents(live);
+
+    const liveWicket = { ...live, score: [{ r: 52, w: 1, o: 10 }] };
+    await processMatchEvents(liveWicket);
+
+    const eventTypes = createdDocs.map((d) => d.eventType);
+    assert.ok(eventTypes.includes("MATCH_STARTED"), "MATCH_STARTED notification present");
+    assert.ok(eventTypes.includes("WICKET"), "WICKET notification created");
+    assert.ok(eventTypes.includes("SCORE_MILESTONE"), "SCORE_MILESTONE notification created");
+    assert.equal(createdDocs.length, 3, "Three different event types created for same user");
+  });
+});
+
 // ─── Format Score Helper ─────────────────────────────────────────────────────
 
 describe("formatScore", () => {

@@ -32,31 +32,32 @@ async function processMatchEvents(match) {
     const userIds = subscriptions.map((s) => s.userId.toString());
 
     for (const event of events) {
-      // Deduplication: check if a notification with this dedup key already exists recently
-      const existing = await Notification.findOne({
-        userId: { $in: userIds },
-        cricApiMatchId: matchId,
-        eventType: event.eventType,
-        createdAt: { $gte: new Date(Date.now() - 60 * 60 * 1000) }, // 1 hour window
-      }).select("_id").lean();
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-      if (existing) continue;
+      // Create notifications for each subscribed user, deduplicating per user
+      for (const userId of userIds) {
+        // Deduplication: check if THIS user already has a notification for this event
+        const existing = await Notification.findOne({
+          userId,
+          cricApiMatchId: matchId,
+          eventType: event.eventType,
+          createdAt: { $gte: oneHourAgo },
+        }).select("_id").lean();
 
-      // Create notifications for each subscribed user
-      const notificationDocs = userIds.map((userId) => ({
-        userId,
-        cricApiMatchId: matchId,
-        eventType: event.eventType,
-        title: event.title,
-        message: event.message,
-        metadata: event.metadata,
-      }));
+        if (existing) continue;
 
-      const saved = await Notification.insertMany(notificationDocs, { ordered: false }).catch(() => []);
+        const doc = await Notification.create({
+          userId,
+          cricApiMatchId: matchId,
+          eventType: event.eventType,
+          title: event.title,
+          message: event.message,
+          metadata: event.metadata,
+        }).catch(() => null);
 
-      // Deliver via Socket.IO to each user
-      for (const doc of saved) {
-        deliverNotification(doc.userId.toString(), {
+        if (!doc) continue;
+
+        deliverNotification(userId, {
           _id: doc._id,
           cricApiMatchId: doc.cricApiMatchId,
           eventType: doc.eventType,
@@ -97,4 +98,4 @@ function stopNotificationConsumer() {
   console.log("[NotificationConsumer] Stopped");
 }
 
-export { startNotificationConsumer, stopNotificationConsumer };
+export { startNotificationConsumer, stopNotificationConsumer, processMatchEvents };
