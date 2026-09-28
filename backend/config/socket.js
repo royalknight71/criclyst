@@ -16,7 +16,11 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import { getLatest, getLastError } from "../services/cricketPolling.service.js";
-import { subscribeToLiveUpdates, isRedisAvailable } from "../services/redisPubSub.service.js";
+import {
+  subscribeToLiveUpdates,
+  subscribeToStatusUpdates,
+  isRedisAvailable,
+} from "../services/redisPubSub.service.js";
 import { userRoom } from "../services/notificationDelivery.service.js";
 import Notification from "../models/notification.model.js";
 
@@ -178,7 +182,15 @@ io.use((socket, next) => {
       }
     }
   });
+  // --- Polling status/error updates ---
+  subscribeToStatusUpdates((status) => {
+    if (!io) return;
 
+    io.emit("live:status", {
+      lastError: status?.lastError ?? null,
+      timestamp: status?.timestamp || new Date().toISOString(),
+    });
+  });
   console.log("[socket] Socket.IO initialized");
   return io;
 }

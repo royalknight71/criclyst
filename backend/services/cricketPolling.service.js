@@ -1,14 +1,15 @@
 import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
-import { publishLiveUpdates } from "./redisPubSub.service.js";
+import { publishLiveUpdates, publishStatusUpdate } from "./redisPubSub.service.js";
 
-const DEFAULT_POLL_INTERVAL_MS = 30000; // 30 seconds
+const DEFAULT_POLL_INTERVAL_MS = 900000; // 15 minutes
 
 let latestData = null;
 let timerId = null;
 let isRunning = false;
 let pollCount = 0;
 let lastError = null;
+let previousLastError = null;
 
 // Kept for backward compatibility / in-process fallback
 const pollingEmitter = new EventEmitter();
@@ -126,6 +127,11 @@ async function pollOnce() {
     // ── END DIAGNOSTIC ──
 
     lastError = null;
+
+if (previousLastError !== lastError) {
+  publishStatusUpdate(lastError);
+  previousLastError = lastError;
+}
     latestData = {
       raw: data,
       relevant: relevantNow,
@@ -153,6 +159,10 @@ async function pollOnce() {
     return { success: true, matchCount, liveCount: liveMatches.length, changed, data };
   } catch (error) {
     lastError = error.message;
+    if (previousLastError !== lastError) {
+  publishStatusUpdate(lastError);
+  previousLastError = lastError;
+}
     console.error(`[cricketPolling] Poll #${pollCount} failed:`, error.message);
     return { success: false, error: error.message };
   } finally {

@@ -4,6 +4,8 @@
  * Provides:
  *   - publishLiveUpdates(matches) — publish live match data to Redis
  *   - subscribeToLiveUpdates(handler) — register a callback for incoming events
+ *   - publishStatusUpdate(lastError) — publish polling error-state changes
+ *   - subscribeToStatusUpdates(handler) — register a callback for status changes
  *   - initPubSub() / shutdownPubSub() — lifecycle management
  *
  * Falls back to in-process EventEmitter when Redis is unavailable, so the
@@ -11,12 +13,19 @@
  */
 
 import { EventEmitter } from "node:events";
-import { createPubSubClients, connectWithTimeout, CHANNEL } from "../config/redis-pubsub.js";
+import {
+  createPubSubClients,
+  connectWithTimeout,
+  CHANNEL,
+} from "../config/redis-pubsub.js";
+
+const STATUS_CHANNEL = `${CHANNEL}:status`;
 
 let publisher = null;
 let subscriber = null;
 let redisAvailable = false;
-let fallbackEmitter = new EventEmitter();
+
+const fallbackEmitter = new EventEmitter();
 fallbackEmitter.setMaxListeners(20);
 
 /**
@@ -45,9 +54,35 @@ export function publishLiveUpdates(liveMatches) {
 }
 
 /**
- * Register a handler that receives live-match updates.
+ * Publish a polling status/error update.
  *
- * The handler receives the parsed array of live match objects.
+ * Uses a separate Redis channel so STATUS_UPDATE payloads can never
+ * accidentally reach live-score subscribers that expect an array.
+ *
+ * @param {string|null} lastError — current polling error, or null after recovery
+ */
+export function publishStatusUpdate(lastError) {
+  const payload = {
+    type: "STATUS_UPDATE",
+    lastError: lastError ?? null,
+    timestamp: new Date().toISOString(),
+  };
+
+  const message = JSON.stringify(payload);
+
+  if (redisAvailable && publisher && publisher.isReady) {
+    publisher.publish(STATUS_CHANNEL, message).catch((err) => {
+      console.error("[Redis:PubSub] Status publish failed:", err.message);
+    });
+    return;
+  }
+
+  // Fallback: deliver through the separate status event
+  fallbackEmitter.emit(STATUS_CHANNEL, payload);
+}
+
+/**
+ * Register a handler that receives live-match updates.
  *
  * @param {(liveMatches: Array<Object>) => void} handler
  * @returns {Function} unsubscribe function
@@ -56,16 +91,16 @@ export function subscribeToLiveUpdates(handler) {
   // Always subscribe to the fallback (covers Redis-down scenario)
   fallbackEmitter.on(CHANNEL, handler);
 
-  // Also subscribe to Redis if available — but avoid double-delivery
-  // by tracking which messages we've already delivered via fallback
+  // Also subscribe to Redis if available
   let lastRedisMessage = null;
 
   if (redisAvailable && subscriber && subscriber.isReady) {
     const redisHandler = (rawMessage) => {
       try {
         const parsed = JSON.parse(rawMessage);
+
         if (parsed.type === "SCORE_UPDATE" && Array.isArray(parsed.data)) {
-          // Avoid duplicate delivery if fallback already emitted this batch
+          // Avoid duplicate delivery
           if (lastRedisMessage !== rawMessage) {
             lastRedisMessage = rawMessage;
             handler(parsed.data);
@@ -76,9 +111,11 @@ export function subscribeToLiveUpdates(handler) {
       }
     };
 
-    subscriber.subscribe(CHANNEL, redisHandler, { pattern: false }).catch((err) => {
-      console.error("[Redis:PubSub] Subscribe failed:", err.message);
-    });
+    subscriber
+      .subscribe(CHANNEL, redisHandler, { pattern: false })
+      .catch((err) => {
+        console.error("[Redis:PubSub] Subscribe failed:", err.message);
+      });
 
     return () => {
       fallbackEmitter.off(CHANNEL, handler);
@@ -88,6 +125,24 @@ export function subscribeToLiveUpdates(handler) {
 
   return () => {
     fallbackEmitter.off(CHANNEL, handler);
+  };
+}
+
+/**
+ * Register a handler that receives polling status/error updates.
+ *
+ * Status updates are delivered through the fallback emitter. When Redis
+ * is available, initPubSub() receives the Redis message and re-emits it
+ * through the fallback emitter, keeping delivery architecture consistent.
+ *
+ * @param {(status: {type: string, lastError: string|null, timestamp: string}) => void} handler
+ * @returns {Function} unsubscribe function
+ */
+export function subscribeToStatusUpdates(handler) {
+  fallbackEmitter.on(STATUS_CHANNEL, handler);
+
+  return () => {
+    fallbackEmitter.off(STATUS_CHANNEL, handler);
   };
 }
 
@@ -109,33 +164,41 @@ export async function initPubSub() {
     ]);
 
     if (!pubOk || !subOk) {
-      console.warn("[Redis:PubSub] One or both connections failed — using fallback");
+      console.warn(
+        "[Redis:PubSub] One or both connections failed — using fallback"
+      );
+
       // Hard stop: disable reconnect on both clients
       try {
         publisher.options.socket.reconnectStrategy = false;
         publisher.disconnect();
       } catch {}
+
       try {
         subscriber.options.socket.reconnectStrategy = false;
         subscriber.disconnect();
       } catch {}
+
       publisher = null;
       subscriber = null;
       redisAvailable = false;
+
       return { publisher: false, subscriber: false };
     }
 
     redisAvailable = true;
 
-    // Subscribe to the channel
+    // Subscribe to live-score channel
     await subscriber.subscribe(CHANNEL, (rawMessage) => {
       try {
         const parsed = JSON.parse(rawMessage);
+
         if (parsed.type === "SCORE_UPDATE" && Array.isArray(parsed.data)) {
           console.log(
             `[Redis:PubSub] Received SCORE_UPDATE — ${parsed.data.length} matches`
           );
-          // Re-emit on fallbackEmitter so all subscribers (including Socket.IO) get it
+
+          // Re-emit on fallbackEmitter so all subscribers get it
           fallbackEmitter.emit(CHANNEL, parsed.data);
         }
       } catch (err) {
@@ -143,14 +206,45 @@ export async function initPubSub() {
       }
     });
 
+    // Subscribe to separate status channel
+    await subscriber.subscribe(STATUS_CHANNEL, (rawMessage) => {
+      try {
+        const parsed = JSON.parse(rawMessage);
+
+        if (
+          parsed.type === "STATUS_UPDATE" &&
+          Object.prototype.hasOwnProperty.call(parsed, "lastError")
+        ) {
+          console.log(
+            `[Redis:PubSub] Received STATUS_UPDATE — ${
+              parsed.lastError ?? "recovered"
+            }`
+          );
+
+          fallbackEmitter.emit(STATUS_CHANNEL, parsed);
+        }
+      } catch (err) {
+        console.error(
+          "[Redis:PubSub] Invalid status message received:",
+          err.message
+        );
+      }
+    });
+
     console.log(`[Redis:PubSub] Subscribed to channel: ${CHANNEL}`);
+    console.log(
+      `[Redis:PubSub] Subscribed to status channel: ${STATUS_CHANNEL}`
+    );
+
     return { publisher: true, subscriber: true };
   } catch (err) {
     console.error("[Redis:PubSub] Initialization failed:", err.message);
     console.warn("[Redis:PubSub] Falling back to in-process EventEmitter");
+
     redisAvailable = false;
     publisher = null;
     subscriber = null;
+
     return { publisher: false, subscriber: false };
   }
 }
@@ -162,11 +256,15 @@ export async function shutdownPubSub() {
   try {
     if (subscriber) {
       await subscriber.unsubscribe(CHANNEL).catch(() => {});
+      await subscriber.unsubscribe(STATUS_CHANNEL).catch(() => {});
       await subscriber.disconnect().catch(() => {});
       console.log("[Redis:PubSub] Subscriber disconnected");
     }
   } catch (err) {
-    console.error("[Redis:PubSub] Subscriber shutdown error:", err.message);
+    console.error(
+      "[Redis:PubSub] Subscriber shutdown error:",
+      err.message
+    );
   }
 
   try {
@@ -175,7 +273,10 @@ export async function shutdownPubSub() {
       console.log("[Redis:PubSub] Publisher disconnected");
     }
   } catch (err) {
-    console.error("[Redis:PubSub] Publisher shutdown error:", err.message);
+    console.error(
+      "[Redis:PubSub] Publisher shutdown error:",
+      err.message
+    );
   }
 
   publisher = null;
