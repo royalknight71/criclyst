@@ -10,11 +10,11 @@
  * Does NOT make any additional CricAPI calls.
  */
 
-import { subscribeToLiveUpdates, isRedisAvailable } from "./redisPubSub.service.js";
+import { subscribeToLiveUpdates } from "./redisPubSub.service.js";
 import { detectEvents } from "./notificationEventDetection.service.js";
 import Notification from "../models/notification.model.js";
 import MatchSubscription from "../models/matchSubscription.model.js";
-import { deliverNotification, deliverBulkNotifications } from "./notificationDelivery.service.js";
+import { deliverNotification } from "./notificationDelivery.service.js";
 
 let unsubscribe = null;
 

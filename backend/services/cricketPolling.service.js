@@ -98,33 +98,12 @@ async function pollOnce() {
   const startedAt = new Date().toISOString();
 
   try {
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — calling fetchCurrentMatches()...`);
-    const fetchStart = Date.now();
     const data = await fetchCurrentMatches();
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — fetchCurrentMatches() returned in ${Date.now() - fetchStart}ms`);
 
     const matchCount = Array.isArray(data.data) ? data.data.length : 0;
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — extractRelevantMatches()...`);
     const relevantNow = extractRelevantMatches(data);
-
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — filtering live matches...`);
     const liveMatches = relevantNow.filter((m) => m.matchState === "live");
-
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — hasChanged()...`);
     const changed = hasChanged(latestData?.liveMatches, liveMatches);
-
-    // ── DIAGNOSTIC: per-match status breakdown ──
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — ${matchCount} raw matches from provider:`);
-    relevantNow.forEach((m, i) => {
-      console.log(
-        `  [${i}] id=${m.id}  teams=${(m.teams || []).join(" vs ")}  ` +
-        `providerStatus="${m.status}"  date=${m.date}  ` +
-        `matchStarted=${m.matchStarted}  matchEnded=${m.matchEnded}  ` +
-        `scoreInnings=${Array.isArray(m.score) ? m.score.length : 0}  ` +
-        `→ normalized="${m.matchState}"  isLive=${m.matchState === "live"}`
-      );
-    });
-    // ── END DIAGNOSTIC ──
 
     lastError = null;
 
@@ -147,13 +126,8 @@ if (previousLastError !== lastError) {
     );
 
     if (changed) {
-      console.log(`[cricketPolling:DIAG] Poll #${pollCount} — calling publishLiveUpdates(${relevantNow.length} matches)...`);
       publishLiveUpdates(relevantNow);
-      console.log(`[cricketPolling:DIAG] Poll #${pollCount} — publishLiveUpdates() returned`);
-
-      console.log(`[cricketPolling:DIAG] Poll #${pollCount} — emitting pollingEmitter...`);
       pollingEmitter.emit("live:update", liveMatches);
-      console.log(`[cricketPolling:DIAG] Poll #${pollCount} — pollingEmitter emitted`);
     }
 
     return { success: true, matchCount, liveCount: liveMatches.length, changed, data };
@@ -167,7 +141,6 @@ if (previousLastError !== lastError) {
     return { success: false, error: error.message };
   } finally {
     isRunning = false;
-    console.log(`[cricketPolling:DIAG] Poll #${pollCount} — finally block, isRunning=false`);
   }
 }
 

@@ -128,6 +128,12 @@ function detectEvents(match) {
   // Save current state for next comparison
   previousStates.set(matchId, currentState);
 
+  // Clean up completed matches to prevent unbounded memory growth
+  const isCompleted = currentState.matchEnded === true || currentState.matchState === "completed";
+  if (isCompleted) {
+    previousStates.delete(matchId);
+  }
+
   return events;
 }
 

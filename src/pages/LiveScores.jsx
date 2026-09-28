@@ -13,7 +13,7 @@
  * error states, and renders a responsive grid of LiveMatchCards.
  */
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import socket from "../services/socket";
 import LiveMatchCard from "../components/live/LiveMatchCard";
 import { FaSatelliteDish } from "react-icons/fa";
@@ -39,7 +39,6 @@ function LiveScores() {
   const [dataAvailable, setDataAvailable] = useState(false);
   const [lastError, setLastError] = useState(null);
   const [fetchedAt, setFetchedAt] = useState(null);
-  const fetchedAtRef = useRef(null);
 
   const handleLiveMatches = useCallback((payload) => {
     setLoading(false);
@@ -53,7 +52,6 @@ function LiveScores() {
       setMatches(Array.isArray(payload.matches) ? payload.matches : []);
       setLastError(payload.lastError || null);
       setFetchedAt(payload.fetchedAt || null);
-      fetchedAtRef.current = payload.fetchedAt || null;
     } else if (Array.isArray(payload)) {
       setDataAvailable(true);
       setMatches(payload);

@@ -7,7 +7,7 @@
  * Run: node --test backend/tests/notification.test.js
  */
 
-import { describe, it, beforeEach, mock } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 
 // ─── Event Detection Tests ───────────────────────────────────────────────────
@@ -196,6 +196,90 @@ describe("notificationEventDetection", () => {
     const events = detectEvents(null);
     assert.ok(Array.isArray(events));
     assert.equal(events.length, 0);
+  });
+
+  it("removes completed match from previousStates after MATCH_COMPLETED", () => {
+    const liveMatch = {
+      id: "match-cleanup-1",
+      name: "IND vs PAK",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 180, w: 4, o: 35 }],
+    };
+    detectEvents(liveMatch);
+
+    const completedMatch = {
+      ...liveMatch,
+      matchEnded: true,
+      matchState: "completed",
+      status: "IND won by 20 runs",
+      score: [{ r: 220, w: 6, o: 40 }],
+    };
+    const events = detectEvents(completedMatch);
+    const completedEvents = events.filter((e) => e.eventType === "MATCH_COMPLETED");
+    assert.equal(completedEvents.length, 1, "MATCH_COMPLETED emitted");
+
+    // Calling again with same completed state should produce NO events (state was cleaned up)
+    const events2 = detectEvents(completedMatch);
+    assert.equal(events2.length, 0, "No duplicate event after cleanup");
+  });
+
+  it("active match states remain tracked while not completed", () => {
+    const match1 = {
+      id: "match-active-1",
+      name: "ENG vs AUS",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 100, w: 2, o: 20 }],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1, score: [{ r: 101, w: 3, o: 20.1 }] };
+    const events = detectEvents(match2);
+    assert.equal(events.length, 1, "Wicket detected in active match");
+    assert.equal(events[0].eventType, "WICKET");
+
+    // Match still tracked — further state changes are detected
+    const match3 = { ...match2, score: [{ r: 150, w: 3, o: 30 }] };
+    detectEvents(match3);
+
+    const match4 = { ...match3, score: [{ r: 151, w: 4, o: 30.1 }] };
+    const events2 = detectEvents(match4);
+    assert.equal(events2.length, 1, "Active match still detected after multiple updates");
+    assert.equal(events2[0].eventType, "WICKET");
+  });
+
+  it("other matches stay tracked when one match completes", () => {
+    const matchA1 = {
+      id: "match-A",
+      name: "IND vs SA",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 150, w: 3, o: 30 }],
+    };
+    const matchB1 = {
+      id: "match-B",
+      name: "ENG vs WI",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 120, w: 2, o: 25 }],
+    };
+    detectEvents(matchA1);
+    detectEvents(matchB1);
+
+    // Complete match A
+    const matchA2 = { ...matchA1, matchEnded: true, matchState: "completed", status: "IND won" };
+    detectEvents(matchA2);
+
+    // Match B still tracked — wicket detected
+    const matchB2 = { ...matchB1, score: [{ r: 121, w: 3, o: 25.1 }] };
+    const events = detectEvents(matchB2);
+    assert.equal(events.length, 1, "Match B still tracked after match A completed");
+    assert.equal(events[0].eventType, "WICKET");
   });
 });
 
