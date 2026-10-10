@@ -14,6 +14,7 @@ import { useAuth } from "../../context/AuthContext";
 import { subscribeToMatch, unsubscribeFromMatch, checkSubscription } from "../../services/notification.service";
 import { FaLocationDot, FaCalendarDays } from "react-icons/fa6";
 import { FaBell, FaBellSlash } from "react-icons/fa";
+import { getTeamInningsScore, inferMatchType } from "../../utils/match.helpers";
 
 const formatDate = (dateStr) => {
   if (!dateStr) return "--";
@@ -45,13 +46,12 @@ function LiveMatchCard({ match }) {
   const [subLoading, setSubLoading] = useState(false);
   const teams = match.teams || [];
   const teamInfo = match.teamInfo || [];
-  const score = match.score || [];
 
   const teamAInfo = teamInfo[0] || null;
   const teamBInfo = teamInfo[1] || null;
 
-  const teamAScore = score.find((s) => s.inning?.startsWith(teams[0]));
-  const teamBScore = score.find((s) => s.inning?.startsWith(teams[1]));
+  const teamAScore = getTeamInningsScore(match, 0);
+  const teamBScore = getTeamInningsScore(match, 1);
 
   const displayState = getMatchDisplayState(match);
 
@@ -120,7 +120,7 @@ function LiveMatchCard({ match }) {
             </button>
           )}
           <span className="rounded-full bg-slate-700/60 px-3 py-1 text-xs font-semibold uppercase text-slate-300">
-            {match.matchType || "--"}
+            {inferMatchType(match) || "--"}
           </span>
         </div>
       </div>

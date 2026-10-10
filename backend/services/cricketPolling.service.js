@@ -103,7 +103,7 @@ async function pollOnce() {
     const matchCount = Array.isArray(data.data) ? data.data.length : 0;
     const relevantNow = extractRelevantMatches(data);
     const liveMatches = relevantNow.filter((m) => m.matchState === "live");
-    const changed = hasChanged(latestData?.liveMatches, liveMatches);
+    const changed = hasChanged(latestData?.relevant, relevantNow);
 
     lastError = null;
 

@@ -113,13 +113,14 @@ io.use((socket, next) => {
     const latest = getLatest();
     const lastErr = getLastError();
     const hasData = latest !== null;
-    const liveMatches = hasData && Array.isArray(latest.liveMatches) ? latest.liveMatches : [];
+    const relevantMatches = hasData && Array.isArray(latest.relevant) ? latest.relevant : [];
+    const liveCount = hasData && Array.isArray(latest.liveMatches) ? latest.liveMatches.length : 0;
 
     socket.emit("live:matches", {
-      matches: liveMatches,
+      matches: relevantMatches,
       available: hasData,
-      liveCount: liveMatches.length,
-      totalFetched: hasData && Array.isArray(latest.relevant) ? latest.relevant.length : 0,
+      liveCount,
+      totalFetched: relevantMatches.length,
       lastError: lastErr,
       fetchedAt: latest?.fetchedAt || null,
     });
@@ -137,8 +138,8 @@ io.use((socket, next) => {
       console.log(`[socket] ${socket.id} joined ${room}`);
 
       // Send current data for this match if available
-      if (latest && latest.liveMatches) {
-        const match = findMatchById(matchId, latest.liveMatches);
+      if (latest && latest.relevant) {
+        const match = findMatchById(matchId, latest.relevant);
         if (match) {
           socket.emit("live:update", [match]);
         }
@@ -165,16 +166,13 @@ io.use((socket, next) => {
   subscribeToLiveUpdates((allMatches) => {
     if (!io) return;
 
-    // Filter to only genuinely live matches for the live-score broadcast
-    const liveMatches = Array.isArray(allMatches)
-      ? allMatches.filter((m) => m && (m.matchState === "live" || (m.matchStarted === true && m.matchEnded !== true)))
-      : [];
-
-    // Global broadcast — only genuinely live matches
-    io.emit("live:update", liveMatches);
+    // Global broadcast — all matches returned by the API (live, completed,
+    // upcoming); the frontend distinguishes states via matchState/status.
+    const matches = Array.isArray(allMatches) ? allMatches : [];
+    io.emit("live:update", matches);
 
     // Per-match room broadcast (only send the relevant match to each room)
-    for (const match of liveMatches) {
+    for (const match of matches) {
       if (match && match.id) {
         const room = matchRoom(match.id);
         io.to(room).emit("live:update", [match]);
