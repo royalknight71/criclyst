@@ -12,9 +12,24 @@ import { io } from "socket.io-client";
 const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL || window.location.origin;
 
+console.log("[socket] Connecting to:", SOCKET_URL);
+
 const socket = io(SOCKET_URL, {
   autoConnect: false,
-  transports: ["websocket", "polling"],
+  withCredentials: true,
+  transports: ["polling", "websocket"],
+});
+
+socket.on("connect", () => {
+  console.log("[socket] Connected:", socket.id);
+});
+
+socket.on("connect_error", (err) => {
+  console.error("[socket] connect_error:", err.message);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("[socket] Disconnected:", reason);
 });
 
 export default socket;

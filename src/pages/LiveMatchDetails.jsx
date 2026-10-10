@@ -17,6 +17,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import socket from "../services/socket";
 import api from "../api/axios";
+import { getTeamInningsScore, inferMatchType } from "../utils/match.helpers";
 import {
   FaArrowLeft,
   FaLocationDot,
@@ -293,7 +294,9 @@ function LiveMatchDetails() {
       socket.off("disconnect", onDisconnect);
       socket.off("connect_error", onConnectError);
       socket.off("live:update", onLiveUpdate);
-      socket.disconnect();
+      // Do NOT socket.disconnect() here — this is a shared app-wide singleton.
+      // Disconnecting on unmount kills live scores and private notifications
+      // for every other mounted component.
     };
   }, [matchId]);
 
@@ -302,19 +305,18 @@ function LiveMatchDetails() {
   const sc = scorecardData?.data || null;
 
   const matchName = sc?.name || ls.name || "Match Details";
-  const matchType = sc?.matchType || ls.matchType || "";
+  const matchType = inferMatchType(sc || ls) || "";
   const venue = sc?.venue || ls.venue || "";
   const matchDate = sc?.date || ls.date || "";
   const matchStatus = ls.status || sc?.status || "";
   const teams = ls.teams || sc?.teams || [];
   const teamInfo = ls.teamInfo || sc?.teamInfo || [];
-  const scoreArr = ls.score || sc?.score || [];
   const scorecard = sc?.scorecard || [];
-
+  const liveForScore = ls.id ? ls : (sc ? { ...sc, teams, teamInfo, score: sc.score } : null);
   const teamAInfo = teamInfo[0] || null;
   const teamBInfo = teamInfo[1] || null;
-  const teamAScore = scoreArr.find((s) => s.inning?.startsWith(teams[0]));
-  const teamBScore = scoreArr.find((s) => s.inning?.startsWith(teams[1]));
+  const teamAScore = liveForScore ? getTeamInningsScore(liveForScore, 0) : null;
+  const teamBScore = liveForScore ? getTeamInningsScore(liveForScore, 1) : null;
 
   const tossWinner = sc?.tossWinner || ls.tossWinner;
   const tossChoice = sc?.tossChoice || ls.tossChoice;

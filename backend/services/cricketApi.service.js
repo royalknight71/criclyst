@@ -9,6 +9,18 @@ function getApiKey() {
   return key;
 }
 
+/**
+ * CricAPI echoes the requested apikey back inside its response body.
+ * Delete it so the credential can never leak through our own API
+ * responses (e.g. /api/live-cricket/latest returns the raw payload).
+ */
+function sanitizeProviderPayload(data) {
+  if (data && typeof data === "object" && "apikey" in data) {
+    delete data.apikey;
+  }
+  return data;
+}
+
 export async function fetchCurrentMatches() {
   const apiKey = getApiKey();
   const url = `${CRICAPI_BASE_URL}/currentMatches?apikey=${encodeURIComponent(apiKey)}&offset=0`;
@@ -30,7 +42,7 @@ export async function fetchCurrentMatches() {
       throw new Error(`CricAPI error: ${msg}`);
     }
 
-    return data;
+    return sanitizeProviderPayload(data);
   } catch (error) {
     if (error.name === "AbortError") {
       throw new Error("CricAPI request timed out", { cause: error });
@@ -62,7 +74,7 @@ export async function fetchMatchScorecard(matchId) {
       throw new Error(`CricAPI error: ${msg}`);
     }
 
-    return data;
+    return sanitizeProviderPayload(data);
   } catch (error) {
     if (error.name === "AbortError") {
       throw new Error("CricAPI request timed out", { cause: error });

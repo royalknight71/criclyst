@@ -1,14 +1,15 @@
 import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
-import { publishLiveUpdates } from "./redisPubSub.service.js";
+import { publishLiveUpdates, publishStatusUpdate } from "./redisPubSub.service.js";
 
-const DEFAULT_POLL_INTERVAL_MS = 1800000; // 30 minutes
+const DEFAULT_POLL_INTERVAL_MS = 900000; // 15 minutes
 
 let latestData = null;
 let timerId = null;
 let isRunning = false;
 let pollCount = 0;
 let lastError = null;
+let previousLastError = null;
 
 // Kept for backward compatibility / in-process fallback
 const pollingEmitter = new EventEmitter();
@@ -98,12 +99,18 @@ async function pollOnce() {
 
   try {
     const data = await fetchCurrentMatches();
+
     const matchCount = Array.isArray(data.data) ? data.data.length : 0;
     const relevantNow = extractRelevantMatches(data);
     const liveMatches = relevantNow.filter((m) => m.matchState === "live");
-    const changed = hasChanged(latestData?.liveMatches, liveMatches);
+    const changed = hasChanged(latestData?.relevant, relevantNow);
 
     lastError = null;
+
+if (previousLastError !== lastError) {
+  publishStatusUpdate(lastError);
+  previousLastError = lastError;
+}
     latestData = {
       raw: data,
       relevant: relevantNow,
@@ -119,15 +126,17 @@ async function pollOnce() {
     );
 
     if (changed) {
-      // Publish through Redis Pub/Sub (falls back to in-process emitter if Redis unavailable)
-      publishLiveUpdates(liveMatches);
-      // Also emit on local EventEmitter for any in-process listeners
+      publishLiveUpdates(relevantNow);
       pollingEmitter.emit("live:update", liveMatches);
     }
 
     return { success: true, matchCount, liveCount: liveMatches.length, changed, data };
   } catch (error) {
     lastError = error.message;
+    if (previousLastError !== lastError) {
+  publishStatusUpdate(lastError);
+  previousLastError = lastError;
+}
     console.error(`[cricketPolling] Poll #${pollCount} failed:`, error.message);
     return { success: false, error: error.message };
   } finally {

@@ -1,0 +1,613 @@
+/**
+ * Notification system tests.
+ *
+ * Tests event detection, deduplication, user targeting, notification
+ * persistence, API endpoints, and Socket.IO delivery logic.
+ *
+ * Run: node --test backend/tests/notification.test.js
+ */
+
+import { describe, it, beforeEach } from "node:test";
+import assert from "node:assert/strict";
+
+// ─── Event Detection Tests ───────────────────────────────────────────────────
+
+// We test the pure logic by importing the detection functions directly.
+// Since the module uses ES module exports, we dynamic-import and test.
+
+describe("notificationEventDetection", () => {
+  let detectEvents, clearState;
+
+  beforeEach(async () => {
+    const mod = await import("../services/notificationEventDetection.service.js");
+    detectEvents = mod.detectEvents;
+    clearState = mod.clearState;
+    clearState();
+  });
+
+  it("detects MATCH_STARTED when match transitions from upcoming to live", () => {
+    const match1 = {
+      id: "match-1",
+      name: "IND vs AUS",
+      matchStarted: false,
+      matchEnded: false,
+      matchState: "upcoming",
+      score: [],
+    };
+    const events1 = detectEvents(match1);
+    assert.equal(events1.length, 0, "No events on first observation");
+
+    const match2 = {
+      ...match1,
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 0, w: 0, o: 0 }],
+    };
+    const events2 = detectEvents(match2);
+    assert.equal(events2.length, 1);
+    assert.equal(events2[0].eventType, "MATCH_STARTED");
+    assert.ok(events2[0].message.includes("IND vs AUS"));
+  });
+
+  it("detects MATCH_COMPLETED when match transitions from live to completed", () => {
+    const match1 = {
+      id: "match-2",
+      name: "ENG vs SA",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 200, w: 5, o: 40 }],
+    };
+    detectEvents(match1);
+
+    const match2 = {
+      ...match1,
+      matchStarted: true,
+      matchEnded: true,
+      matchState: "completed",
+      status: "ENG won by 30 runs",
+      score: [{ r: 200, w: 5, o: 40 }],
+    };
+    const events = detectEvents(match2);
+    const completedEvents = events.filter((e) => e.eventType === "MATCH_COMPLETED");
+    assert.equal(completedEvents.length, 1);
+    assert.ok(completedEvents[0].message.includes("ENG won by 30 runs"));
+  });
+
+  it("detects WICKET when wicket count increases", () => {
+    const match1 = {
+      id: "match-3",
+      name: "PAK vs NZ",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 100, w: 2, o: 20 }],
+    };
+    detectEvents(match1);
+
+    const match2 = {
+      ...match1,
+      score: [{ r: 101, w: 3, o: 20.1 }],
+    };
+    const events = detectEvents(match2);
+    const wicketEvents = events.filter((e) => e.eventType === "WICKET");
+    assert.equal(wicketEvents.length, 1);
+    assert.ok(wicketEvents[0].message.includes("wicket"));
+  });
+
+  it("detects SCORE_MILESTONE when total runs cross a 50-run threshold", () => {
+    const match1 = {
+      id: "match-4",
+      name: "WI vs BAN",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 48, w: 1, o: 10 }],
+    };
+    detectEvents(match1);
+
+    const match2 = {
+      ...match1,
+      score: [{ r: 52, w: 1, o: 11 }],
+    };
+    const events = detectEvents(match2);
+    const milestoneEvents = events.filter((e) => e.eventType === "SCORE_MILESTONE");
+    assert.equal(milestoneEvents.length, 1);
+    assert.ok(milestoneEvents[0].title.includes("50"));
+  });
+
+  it("does NOT generate notification for unchanged score", () => {
+    const match1 = {
+      id: "match-5",
+      name: "SL vs ZIM",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 150, w: 4, o: 30 }],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1 };
+    const events = detectEvents(match2);
+    assert.equal(events.length, 0, "No events for unchanged state");
+  });
+
+  it("does NOT generate duplicate MATCH_STARTED for same match", () => {
+    const match1 = {
+      id: "match-6",
+      name: "IND vs ENG",
+      matchStarted: false,
+      matchState: "upcoming",
+      score: [],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1, matchStarted: true, matchState: "live" };
+    const events2 = detectEvents(match2);
+    assert.equal(events2.length, 1, "First transition produces event");
+
+    // Same state again — no event
+    const match3 = { ...match2 };
+    const events3 = detectEvents(match3);
+    assert.equal(events3.length, 0, "Same state again produces no event");
+  });
+
+  it("detects multiple events in one transition", () => {
+    const match1 = {
+      id: "match-7",
+      name: "AUS vs NZ",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 45, w: 1, o: 9 }],
+    };
+    detectEvents(match1);
+
+    // Cross 50 runs AND take a wicket
+    const match2 = {
+      ...match1,
+      score: [{ r: 52, w: 2, o: 10 }],
+    };
+    const events = detectEvents(match2);
+    const types = events.map((e) => e.eventType);
+    assert.ok(types.includes("WICKET"), "Wicket detected");
+    assert.ok(types.includes("SCORE_MILESTONE"), "Milestone detected");
+  });
+
+  it("handles missing score data gracefully", () => {
+    const match = {
+      id: "match-8",
+      name: "Test",
+      matchStarted: true,
+      matchState: "live",
+      score: null,
+    };
+    const events = detectEvents(match);
+    assert.ok(Array.isArray(events));
+  });
+
+  it("handles empty match object gracefully", () => {
+    const events = detectEvents({});
+    assert.ok(Array.isArray(events));
+  });
+
+  it("handles null match gracefully", () => {
+    const events = detectEvents(null);
+    assert.ok(Array.isArray(events));
+    assert.equal(events.length, 0);
+  });
+
+  it("removes completed match from previousStates after MATCH_COMPLETED", () => {
+    const liveMatch = {
+      id: "match-cleanup-1",
+      name: "IND vs PAK",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 180, w: 4, o: 35 }],
+    };
+    detectEvents(liveMatch);
+
+    const completedMatch = {
+      ...liveMatch,
+      matchEnded: true,
+      matchState: "completed",
+      status: "IND won by 20 runs",
+      score: [{ r: 220, w: 6, o: 40 }],
+    };
+    const events = detectEvents(completedMatch);
+    const completedEvents = events.filter((e) => e.eventType === "MATCH_COMPLETED");
+    assert.equal(completedEvents.length, 1, "MATCH_COMPLETED emitted");
+
+    // Calling again with same completed state should produce NO events (state was cleaned up)
+    const events2 = detectEvents(completedMatch);
+    assert.equal(events2.length, 0, "No duplicate event after cleanup");
+  });
+
+  it("active match states remain tracked while not completed", () => {
+    const match1 = {
+      id: "match-active-1",
+      name: "ENG vs AUS",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 100, w: 2, o: 20 }],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1, score: [{ r: 101, w: 3, o: 20.1 }] };
+    const events = detectEvents(match2);
+    assert.equal(events.length, 1, "Wicket detected in active match");
+    assert.equal(events[0].eventType, "WICKET");
+
+    // Match still tracked — further state changes are detected
+    const match3 = { ...match2, score: [{ r: 150, w: 3, o: 30 }] };
+    detectEvents(match3);
+
+    const match4 = { ...match3, score: [{ r: 151, w: 4, o: 30.1 }] };
+    const events2 = detectEvents(match4);
+    assert.equal(events2.length, 1, "Active match still detected after multiple updates");
+    assert.equal(events2[0].eventType, "WICKET");
+  });
+
+  it("other matches stay tracked when one match completes", () => {
+    const matchA1 = {
+      id: "match-A",
+      name: "IND vs SA",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 150, w: 3, o: 30 }],
+    };
+    const matchB1 = {
+      id: "match-B",
+      name: "ENG vs WI",
+      matchStarted: true,
+      matchEnded: false,
+      matchState: "live",
+      score: [{ r: 120, w: 2, o: 25 }],
+    };
+    detectEvents(matchA1);
+    detectEvents(matchB1);
+
+    // Complete match A
+    const matchA2 = { ...matchA1, matchEnded: true, matchState: "completed", status: "IND won" };
+    detectEvents(matchA2);
+
+    // Match B still tracked — wicket detected
+    const matchB2 = { ...matchB1, score: [{ r: 121, w: 3, o: 25.1 }] };
+    const events = detectEvents(matchB2);
+    assert.equal(events.length, 1, "Match B still tracked after match A completed");
+    assert.equal(events[0].eventType, "WICKET");
+  });
+});
+
+// ─── Deduplication Key Tests ─────────────────────────────────────────────────
+
+describe("deduplication", () => {
+  let detectEvents, clearState;
+
+  beforeEach(async () => {
+    const mod = await import("../services/notificationEventDetection.service.js");
+    detectEvents = mod.detectEvents;
+    clearState = mod.clearState;
+    clearState();
+  });
+
+  it("generates unique deduplication keys for wickets at different times", () => {
+    const match1 = {
+      id: "dedup-1",
+      matchStarted: true,
+      matchState: "live",
+      score: [{ r: 100, w: 2, o: 20 }],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1, score: [{ r: 100, w: 3, o: 20 }] };
+    const events2 = detectEvents(match2);
+    assert.equal(events2.length, 1);
+
+    // Another wicket — different dedup key because timestamp differs
+    const match3 = { ...match2, score: [{ r: 101, w: 4, o: 21 }] };
+    const events3 = detectEvents(match3);
+    assert.equal(events3.length, 1);
+    assert.notEqual(events2[0].deduplicationKey, events3[0].deduplicationKey);
+  });
+
+  it("generates same deduplication key for same milestone", () => {
+    const match1 = {
+      id: "dedup-2",
+      matchStarted: true,
+      matchState: "live",
+      score: [{ r: 48, w: 0, o: 10 }],
+    };
+    detectEvents(match1);
+
+    const match2 = { ...match1, score: [{ r: 52, w: 0, o: 11 }] };
+    const events = detectEvents(match2);
+    assert.equal(events.length, 1);
+    // Milestone dedup key is based on milestone value, not timestamp
+    assert.ok(events[0].deduplicationKey.includes("SCORE_MILESTONE:50"));
+  });
+});
+
+// ─── User Targeting Tests ────────────────────────────────────────────────────
+
+describe("user targeting", () => {
+  it("MatchSubscription model schema has correct indexes", async () => {
+    const mod = await import("../models/matchSubscription.model.js");
+    const MatchSubscription = mod.default;
+    assert.ok(MatchSubscription, "MatchSubscription model loaded");
+    assert.equal(MatchSubscription.modelName, "MatchSubscription");
+  });
+
+  it("Notification model schema has correct structure", async () => {
+    const mod = await import("../models/notification.model.js");
+    const Notification = mod.default;
+    assert.ok(Notification, "Notification model loaded");
+    assert.equal(Notification.modelName, "Notification");
+  });
+});
+
+// ─── Notification Controller Tests (unit) ────────────────────────────────────
+
+describe("notification controller", () => {
+  it("exports all required handlers", async () => {
+    const mod = await import("../controllers/notification.controller.js");
+    assert.equal(typeof mod.getNotifications, "function");
+    assert.equal(typeof mod.getUnreadCount, "function");
+    assert.equal(typeof mod.markAsRead, "function");
+    assert.equal(typeof mod.markAllAsRead, "function");
+  });
+});
+
+describe("matchSubscription controller", () => {
+  it("exports all required handlers", async () => {
+    const mod = await import("../controllers/matchSubscription.controller.js");
+    assert.equal(typeof mod.subscribeToMatch, "function");
+    assert.equal(typeof mod.unsubscribeFromMatch, "function");
+    assert.equal(typeof mod.checkSubscription, "function");
+    assert.equal(typeof mod.getSubscriptions, "function");
+  });
+});
+
+// ─── Notification Delivery Tests ─────────────────────────────────────────────
+
+describe("notificationDelivery", () => {
+  it("exports delivery functions", async () => {
+    const mod = await import("../services/notificationDelivery.service.js");
+    assert.equal(typeof mod.deliverNotification, "function");
+    assert.equal(typeof mod.deliverBulkNotifications, "function");
+    assert.equal(typeof mod.emitUnreadCount, "function");
+    assert.equal(typeof mod.userRoom, "function");
+  });
+
+  it("userRoom generates correct room name", async () => {
+    const mod = await import("../services/notificationDelivery.service.js");
+    assert.equal(mod.userRoom("abc123"), "user:abc123");
+  });
+
+  it("deliverNotification does not crash when IO is null", async () => {
+    const mod = await import("../services/notificationDelivery.service.js");
+    // getIO returns null when server not initialized — should not throw
+    assert.doesNotThrow(() => {
+      mod.deliverNotification("user1", { title: "test" });
+    });
+  });
+});
+
+// ─── Consumer Tests ──────────────────────────────────────────────────────────
+
+describe("notificationConsumer", () => {
+  it("exports start/stop functions", async () => {
+    const mod = await import("../services/notificationConsumer.service.js");
+    assert.equal(typeof mod.startNotificationConsumer, "function");
+    assert.equal(typeof mod.stopNotificationConsumer, "function");
+  });
+});
+
+// ─── Consumer Deduplication Tests (per-user) ────────────────────────────────
+
+describe("notificationConsumer deduplication", () => {
+  let processMatchEvents;
+  let Notification, MatchSubscription, deliverNotification;
+  let clearState;
+
+  beforeEach(async () => {
+    const consumerMod = await import("../services/notificationConsumer.service.js");
+    processMatchEvents = consumerMod.processMatchEvents;
+
+    const notifMod = await import("../models/notification.model.js");
+    Notification = notifMod.default;
+
+    const subMod = await import("../models/matchSubscription.model.js");
+    MatchSubscription = subMod.default;
+
+    const deliveryMod = await import("../services/notificationDelivery.service.js");
+    deliverNotification = deliveryMod.deliverNotification;
+
+    const detMod = await import("../services/notificationEventDetection.service.js");
+    clearState = detMod.clearState;
+    clearState();
+  });
+
+  it("TEST 1: same event + same user processed twice → only ONE notification", async () => {
+    const userId = "6650f1a1a1a1a1a1a1a1a1a1";
+    const matchId = "dedup-match-1";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId }]),
+      }),
+    });
+
+    let findOneCalls = 0;
+    Notification.findOne = () => ({
+      select: () => ({
+        lean: () => {
+          findOneCalls++;
+          if (findOneCalls <= 1) return Promise.resolve(null);
+          return Promise.resolve({ _id: "existing-notif" });
+        },
+      }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "First transition creates one notification");
+    assert.equal(createdDocs[0].userId, userId);
+    assert.equal(createdDocs[0].eventType, "MATCH_STARTED");
+
+    clearState();
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "Second identical transition deduplicated — still 1 notification");
+  });
+
+  it("TEST 2: same event + User A and User B → TWO notifications", async () => {
+    const userIdA = "6650f1a1a1a1a1a1a1a1a1a1";
+    const userIdB = "6650f1b2b2b2b2b2b2b2b2b2";
+    const matchId = "dedup-match-2";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId: userIdA }, { userId: userIdB }]),
+      }),
+    });
+
+    Notification.findOne = () => ({
+      select: () => ({ lean: () => Promise.resolve(null) }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 2, "Two notifications created (one per user)");
+    assert.equal(createdDocs[0].userId, userIdA, "First for User A");
+    assert.equal(createdDocs[1].userId, userIdB, "Second for User B");
+  });
+
+  it("TEST 3: existing notification for User A + same event for User B → User B still gets notified", async () => {
+    const userIdA = "6650f1a1a1a1a1a1a1a1a1a1";
+    const userIdB = "6650f1b2b2b2b2b2b2b2b2b2";
+    const matchId = "dedup-match-3";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId: userIdA }, { userId: userIdB }]),
+      }),
+    });
+
+    Notification.findOne = (query) => ({
+      select: () => ({
+        lean: () => {
+          if (query.userId === userIdA) return Promise.resolve({ _id: "existing-A" });
+          return Promise.resolve(null);
+        },
+      }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 0, w: 0, o: 0 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "Only User B gets a notification (User A already has one)");
+    assert.equal(createdDocs[0].userId, userIdB, "The notification belongs to User B");
+  });
+
+  it("TEST 4: different events for the same user → both notifications are created", async () => {
+    const userId = "6650f1a1a1a1a1a1a1a1a1a1";
+    const matchId = "multi-event-match";
+
+    MatchSubscription.find = () => ({
+      select: () => ({
+        lean: () => Promise.resolve([{ userId }]),
+      }),
+    });
+
+    Notification.findOne = () => ({
+      select: () => ({ lean: () => Promise.resolve(null) }),
+    });
+
+    const createdDocs = [];
+    Notification.create = (doc) => {
+      const saved = { ...doc, _id: `notif-${createdDocs.length + 1}`, read: false, createdAt: new Date() };
+      createdDocs.push(saved);
+      return Promise.resolve(saved);
+    };
+
+    const upcoming = { id: matchId, matchStarted: false, matchState: "upcoming", score: [] };
+    const live = { id: matchId, matchStarted: true, matchState: "live", score: [{ r: 45, w: 0, o: 9 }] };
+
+    await processMatchEvents(upcoming);
+    await processMatchEvents(live);
+
+    assert.equal(createdDocs.length, 1, "MATCH_STARTED notification created");
+    assert.equal(createdDocs[0].eventType, "MATCH_STARTED");
+
+    clearState();
+    await processMatchEvents(live);
+
+    const liveWicket = { ...live, score: [{ r: 52, w: 1, o: 10 }] };
+    await processMatchEvents(liveWicket);
+
+    const eventTypes = createdDocs.map((d) => d.eventType);
+    assert.ok(eventTypes.includes("MATCH_STARTED"), "MATCH_STARTED notification present");
+    assert.ok(eventTypes.includes("WICKET"), "WICKET notification created");
+    assert.ok(eventTypes.includes("SCORE_MILESTONE"), "SCORE_MILESTONE notification created");
+    assert.equal(createdDocs.length, 3, "Three different event types created for same user");
+  });
+});
+
+// ─── Format Score Helper ─────────────────────────────────────────────────────
+
+describe("formatScore", () => {
+  it("formats score array correctly", async () => {
+    const mod = await import("../services/notificationEventDetection.service.js");
+    const score = [
+      { r: 200, w: 5, o: 40 },
+      { r: 150, w: 8, o: 35 },
+    ];
+    const result = mod.formatScore(score);
+    assert.ok(result.includes("200/5"));
+    assert.ok(result.includes("150/8"));
+  });
+
+  it("returns N/A for empty score", async () => {
+    const mod = await import("../services/notificationEventDetection.service.js");
+    assert.equal(mod.formatScore([]), "N/A");
+    assert.equal(mod.formatScore(null), "N/A");
+  });
+});

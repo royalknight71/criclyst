@@ -1,0 +1,19 @@
+{
+  "watch": ["."],
+  "ext": "js,mjs,cjs",
+  "ignore": [
+    "node_modules",
+    ".git",
+    "*.log",
+    "server-stdout.log",
+    "server-stderr.log",
+    "test-out.log",
+    "test-err.log",
+    ".env",
+    ".env.example",
+    "tests",
+    "scripts",
+    "dist",
+    "coverage"
+  ]
+}

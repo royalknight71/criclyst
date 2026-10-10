@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import NotificationBell from "../notification/NotificationBell";
 import logo from "../../assets/Criclyst_LOGO.png";
 
 function Navbar() {
@@ -101,6 +102,7 @@ function Navbar() {
       <div className="flex items-center gap-4">
         {user ? (
           <>
+            <NotificationBell />
             <span className="text-sm text-slate-300">
               {user.name}
             </span>
