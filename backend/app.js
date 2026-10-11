@@ -21,12 +21,24 @@ import cors from "cors";
 const app=express();
 app.use(cookieParser());
 //app.use(rateLimiter)
+
+// CORS origins are environment-driven (comma-separated CORS_ORIGINS),
+// falling back to the current localhost + production origins.
+const DEFAULT_CORS_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "https://criclyst.vercel.app"
+];
+
+function getCorsOrigins() {
+    const raw = process.env.CORS_ORIGINS;
+    if (!raw) return DEFAULT_CORS_ORIGINS;
+    const parsed = raw.split(",").map((origin) => origin.trim()).filter(Boolean);
+    return parsed.length > 0 ? parsed : DEFAULT_CORS_ORIGINS;
+}
+
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://criclyst.vercel.app"
-    ],
+    origin: getCorsOrigins(),
     credentials: true
 }));
 app.use(express.json());
