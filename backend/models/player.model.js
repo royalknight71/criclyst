@@ -101,10 +101,34 @@ const playerSchema=new mongoose.Schema({
     isActive:{
         type:Boolean,
         default:true
+    },
+    // CricAPI/provider player identifier; primary identity for auto-synced players.
+    // Manually curated players keep this null.
+    providerId:{
+        type:String,
+        trim:true,
+        default:null
     }
 },{
     timestamps: true
 })
+
+// Prevent duplicate provider players while leaving manually curated players
+// (providerId null/missing) exempt via a partial filter.
+playerSchema.index(
+    {
+        providerId: 1
+    },
+    {
+        unique: true,
+        partialFilterExpression: {
+            providerId: {
+                $type: "string",
+                $gt: ""
+            }
+        }
+    }
+);
 
 /** Mongoose model for cricket players. */
 const Player=mongoose.model('Player',playerSchema);

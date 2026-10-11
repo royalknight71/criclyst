@@ -1,6 +1,7 @@
 import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
 import { publishLiveUpdates, publishStatusUpdate } from "./redisPubSub.service.js";
+import { syncMatchesFromProvider } from "./matchSync.service.js";
 
 const DEFAULT_POLL_INTERVAL_MS = 900000; // 15 minutes
 
@@ -128,6 +129,20 @@ if (previousLastError !== lastError) {
     if (changed) {
       publishLiveUpdates(relevantNow);
       pollingEmitter.emit("live:update", liveMatches);
+    }
+
+    // Persist provider state into the Match collection, reusing the payload
+    // fetched above (no extra CricAPI calls). Failures never break polling.
+    try {
+      const syncResult = await syncMatchesFromProvider(relevantNow);
+      const unresolved = syncResult.unresolvedTeams?.length
+        ? ` | unresolved teams: ${syncResult.unresolvedTeams.join(", ")}`
+        : "";
+      console.log(
+        `[cricketPolling] Match sync #${pollCount} — ${syncResult.created} created, ${syncResult.updated} updated, ${syncResult.synced} unchanged, ${syncResult.skipped} skipped, ${syncResult.staleDemoted} stale demoted${unresolved}`
+      );
+    } catch (syncError) {
+      console.error("[cricketPolling] Match sync failed:", syncError.message);
     }
 
     return { success: true, matchCount, liveCount: liveMatches.length, changed, data };

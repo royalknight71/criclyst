@@ -1,8 +1,28 @@
 import { fetchCurrentMatches, fetchMatchScorecard } from "../services/cricketApi.service.js";
 import { pollOnce, getLatest, getLastError, getMatchState } from "../services/cricketPolling.service.js";
+import { syncPlayersFromScorecard } from "../services/playerSync.service.js";
 
 const scorecardCache = new Map();
 const SCORECARD_CACHE_TTL_MS = 5 * 60 * 1000;
+
+/**
+ * Fire-and-forget player auto-sync from an already-fetched scorecard.
+ * Uses no additional CricAPI calls and never affects the response.
+ */
+function syncPlayersInBackground(payload) {
+  Promise.resolve()
+    .then(() => syncPlayersFromScorecard(payload))
+    .then((summary) => {
+      if (!summary || summary.total === 0) return;
+      console.log(
+        `[playerSync] ${summary.created} created, ${summary.updated} updated, ${summary.synced} unchanged, ${summary.skipped} skipped` +
+          (summary.unresolvedTeams?.length ? ` | unresolved teams: ${summary.unresolvedTeams.join(", ")}` : "")
+      );
+    })
+    .catch((error) => {
+      console.warn("[playerSync] Background sync failed:", error.message);
+    });
+}
 
 function getCachedScorecard(matchId) {
   const entry = scorecardCache.get(matchId);
@@ -112,6 +132,7 @@ export const getMatchScorecard = async (req, res) => {
 
   const cached = getCachedScorecard(id);
   if (cached) {
+    syncPlayersInBackground(cached);
     return res.status(200).json({
       success: true,
       data: cached,
@@ -122,6 +143,7 @@ export const getMatchScorecard = async (req, res) => {
   try {
     const data = await fetchMatchScorecard(id);
     setCachedScorecard(id, data);
+    syncPlayersInBackground(data);
     console.log(`[liveCricket] Scorecard fetched for ${id}`);
     return res.status(200).json({
       success: true,

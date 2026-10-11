@@ -95,10 +95,34 @@ const matchSchema=new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Player",
         default: null
+    },
+    // CricAPI/provider match identifier; primary identity for synced matches.
+    // Legacy/admin-created matches keep this null.
+    providerId:{
+        type:String,
+        trim:true,
+        default:null
     }
 },{
     timestamps:true
 })
+
+// Prevent duplicate provider matches while leaving legacy/admin matches
+// (providerId null/missing) exempt via a partial filter.
+matchSchema.index(
+    {
+        providerId: 1
+    },
+    {
+        unique: true,
+        partialFilterExpression: {
+            providerId: {
+                $type: "string",
+                $gt: ""
+            }
+        }
+    }
+);
 
 /** Mongoose model for cricket matches. */
 const Match=mongoose.model('Match',matchSchema)
