@@ -32,7 +32,7 @@ function AdminMatches() {
     async function fetchMatches() {
         setLoading(true);
         try {
-            const data = await getMatches({ page, limit: 10 });
+            const data = await getMatches({ page, limit: 10, includeProviderOnly: false });
             setMatches(data.data);
             setTotalPages(data.totalPages);
             setTotalMatches(data.totalMatches);

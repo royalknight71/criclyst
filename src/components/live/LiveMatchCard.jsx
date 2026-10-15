@@ -30,12 +30,20 @@ const formatDate = (dateStr) => {
 };
 
 function getMatchDisplayState(match) {
-  if (match.matchStarted === true && match.matchEnded !== true) return "live";
+  // Backend-normalized state wins so every surface agrees.
+  if (
+    match.matchState === "live" ||
+    match.matchState === "completed" ||
+    match.matchState === "upcoming"
+  ) {
+    return match.matchState;
+  }
   if (match.matchEnded === true) return "completed";
+  if (match.matchStarted === true) return "live";
   if (match.matchStarted === false) return "upcoming";
   const s = (match.status || "").toLowerCase();
-  if (s.includes("live") || s.includes("in progress") || s.includes("innings break")) return "live";
   if (s.includes("complete") || s.includes("result") || s.includes("won") || s.includes("tied") || s.includes("draw")) return "completed";
+  if (s.includes("live") || s.includes("in progress") || s.includes("innings break")) return "live";
   return "upcoming";
 }
 

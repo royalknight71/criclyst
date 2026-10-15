@@ -23,8 +23,15 @@ import LiveMatchCard from "../components/live/LiveMatchCard";
 import { FaSatelliteDish, FaPlugCircleXmark } from "react-icons/fa6";
 
 function isLive(match) {
-  if (match.matchStarted === true && match.matchEnded !== true) return true;
+  // The backend attaches the authoritative normalized matchState —
+  // prefer it so every page agrees with the provider snapshot.
   if (match.matchState === "live") return true;
+  if (match.matchState === "completed" || match.matchState === "upcoming") {
+    return false;
+  }
+  if (match.matchEnded === true) return false;
+  if (match.matchStarted === true) return true;
+  if (match.matchStarted === false) return false;
   const s = (match.status || "").toLowerCase();
   if (
     s.includes("live") ||
@@ -60,6 +67,7 @@ function LiveScores() {
   const [providerError, setProviderError] = useState(null);
   const [connectionError, setConnectionError] = useState(null);
   const [fetchedAt, setFetchedAt] = useState(null);
+  const [stale, setStale] = useState(false);
   const receivedDataRef = useRef(false);
 
   const handleLiveMatches = useCallback((payload) => {
@@ -74,11 +82,13 @@ function LiveScores() {
       setDataAvailable(payload.available !== false);
       setMatches(dedupeMatches(payload.matches));
       setProviderError(payload.lastError || null);
-      setFetchedAt(payload.fetchedAt || null);
+      setFetchedAt(payload.fetchedAt || payload.lastSyncAt || null);
+      setStale(payload.stale === true);
       setConnectionError(null);
     } else if (Array.isArray(payload)) {
       setDataAvailable(true);
       setMatches(dedupeMatches(payload));
+      setStale(false);
       setConnectionError(null);
     }
   }, []);
@@ -98,11 +108,13 @@ function LiveScores() {
     setLoading(false);
     setDataAvailable(true);
     setFetchedAt(new Date().toISOString());
+    setStale(false);
   }, []);
 
   // Handle polling/API status changes from the backend.
   const handleLiveStatus = useCallback((status) => {
     setProviderError(status?.lastError ?? null);
+    if (status?.lastError) setStale(true);
   }, []);
 
   useEffect(() => {
@@ -242,6 +254,21 @@ function LiveScores() {
         </div>
 
         <div className="flex items-center gap-3">
+          {stale && (
+            <span
+              className="rounded-full border border-yellow-500/30 bg-yellow-500/10 px-3 py-1 text-xs text-yellow-300"
+              title={
+                fetchedAt
+                  ? `Last successful sync: ${new Date(fetchedAt).toLocaleString()}`
+                  : "Awaiting first successful sync"
+              }
+            >
+              {fetchedAt
+                ? `Data may be delayed — last synced ${new Date(fetchedAt).toLocaleTimeString()}`
+                : "Awaiting fresh data from provider"}
+            </span>
+          )}
+
           {fetchedAt && (
             <span className="text-xs text-slate-600">
               Updated {new Date(fetchedAt).toLocaleTimeString()}

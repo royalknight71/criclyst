@@ -40,27 +40,34 @@ const statusBadge = {
 function MatchCard({ match }) {
   const navigate = useNavigate();
 
-  const formattedDate = new Date(match.matchDate).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
+  // Display-only provider-confirmed live match (teams not in MongoDB yet):
+  // no stored document exists, so it must never navigate to /matches/:id.
+  const providerOnly = match.providerOnly === true;
+
+  const formattedDate =
+    match.matchDate && !Number.isNaN(new Date(match.matchDate).getTime())
+      ? new Date(match.matchDate).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })
+      : "";
+
+  const CardTag = providerOnly ? "div" : "button";
+  const cardProps = providerOnly ? {} : { onClick: () => navigate(`/matches/${match._id}`) };
 
   return (
-    <button
-      onClick={() => navigate(`/matches/${match._id}`)}
-      className="
+    <CardTag
+      {...cardProps}
+      className={`
         group rounded-3xl
         border border-slate-700
         bg-gradient-to-br from-slate-800 to-slate-900
         p-6
         text-left
         shadow-lg
-        transition-all duration-300
-        hover:-translate-y-1
-        hover:border-cyan-400
-        hover:shadow-cyan-500/20
-      "
+        ${providerOnly ? "" : "cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20"}
+      `}
     >
       {/* Status + Format */}
       <div className="flex items-center justify-between">
@@ -125,20 +132,28 @@ function MatchCard({ match }) {
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <FaLocationDot className="mt-1 shrink-0 text-cyan-400" />
-          <p className="truncate text-sm text-white">{match.venue}</p>
+          <p className="truncate text-sm text-white">{match.venue || "Venue TBC"}</p>
         </div>
 
-        <div className="flex items-start gap-3">
-          <FaCalendarDays className="mt-1 shrink-0 text-cyan-400" />
-          <p className="text-sm text-white">{formattedDate}</p>
-        </div>
+        {formattedDate && (
+          <div className="flex items-start gap-3">
+            <FaCalendarDays className="mt-1 shrink-0 text-cyan-400" />
+            <p className="text-sm text-white">{formattedDate}</p>
+          </div>
+        )}
       </div>
 
-      {/* View Match hint */}
-      <p className="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-cyan-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
-        View Match →
-      </p>
-    </button>
+      {/* View Match hint / provider-only notice */}
+      {providerOnly ? (
+        <p className="mt-6 flex items-center justify-center gap-2 text-center text-xs font-semibold text-amber-400/90">
+          Live • teams not added to Criclyst yet
+        </p>
+      ) : (
+        <p className="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-cyan-400 opacity-0 transition-all duration-300 group-hover:opacity-100">
+          View Match →
+        </p>
+      )}
+    </CardTag>
   );
 }
 

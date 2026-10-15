@@ -10,18 +10,24 @@
 import api from "../api/axios";
 
 /**
- * Fetch all matches that are currently live.
+ * Fetch matches confirmed live by the backend's authoritative provider
+ * snapshot, plus freshness metadata.
  *
  * Hits: GET /matches?status=live
  *
+ * The backend only returns provider-confirmed in-progress matches; when
+ * the provider is unreachable the response meta reports "unavailable" or
+ * "stale" instead of a misleading empty list.
+ *
  * @async
- * @returns {Promise<Array<Object>>} List of live match objects.
+ * @returns {Promise<{matches: Array<Object>, meta: Object|null}>} Live
+ *   match objects plus provider freshness metadata.
  */
 export const getLiveMatch=async ()=>{
     const {data}=await api.get(
-        "/matches?status=live"
+        "/matches?status=live&limit=20"
     )
-    return data.data
+    return { matches: data.data || [], meta: data.meta || null }
 }
 
 /**
@@ -34,22 +40,23 @@ export const getLiveMatch=async ()=>{
  */
 export const getUpcomingMatches=async ()=>{
     const {data}=await api.get(
-        "/matches?status=upcoming&sortBy=matchDate&order=asc"
+        "/matches?status=upcoming&sortBy=matchDate&order=asc&limit=5"
     )
     return data.data;
 }
 
 /**
- * Fetch recently completed matches sorted by date (latest first).
+ * Fetch recently completed matches sorted by completion time
+ * (newest first; falls back to match date for legacy records).
  *
- * Hits: GET /matches?status=completed&sortBy=matchDate&order=desc
+ * Hits: GET /matches?status=completed&sortBy=completedAt&order=desc
  *
  * @async
  * @returns {Promise<Array<Object>>} List of completed match objects.
  */
 export const getRecentMatches=async()=>{
     const {data}=await api.get(
-        "/matches?status=completed&sortBy=matchDate&order=desc"
+        "/matches?status=completed&sortBy=completedAt&order=desc&limit=5"
     )
     return data.data
 }
@@ -83,6 +90,7 @@ export const getMatches = async ({
     format = "",
     sortBy = "",
     order = "",
+    includeProviderOnly = null,
 } = {}) => {
     const params = new URLSearchParams();
 
@@ -99,6 +107,12 @@ export const getMatches = async ({
 
     if (sortBy) {
         params.append("sortBy", sortBy);
+    }
+
+    // Admin surfaces request false so display-only provider live matches
+    // (no stored document) never enter edit/delete flows.
+    if (includeProviderOnly === false) {
+        params.append("includeProviderOnly", "false");
     }
 
     if (order) {

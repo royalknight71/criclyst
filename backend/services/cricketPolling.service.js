@@ -2,6 +2,11 @@ import { EventEmitter } from "node:events";
 import { fetchCurrentMatches } from "./cricketApi.service.js";
 import { publishLiveUpdates, publishStatusUpdate } from "./redisPubSub.service.js";
 import { syncMatchesFromProvider } from "./matchSync.service.js";
+import { getMatchState } from "../utils/matchStatus.js";
+import {
+  saveProviderSnapshot,
+  loadProviderSnapshot,
+} from "./providerSnapshot.service.js";
 
 const DEFAULT_POLL_INTERVAL_MS = 900000; // 15 minutes
 
@@ -16,45 +21,9 @@ let previousLastError = null;
 const pollingEmitter = new EventEmitter();
 pollingEmitter.setMaxListeners(20);
 
-/**
- * Determine match state from CricAPI fields.
- *
- * Uses matchStarted / matchEnded booleans first, then falls back
- * to the status string for edge-cases where the booleans are missing.
- *
- * @param {Object} match – raw match object from CricAPI
- * @returns {"live"|"completed"|"upcoming"}
- */
-export function getMatchState(match) {
-  if (!match) return "unknown";
-
-  // Explicit booleans are the most reliable signal
-  if (match.matchStarted === true && match.matchEnded !== true) {
-    return "live";
-  }
-  if (match.matchEnded === true) {
-    return "completed";
-  }
-  if (match.matchStarted === false) {
-    return "upcoming";
-  }
-
-  // Fallback: parse the status string
-  const s = (match.status || "").toLowerCase();
-  if (s.includes("live") || s.includes("in progress") || s.includes("innings break")) {
-    return "live";
-  }
-  if (s.includes("complete") || s.includes("result") || s.includes("won") || s.includes("tied") || s.includes("draw") || s.includes("abandon")) {
-    return "completed";
-  }
-
-  // If started flag is missing but score exists, treat as live
-  if (match.matchStarted === undefined && Array.isArray(match.score) && match.score.length > 0) {
-    return "live";
-  }
-
-  return "upcoming";
-}
+// Re-export the shared strict classifier so existing importers
+// (liveCricket.controller, tests) keep a single source of truth.
+export { getMatchState };
 
 function getInterval() {
   const raw = process.env.CRICKET_API_POLL_INTERVAL_MS;
@@ -75,6 +44,7 @@ function extractRelevantMatches(data) {
     teamInfo: m.teamInfo,
     venue: m.venue,
     date: m.date,
+    dateTimeGMT: m.dateTimeGMT,
     matchStarted: m.matchStarted,
     matchEnded: m.matchEnded,
     matchState: getMatchState(m),
@@ -120,7 +90,12 @@ if (previousLastError !== lastError) {
       pollCount,
       liveCount: liveMatches.length,
       lastError: null,
+      hydrated: false,
     };
+
+    // Persist the successful payload so the authoritative state survives
+    // restarts. Best-effort; never blocks or fails the poll.
+    saveProviderSnapshot(relevantNow, startedAt, liveMatches.length);
 
     console.log(
       `[cricketPolling] Poll #${pollCount} succeeded — ${matchCount} total, ${liveMatches.length} live — ${changed ? "changed" : "unchanged"}`
@@ -134,7 +109,12 @@ if (previousLastError !== lastError) {
     // Persist provider state into the Match collection, reusing the payload
     // fetched above (no extra CricAPI calls). Failures never break polling.
     try {
-      const syncResult = await syncMatchesFromProvider(relevantNow);
+      const syncResult = await syncMatchesFromProvider(relevantNow, {
+        // Only treat the feed as authoritative when the provider actually
+        // returned a data array (a malformed payload must not demote
+        // everything to completed).
+        feedAuthoritative: Array.isArray(data.data),
+      });
       const unresolved = syncResult.unresolvedTeams?.length
         ? ` | unresolved teams: ${syncResult.unresolvedTeams.join(", ")}`
         : "";
@@ -169,6 +149,69 @@ function scheduleNext() {
   }, interval);
 }
 
+/**
+ * Reload the last successful provider snapshot from MongoDB so restarts
+ * (e.g. Render dyno cycling) don't lose the authoritative match states.
+ * The hydrated snapshot is flagged stale until the next successful poll.
+ */
+async function hydrateFromStorage() {
+  if (latestData) return;
+  const snapshot = await loadProviderSnapshot();
+  if (!snapshot || latestData) return;
+  if (!Array.isArray(snapshot.matches) || snapshot.matches.length === 0) return;
+
+  const relevant = extractRelevantMatches({ data: snapshot.matches });
+  const liveMatches = relevant.filter((m) => m.matchState === "live");
+  const fetchedAt =
+    snapshot.fetchedAt instanceof Date
+      ? snapshot.fetchedAt.toISOString()
+      : snapshot.fetchedAt || null;
+
+  latestData = {
+    raw: null,
+    relevant,
+    liveMatches,
+    fetchedAt,
+    pollCount: 0,
+    liveCount: liveMatches.length,
+    lastError: null,
+    hydrated: true,
+  };
+  console.log(
+    `[cricketPolling] Hydrated cached snapshot from ${fetchedAt} — ${relevant.length} matches, ${liveMatches.length} live (stale until next poll)`
+  );
+}
+
+/**
+ * Authoritative provider state used by every read path.
+ *
+ * - available=false: no successful provider response exists — callers
+ *   must NOT claim "zero live matches"; report unavailable/stale instead.
+ * - stale=true: data comes from cache (hydrated snapshot) or the most
+ *   recent poll failed — present it with its last successful sync time.
+ */
+function getAuthoritativeState() {
+  if (!latestData) {
+    return {
+      available: false,
+      stale: true,
+      fetchedAt: null,
+      lastError,
+      liveMatches: [],
+      relevant: [],
+    };
+  }
+  const stale = latestData.hydrated === true || lastError !== null;
+  return {
+    available: true,
+    stale,
+    fetchedAt: latestData.fetchedAt || null,
+    lastError,
+    liveMatches: latestData.liveMatches || [],
+    relevant: latestData.relevant || [],
+  };
+}
+
 function start() {
   if (timerId) {
     console.log("[cricketPolling] Already running");
@@ -176,6 +219,11 @@ function start() {
   }
   const interval = getInterval();
   console.log(`[cricketPolling] Starting — interval ${interval}ms`);
+  // Non-blocking: the first poll decides the real state; the hydrated
+  // snapshot only covers the gap if the poll fails.
+  hydrateFromStorage().catch((error) =>
+    console.warn("[cricketPolling] Snapshot hydration failed:", error.message)
+  );
   pollOnce().then(() => scheduleNext());
 }
 
@@ -195,4 +243,4 @@ function getLastError() {
   return lastError;
 }
 
-export { start, stop, pollOnce, getLatest, getLastError, pollingEmitter };
+export { start, stop, pollOnce, getLatest, getLastError, getAuthoritativeState, pollingEmitter };

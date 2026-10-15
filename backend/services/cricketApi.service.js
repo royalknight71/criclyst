@@ -2,7 +2,9 @@ const CRICAPI_BASE_URL = "https://api.cricapi.com/v1";
 const REQUEST_TIMEOUT_MS = 10000;
 
 function getApiKey() {
-  const key = process.env.CRICKET_API_KEY;
+  // Trimmed once so stray whitespace (common in hand-edited .env values)
+  // can never produce a bogus "Invalid API Key". Never logged.
+  const key = (process.env.CRICKET_API_KEY || "").trim();
   if (!key) {
     throw new Error("CRICKET_API_KEY is not configured");
   }
@@ -10,9 +12,21 @@ function getApiKey() {
 }
 
 /**
+ * Defensive scrub: guarantee the API key can never appear in an error
+ * message (logs, API responses, status events) even if the provider
+ * echoes it back inside `reason`/`message`.
+ */
+function scrubSecret(message) {
+  if (typeof message !== "string" || !message) return message;
+  const key = (process.env.CRICKET_API_KEY || "").trim();
+  return key ? message.split(key).join("***") : message;
+}
+
+/**
  * CricAPI echoes the requested apikey back inside its response body.
  * Delete it so the credential can never leak through our own API
  * responses (e.g. /api/live-cricket/latest returns the raw payload).
+ * Applied before ANY branch so failure payloads are scrubbed too.
  */
 function sanitizeProviderPayload(data) {
   if (data && typeof data === "object" && "apikey" in data) {
@@ -35,19 +49,19 @@ export async function fetchCurrentMatches() {
       throw new Error(`CricAPI responded with status ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = sanitizeProviderPayload(await response.json());
 
     if (data.status !== "success") {
       const msg = data.reason || data.message || "Unknown error from CricAPI";
-      throw new Error(`CricAPI error: ${msg}`);
+      throw new Error(`CricAPI error: ${scrubSecret(msg)}`);
     }
 
-    return sanitizeProviderPayload(data);
+    return data;
   } catch (error) {
     if (error.name === "AbortError") {
       throw new Error("CricAPI request timed out", { cause: error });
     }
-    throw new Error(error.message, { cause: error });
+    throw new Error(scrubSecret(error.message), { cause: error });
   } finally {
     clearTimeout(timeout);
   }
@@ -67,19 +81,19 @@ export async function fetchMatchScorecard(matchId) {
       throw new Error(`CricAPI responded with status ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = sanitizeProviderPayload(await response.json());
 
     if (data.status !== "success") {
       const msg = data.reason || data.message || "Unknown error from CricAPI";
-      throw new Error(`CricAPI error: ${msg}`);
+      throw new Error(`CricAPI error: ${scrubSecret(msg)}`);
     }
 
-    return sanitizeProviderPayload(data);
+    return data;
   } catch (error) {
     if (error.name === "AbortError") {
       throw new Error("CricAPI request timed out", { cause: error });
     }
-    throw new Error(error.message, { cause: error });
+    throw new Error(scrubSecret(error.message), { cause: error });
   } finally {
     clearTimeout(timeout);
   }

@@ -15,7 +15,7 @@
 
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
-import { getLatest, getLastError } from "../services/cricketPolling.service.js";
+import { getLatest, getLastError, getAuthoritativeState } from "../services/cricketPolling.service.js";
 import {
   subscribeToLiveUpdates,
   subscribeToStatusUpdates,
@@ -112,6 +112,7 @@ io.use((socket, next) => {
     // --- Initial data sync (no API call, uses in-memory latest) ---
     const latest = getLatest();
     const lastErr = getLastError();
+    const authority = getAuthoritativeState();
     const hasData = latest !== null;
     const relevantMatches = hasData && Array.isArray(latest.relevant) ? latest.relevant : [];
     const liveCount = hasData && Array.isArray(latest.liveMatches) ? latest.liveMatches.length : 0;
@@ -123,6 +124,10 @@ io.use((socket, next) => {
       totalFetched: relevantMatches.length,
       lastError: lastErr,
       fetchedAt: latest?.fetchedAt || null,
+      // True when data is cached or the most recent poll failed — clients
+      // must show it as delayed, never as confirmed real-time.
+      stale: authority.stale,
+      lastSyncAt: authority.fetchedAt || null,
     });
 
     // --- Join a match room ---

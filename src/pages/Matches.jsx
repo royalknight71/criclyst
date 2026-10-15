@@ -44,6 +44,8 @@ const Matches = () => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [totalMatches, setTotalMatches] = useState(null);
+  const [meta, setMeta] = useState(null);
 
   const [status, setStatus] = useState("");
   const [format, setFormat] = useState("");
@@ -74,6 +76,10 @@ const Matches = () => {
 
         setMatches(data.data);
         setPagination(data.pagination);
+        setTotalMatches(
+          typeof data.totalMatches === "number" ? data.totalMatches : null
+        );
+        setMeta(data.meta || null);
       } catch (err) {
         console.error(err);
         setError("Failed to fetch matches");
@@ -213,16 +219,41 @@ const Matches = () => {
 
       <div className="mx-auto mt-12 max-w-7xl text-sm text-slate-400">
         Showing{" "}
-        <span className="font-semibold text-cyan-400">{matches.length}</span>{" "}
+        <span className="font-semibold text-cyan-400">
+          {matches.length}
+        </span>{" "}
+        of{" "}
+        <span className="font-semibold text-cyan-400">
+          {totalMatches ?? matches.length}
+        </span>{" "}
         Matches
       </div>
+
+      {/* Provider freshness notice (Live filter only) */}
+
+      {status === "live" && meta?.providerStatus === "unavailable" && (
+        <div className="mx-auto mt-4 max-w-7xl rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-300">
+          Live match data is temporarily unavailable — the cricket data
+          provider could not be checked.
+        </div>
+      )}
+
+      {status === "live" && meta?.stale && meta?.providerStatus !== "unavailable" && (
+        <div className="mx-auto mt-4 max-w-7xl rounded-xl border border-yellow-500/30 bg-yellow-500/5 px-4 py-3 text-sm text-yellow-300">
+          Live data may be delayed
+          {meta?.lastSyncAt
+            ? ` — last synced ${new Date(meta.lastSyncAt).toLocaleString()}`
+            : ""}
+          .
+        </div>
+      )}
 
       {/* ================= MATCH GRID ================= */}
 
       {matches.length > 0 ? (
         <section className="mx-auto mt-6 grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {matches.map((match) => (
-            <MatchCard key={match._id} match={match} />
+            <MatchCard key={match._id || match.providerId} match={match} />
           ))}
         </section>
       ) : (
