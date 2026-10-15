@@ -9,6 +9,13 @@ import Match from "../models/match.model.js";
 import Team from "../models/team.model.js";
 import Player from "../models/player.model.js";
 import User from "../models/user.model.js";
+import {
+  getStatusSnapshot,
+  buildStatusFilter,
+  reconcileMatchDocs,
+  buildProviderOnlyLiveDocs,
+  getIdsWithState,
+} from "../services/matchQuery.service.js";
 
 /**
  * Population configuration shared by list and detail endpoints.
@@ -57,6 +64,10 @@ export const getAllMatches = async (req, res) => {
     const sortBy=req.query.sortBy||"matchDate"
     const order=req.query.order||"desc"
     const selectedFields=req.query.fields
+    // Display-only provider-confirmed live matches are included by default
+    // (Home/Matches); callers that manage stored rows only (Admin) opt out
+    // so their counts and edit/delete actions stay Mongo-only.
+    const includeProviderOnly = req.query.includeProviderOnly !== "false"
 
     const filter={...req.query}
     delete filter.page
@@ -64,13 +75,19 @@ export const getAllMatches = async (req, res) => {
     delete filter.sortBy
     delete filter.order
     delete filter.fields
+    delete filter.includeProviderOnly
+
+    // Status filtering is reconciled against the authoritative provider
+    // snapshot (see matchQuery.service) instead of trusting stored values.
+    const { status = "", ...statusIndependentFilter } = filter;
 
     const sortingFields = [
         "matchDate",
         "venue",
         "format",
         "status",
-        "createdAt"
+        "createdAt",
+        "completedAt"
     ];
 
     const selectableFields = [
@@ -87,7 +104,9 @@ export const getAllMatches = async (req, res) => {
         "scorecard",
         "manOfTheMatch",
         "createdAt",
-        "updatedAt"
+        "updatedAt",
+        "completedAt",
+        "providerId"
     ];
 
     const filterableFields=[
@@ -158,9 +177,16 @@ export const getAllMatches = async (req, res) => {
         query=split.join(" ")
     }
 
+    // Reconciled status filter: LIVE only when the provider confirms it.
+    const { snapshotAvailable, stateMap, meta, relevant } = getStatusSnapshot();
+    const mongoFilter = {
+        ...statusIndependentFilter,
+        ...buildStatusFilter(status, stateMap, snapshotAvailable),
+    };
+
     //Basic Calulation on finding Page Details
     const startIndex=(page-1)*limit
-    const totalMatches=await Match.countDocuments(filter)
+    const totalMatches=await Match.countDocuments(mongoFilter)
     const totalPages=Math.ceil(totalMatches/limit)
 
     //Validate Page
@@ -173,9 +199,12 @@ export const getAllMatches = async (req, res) => {
     }
 
     //MongoDB Query
-    let mongoQuery= Match.find(filter).sort({
-        [sortBy]:sortValue
-    })
+    // completedAt sorts fall back to matchDate so legacy records without a
+    // completion timestamp keep a stable, meaningful order.
+    const sortSpec = sortBy === "completedAt"
+        ? { completedAt: sortValue, matchDate: sortValue }
+        : { [sortBy]: sortValue };
+    let mongoQuery= Match.find(mongoFilter).sort(sortSpec)
 
     if(query){
         mongoQuery = mongoQuery.select(query);
@@ -215,6 +244,47 @@ if (selectedFields) {
     // }
     const matches = await mongoQuery.skip(startIndex).limit(limit)
 
+    // Reconcile display statuses against the provider snapshot so stale
+    // stored values (e.g. an old "live") never surface in any filter.
+    reconcileMatchDocs(matches, stateMap, snapshotAvailable);
+
+    // Provider-confirmed LIVE matches whose teams are missing from MongoDB
+    // cannot be stored (Match requires team refs; teams are never invented).
+    // Surface them explicitly so a genuine live match is never hidden from
+    // the Live tab or the All list.
+    let providerOnlyDocs = [];
+    if (includeProviderOnly && (status === "live" || status === "") && snapshotAvailable) {
+        const confirmedLiveIds = getIdsWithState(stateMap, "live");
+        if (confirmedLiveIds.length > 0) {
+            const storedLiveDocs = await Match.find({
+                providerId: { $in: confirmedLiveIds },
+            })
+                .select("providerId")
+                .lean();
+            providerOnlyDocs = buildProviderOnlyLiveDocs({
+                stateMap,
+                relevant,
+                existingDocs: storedLiveDocs,
+                snapshotAvailable,
+            }).filter((doc) =>
+                // Conservative equality matching for any extra filters the
+                // request supplied (format/venue/…); unmatched extras are
+                // excluded rather than guessed.
+                Object.entries(statusIndependentFilter).every(
+                    ([key, value]) => String(doc[key] ?? "") === String(value)
+                )
+            );
+        }
+        if (providerOnlyDocs.length > 0 && page === 1) {
+            matches.push(...providerOnlyDocs);
+        }
+    }
+    const responseTotalMatches = totalMatches + providerOnlyDocs.length;
+    const responseTotalPages = Math.max(
+        totalPages,
+        Math.ceil(responseTotalMatches / limit)
+    );
+
     //Pagination
     const pagination={}
     if(page>1)
@@ -224,7 +294,7 @@ if (selectedFields) {
             limit:limit
         }
     }
-    if(page<totalPages)
+    if(page<responseTotalPages)
     {
         pagination.next={
             page:page+1,
@@ -235,9 +305,10 @@ if (selectedFields) {
       success: true,
       page,
       limit,
-      totalMatches,
-      totalPages,
+      totalMatches: responseTotalMatches,
+      totalPages: responseTotalPages,
       pagination,
+      meta,
       data: matches,
     });
   } catch (error) {
@@ -273,8 +344,13 @@ export const getMatchById = async (req, res) => {
         message: "Match Not Found",
       });
     }
+  // Same authoritative status reconciliation as the list endpoints so the
+  // match center never shows a stale LIVE badge.
+  const { snapshotAvailable, stateMap, meta } = getStatusSnapshot();
+  reconcileMatchDocs([match], stateMap, snapshotAvailable);
   return res.status(200).json({
     success:true,
+    meta,
     data:match
   })
   } catch (error) {

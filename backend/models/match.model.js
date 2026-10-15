@@ -49,6 +49,13 @@ const matchSchema=new mongoose.Schema({
         enum:['upcoming','live','completed'],
         required:true
     },
+    // When the match was first observed completed (provider-confirmed).
+    // Used to sort Recent Matches by real completion order; null until
+    // the match completes. Never overwritten once set.
+    completedAt:{
+        type:Date,
+        default:null
+    },
     // Team that won the toss
     tossWinner:{
         type: mongoose.Schema.Types.ObjectId,
@@ -123,6 +130,11 @@ matchSchema.index(
         }
     }
 );
+
+// Status-tab queries (dashboard sections, Matches page filters).
+matchSchema.index({ status: 1, matchDate: -1 });
+// Recent Matches sorting (completedAt with matchDate tiebreak).
+matchSchema.index({ status: 1, completedAt: -1 });
 
 /** Mongoose model for cricket matches. */
 const Match=mongoose.model('Match',matchSchema)

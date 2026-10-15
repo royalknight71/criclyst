@@ -1,5 +1,5 @@
 import { fetchCurrentMatches, fetchMatchScorecard } from "../services/cricketApi.service.js";
-import { pollOnce, getLatest, getLastError, getMatchState } from "../services/cricketPolling.service.js";
+import { pollOnce, getLatest, getMatchState, getAuthoritativeState } from "../services/cricketPolling.service.js";
 import { syncPlayersFromScorecard } from "../services/playerSync.service.js";
 
 const scorecardCache = new Map();
@@ -91,33 +91,41 @@ export const getLatestData = (req, res) => {
       message: "No polling data available yet",
     });
   }
+  const authority = getAuthoritativeState();
   return res.status(200).json({
     success: true,
+    stale: authority.stale,
     data: latest,
   });
 };
 
 /**
  * GET /live-cricket/live
- * Returns only genuinely live matches (matchStarted && !matchEnded).
+ * Returns only provider-confirmed live matches, plus freshness metadata
+ * so clients can distinguish "zero live" from "provider unavailable".
  */
 export const getLiveMatches = (req, res) => {
-  const latest = getLatest();
-  if (!latest) {
+  const authority = getAuthoritativeState();
+  if (!authority.available) {
     return res.status(200).json({
       success: true,
       data: [],
       available: false,
-      lastError: getLastError(),
+      stale: true,
+      lastSyncAt: null,
+      lastError: authority.lastError,
     });
   }
   return res.status(200).json({
     success: true,
-    data: latest.liveMatches || [],
+    data: authority.liveMatches || [],
     available: true,
-    liveCount: (latest.liveMatches || []).length,
-    totalFetched: (latest.relevant || []).length,
-    fetchedAt: latest.fetchedAt,
+    stale: authority.stale,
+    lastSyncAt: authority.fetchedAt,
+    liveCount: (authority.liveMatches || []).length,
+    totalFetched: (authority.relevant || []).length,
+    fetchedAt: authority.fetchedAt,
+    lastError: authority.lastError,
   });
 };
 

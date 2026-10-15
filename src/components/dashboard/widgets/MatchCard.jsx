@@ -146,13 +146,14 @@ tracking-tight text-cyan-400">
             </p>
 
             <p className="text-white">
-              {formatName(match.venue)}
+              {formatName(match.venue) || "Venue TBC"}
             </p>
 
           </div>
 
         </div>
 
+        {match.tossWinner?.name && match.tossDecision ? (
         <div className="flex items-start gap-3">
 
           <MdSportsCricket className="text-cyan-400 mt-1 text-lg"/>
@@ -164,12 +165,13 @@ tracking-tight text-cyan-400">
             </p>
 
             <p className="text-white">
-              {formatName(match.tossWinner?.name)} won the toss & elected to {match.tossDecision}
+              {formatName(match.tossWinner.name)} won the toss & elected to {match.tossDecision}
             </p>
 
           </div>
 
         </div>
+        ) : null}
 
       </div>
 
@@ -211,8 +213,9 @@ tracking-tight text-cyan-400">
 
       </div>
 
-      {/* Result */}
+      {/* Result — only when the provider reports one */}
 
+      {match.result ? (
       <div className="mt-8 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 py-4 px-5">
 
         <p className="text-center text-cyan-300 font-semibold text-lg tracking-wide">
@@ -222,9 +225,15 @@ tracking-tight text-cyan-400">
         </p>
 
       </div>
+      ) : null}
 
-      {/* Button */}
+      {/* Button / provider-only notice */}
 
+      {match.providerOnly ? (
+      <p className="mt-6 w-full rounded-2xl border border-slate-600 bg-slate-800/60 py-3 text-center text-sm font-medium text-slate-400">
+        Match center unavailable — teams not added to Criclyst yet
+      </p>
+      ) : (
       <button
         onClick={() => navigate(`/matches/${match._id}`)}
         className="group mt-6 w-full cursor-pointer rounded-2xl bg-cyan-500 py-3 text-lg font-semibold
@@ -242,6 +251,7 @@ hover:shadow-cyan-500/30"
         </span>
 
       </button>
+      )}
 
     </div>
   );

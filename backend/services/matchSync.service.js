@@ -10,15 +10,18 @@
  * - Provider state (matchStarted/matchEnded/status) is the primary source
  *   of truth for Match.status; date logic is only a defensive stale-data
  *   fallback.
+ * - A successful provider poll that no longer contains a stored "live"
+ *   match demotes that record to "completed" immediately (live never
+ *   outlives its provider confirmation).
+ * - completedAt records when a match was first observed completed and is
+ *   never overwritten once set.
  * - Teams are resolved by normalized name. Missing teams are logged and
  *   skipped — never auto-created with fabricated captain/coach data.
- * - Stale records (past matches still marked "live"/"upcoming") are
- *   demoted to "completed" so Home sections stop showing them incorrectly.
  */
 
 import Match from "../models/match.model.js";
 import Team from "../models/team.model.js";
-import { getMatchState } from "./cricketPolling.service.js";
+import { getMatchState } from "../utils/matchStatus.js";
 
 // Defensive stale-data fallbacks (never the primary status source).
 // Test matches can run ~5 days, so the "live" grace window is generous.
@@ -61,9 +64,11 @@ export function resolveMatchStatus(providerMatch, matchDate, existingStatus) {
         return existingStatus || null;
     }
 
-    let state = providerMatch?.matchState;
-    if (!VALID_STATUSES.has(state)) {
-        state = getMatchState(providerMatch);
+    // Recompute from the raw provider booleans/status text so a stale
+    // precomputed matchState can never contradict the provider flags.
+    let state = getMatchState(providerMatch);
+    if (!VALID_STATUSES.has(state) && VALID_STATUSES.has(providerMatch?.matchState)) {
+        state = providerMatch.matchState;
     }
     if (!VALID_STATUSES.has(state)) {
         return existingStatus || null;
@@ -85,6 +90,42 @@ export function parseProviderDate(raw) {
     if (!value) return null;
     const parsed = new Date(value);
     return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+/**
+ * Best available provider match start time: precise dateTimeGMT when
+ * present, otherwise the date-only field, otherwise the stored date.
+ */
+export function parseProviderMatchDate(providerMatch, existingMatchDate) {
+    return (
+        parseProviderDate(providerMatch?.dateTimeGMT) ||
+        parseProviderDate(providerMatch?.date) ||
+        existingMatchDate ||
+        null
+    );
+}
+
+/**
+ * Resolve the completion timestamp written together with a "completed"
+ * status. Once set it is never overwritten (completion is an event).
+ *
+ * - Watching a match transition live → completed: use the observation
+ *   time (closest available proxy for the real completion moment).
+ * - First seen already completed: use the provider match date.
+ *
+ * @returns {Date|null|undefined} Date to write, null to clear, or
+ *   undefined to leave the stored value untouched.
+ */
+export function resolveCompletedAt(existing, status, matchDate) {
+    if (status !== "completed") {
+        // Leaving the completed state — clear the completion timestamp.
+        return existing?.status === "completed" ? null : undefined;
+    }
+    if (existing?.completedAt) return undefined; // never overwrite
+    if (existing?.status === "live") return new Date();
+    return matchDate instanceof Date && !Number.isNaN(matchDate.getTime())
+        ? matchDate
+        : new Date();
 }
 
 /** Format a provider score entry ({ r, w }) as "120/3". */
@@ -182,7 +223,7 @@ export function resolveTeamByName(teamIndex, rawName) {
     return null;
 }
 
-function collectProviderTeamNames(providerMatch) {
+export function collectProviderTeamNames(providerMatch) {
     const infoNames = Array.isArray(providerMatch?.teamInfo)
         ? providerMatch.teamInfo.map((t) => t?.name).filter(Boolean)
         : [];
@@ -267,7 +308,7 @@ async function syncOneMatch(providerMatch, teamIndex, summary) {
         namesB = [rawNameB, teamIndex.byId.get(String(existing.teamB))?.name].filter(Boolean);
     }
 
-    const matchDate = parseProviderDate(providerMatch.date) || existing?.matchDate || null;
+    const matchDate = parseProviderMatchDate(providerMatch, existing?.matchDate);
     const status = resolveMatchStatus(providerMatch, matchDate, existing?.status);
     if (!status) {
         summary.skipped++;
@@ -299,11 +340,15 @@ async function syncOneMatch(providerMatch, teamIndex, summary) {
         if (statusText) update.result = statusText;
         const winnerId = resolveWinnerId(providerMatch, teamA, teamB, namesA, namesB);
         if (winnerId) update.winner = winnerId;
+        const completedAt = resolveCompletedAt(existing, status, matchDate);
+        if (completedAt !== undefined) update.completedAt = completedAt;
     } else if (existing?.status === "completed") {
         // Status regressed away from completed — clear completion-only fields.
         update.winner = null;
         update.manOfTheMatch = null;
         if (!update.result) update.result = "";
+        const completedAt = resolveCompletedAt(existing, status, matchDate);
+        if (completedAt !== undefined) update.completedAt = completedAt;
     }
 
     if (!existing) {
@@ -348,19 +393,66 @@ async function syncOneMatch(providerMatch, teamIndex, summary) {
 }
 
 /**
- * Defensive sweep: demote records whose scheduled date is long past but
- * that are still marked live/upcoming (frozen admin/demo leftovers and
- * provider records that disappeared from the feed).
+ * Defensive sweep that reconciles stored statuses with the latest
+ * successful provider feed.
+ *
+ * - When the feed is authoritative: any stored "live" match that is NOT
+ *   in the feed at all (provider dropped it after it ended, or the feed
+ *   genuinely returned zero matches) is demoted to completed immediately.
+ *   This is what stops old matches from being labelled LIVE forever.
+ * - Time-based demotion remains as a fallback for legacy/provider-less
+ *   records and for stale "upcoming" fixtures.
  */
-async function sweepStaleMatches(summary) {
+async function sweepStaleMatches(summary, options = {}) {
+    const { feedIds = null, feedAuthoritative = false } = options;
     const now = Date.now();
+
+    // Aggregation-pipeline update: stamps completedAt (matchDate fallback)
+    // without overwriting an existing completion time.
+    const completionUpdate = [
+        {
+            $set: {
+                status: "completed",
+                completedAt: {
+                    $ifNull: ["$completedAt", { $ifNull: ["$matchDate", "$$NOW"] }],
+                },
+            },
+        },
+    ];
+
+    if (feedAuthoritative && Array.isArray(feedIds)) {
+        // Live is only valid while the provider still confirms it.
+        const liveSweep = await Match.updateMany(
+            { status: "live", providerId: { $nin: feedIds } },
+            completionUpdate,
+            { updatePipeline: true }
+        );
+        // Upcoming fixtures that fell out of the feed and are long past.
+        const upcomingSweep = await Match.updateMany(
+            {
+                status: "upcoming",
+                providerId: { $nin: feedIds },
+                matchDate: { $lt: new Date(now - UPCOMING_STALE_MS) },
+            },
+            completionUpdate,
+            { updatePipeline: true }
+        );
+        summary.staleDemoted =
+            (liveSweep.modifiedCount || 0) + (upcomingSweep.modifiedCount || 0);
+        return;
+    }
+
+    // No authoritative feed available — keep the original time-based
+    // defensive sweeps (legacy records and provider-less matches).
     const liveSweep = await Match.updateMany(
         { status: "live", matchDate: { $lt: new Date(now - LIVE_STALE_MS) } },
-        { $set: { status: "completed" } }
+        completionUpdate,
+        { updatePipeline: true }
     );
     const upcomingSweep = await Match.updateMany(
         { status: "upcoming", matchDate: { $lt: new Date(now - UPCOMING_STALE_MS) } },
-        { $set: { status: "completed" } }
+        completionUpdate,
+        { updatePipeline: true }
     );
     summary.staleDemoted = (liveSweep.modifiedCount || 0) + (upcomingSweep.modifiedCount || 0);
 }
@@ -370,9 +462,13 @@ async function sweepStaleMatches(summary) {
  *
  * @param {Array<Object>} providerMatches – already-fetched CricAPI matches
  *   (ideally the normalized objects from cricketPolling's extractRelevantMatches)
+ * @param {Object} [options]
+ * @param {boolean} [options.feedAuthoritative] – true when providerMatches
+ *   reflects a complete, successful provider response (enables
+ *   feed-absence demotion of stale live records).
  * @returns {Promise<Object>} sync summary
  */
-export async function syncMatchesFromProvider(providerMatches) {
+export async function syncMatchesFromProvider(providerMatches, options = {}) {
     const summary = {
         total: Array.isArray(providerMatches) ? providerMatches.length : 0,
         created: 0,
@@ -384,8 +480,17 @@ export async function syncMatchesFromProvider(providerMatches) {
         reasons: [],
     };
 
+    const feedAuthoritative =
+        options.feedAuthoritative === true && Array.isArray(providerMatches);
+    const feedIds = feedAuthoritative
+        ? providerMatches
+            .map((m) => m?.id)
+            .filter((id) => id !== undefined && id !== null && id !== "")
+            .map(String)
+        : null;
+
     if (!Array.isArray(providerMatches) || providerMatches.length === 0) {
-        await sweepStaleMatches(summary);
+        await sweepStaleMatches(summary, { feedIds, feedAuthoritative });
         return finalizeSummary(summary);
     }
 
@@ -400,7 +505,7 @@ export async function syncMatchesFromProvider(providerMatches) {
         }
     }
 
-    await sweepStaleMatches(summary);
+    await sweepStaleMatches(summary, { feedIds, feedAuthoritative });
     return finalizeSummary(summary);
 }
 
