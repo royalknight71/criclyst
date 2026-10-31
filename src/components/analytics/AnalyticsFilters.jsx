@@ -56,9 +56,9 @@ function AnalyticsFilters({
   const hasActiveFilters = Boolean(country || role);
 
   return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
       {/* Country filter */}
-      <div className="relative flex-1">
+      <div className="relative min-w-0 flex-1">
         <span
           className="
             pointer-events-none absolute left-5 top-1/2 -translate-y-1/2
@@ -70,6 +70,7 @@ function AnalyticsFilters({
 
         <select
           value={country}
+          aria-label="Filter analytics by country"
           onChange={(e) => onCountryChange(e.target.value)}
           className={SELECT_CLASSES}
         >
@@ -92,7 +93,7 @@ function AnalyticsFilters({
       </div>
 
       {/* Role filter */}
-      <div className="relative flex-1">
+      <div className="relative min-w-0 flex-1">
         <FaFilter
           className="
             pointer-events-none absolute left-5 top-1/2 -translate-y-1/2
@@ -102,6 +103,7 @@ function AnalyticsFilters({
 
         <select
           value={role}
+          aria-label="Filter analytics by player role"
           onChange={(e) => onRoleChange(e.target.value)}
           className={SELECT_CLASSES}
         >
@@ -128,8 +130,8 @@ function AnalyticsFilters({
         <button
           onClick={onReset}
           className="
-            shrink-0 rounded-xl border border-slate-700 bg-slate-900/50
-            px-6 py-3 text-sm text-slate-300 transition-all duration-300
+            min-h-11 w-full shrink-0 rounded-xl border border-slate-700 bg-slate-900/50
+            px-6 py-3 text-sm text-slate-300 transition-all duration-300 sm:w-auto
             hover:border-cyan-400 hover:text-cyan-400
           "
         >

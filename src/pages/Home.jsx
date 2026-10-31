@@ -23,7 +23,7 @@ import PerformanceHighlights from "../components/dashboard/widgets/PerformanceHi
  */
 function Home() {
   return (
-    <div>
+    <div className="min-w-0">
       <Hero />
       <HeroDashboard />
       <StatsCards />

@@ -8,6 +8,7 @@
  */
 
 import { ResponsiveContainer, PieChart, Pie, Tooltip, Legend, Cell } from "recharts"
+import { useEffect, useState } from "react";
 
 /** Shared tooltip styling matching the Criclyst card theme. */
 const TOOLTIP_STYLE = {
@@ -15,6 +16,8 @@ const TOOLTIP_STYLE = {
         backgroundColor: "#111827",
         border: "1px solid #334155",
         borderRadius: "12px",
+        maxWidth: "calc(100vw - 32px)",
+        overflowWrap: "anywhere",
     },
     itemStyle: { color: "#e2e8f0" },
 };
@@ -39,18 +42,26 @@ function RolePieChart({
     COLORS,
     innerRadius
 }){
+    const [isNarrow, setIsNarrow] = useState(() => window.innerWidth < 640);
+
+    useEffect(() => {
+        const handleResize = () => setIsNarrow(window.innerWidth < 640);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     return (
         <div
             className="
-                rounded-3xl border border-slate-800 bg-[#111827] p-6
+                min-w-0 rounded-3xl border border-slate-800 bg-[#111827] p-4
                 transition-colors duration-300 hover:border-slate-700 sm:p-8
             "
         >
-            <h2 className="mb-6 text-lg font-bold text-white sm:text-xl">
+            <h2 className="mb-5 break-words text-lg font-bold text-white sm:mb-6 sm:text-xl">
                 {title}
             </h2>
 
-            <div className="h-[340px] w-full">
+            <div className="h-[320px] w-full min-w-0 sm:h-[340px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Pie
@@ -59,12 +70,12 @@ function RolePieChart({
                             nameKey={nameKey}
                             cx="50%"
                             cy="45%"
-                            outerRadius={95}
-                            innerRadius={innerRadius}
+                            outerRadius={isNarrow ? 74 : 95}
+                            innerRadius={isNarrow ? 44 : innerRadius}
                             labelLine={{ stroke: "#475569" }}
                             label={({ cx, cy, midAngle, outerRadius, name, percent }) => {
                                 const RADIAN = Math.PI / 180;
-                                const radius = outerRadius + 24;
+                                const radius = isNarrow ? outerRadius * 0.68 : outerRadius + 24;
                                 const x = cx + radius * Math.cos(-midAngle * RADIAN);
                                 const y = cy + radius * Math.sin(-midAngle * RADIAN);
                                 return (
@@ -72,11 +83,11 @@ function RolePieChart({
                                         x={x}
                                         y={y}
                                         fill="#cbd5e1"
-                                        fontSize={12}
-                                        textAnchor={x > cx ? "start" : "end"}
+                                        fontSize={isNarrow ? 10 : 12}
+                                        textAnchor={isNarrow ? "middle" : x > cx ? "start" : "end"}
                                         dominantBaseline="central"
                                     >
-                                        {`${name} ${(percent * 100).toFixed(0)}%`}
+                                        {isNarrow ? `${(percent * 100).toFixed(0)}%` : `${name} ${(percent * 100).toFixed(0)}%`}
                                     </text>
                                 );
                             }}
@@ -92,14 +103,16 @@ function RolePieChart({
 
                         <Tooltip
                             {...TOOLTIP_STYLE}
+                            allowEscapeViewBox={{ x: false, y: false }}
                             formatter={(value, name) => [`${value} Players`, name]}
                         />
 
                         <Legend
                             verticalAlign="bottom"
                             iconType="circle"
+                            wrapperStyle={{ width: "100%", left: 0, bottom: 0 }}
                             formatter={(value) => (
-                                <span className="text-slate-400">{value}</span>
+                                <span className="break-words text-slate-400">{value}</span>
                             )}
                         />
                     </PieChart>

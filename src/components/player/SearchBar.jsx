@@ -35,10 +35,11 @@ function SearchBar({ value, onChange,placeholder }) {
       <input
         type="text"
         placeholder={placeholder}
+        aria-label={placeholder || "Search players"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="
-          w-full
+          min-w-0 w-full
           rounded-2xl
           border
           border-slate-700

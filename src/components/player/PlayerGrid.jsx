@@ -18,12 +18,14 @@ function PlayerGrid({ players, onUnfavorite, showFavoriteAction = false }) {
   return (   
     <div
   className="
-    grid
+    grid min-w-0
     grid-cols-1
     sm:grid-cols-2
     lg:grid-cols-3
     xl:grid-cols-4
-    gap-8
+    gap-4
+    sm:gap-6
+    xl:gap-8
     justify-items-center
   "
 >

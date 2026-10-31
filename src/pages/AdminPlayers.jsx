@@ -112,7 +112,7 @@ function AdminPlayers() {
     return (
         <section className="relative min-h-screen overflow-hidden bg-[#0B1120]">
             <div className="absolute top-20 left-0 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
-            <div className="relative mx-auto max-w-6xl px-6 py-16">
+            <div className="relative mx-auto w-full min-w-0 max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
                 <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="text-cyan-400 font-semibold tracking-[0.2em] uppercase text-sm">Admin</p>
@@ -135,10 +135,10 @@ function AdminPlayers() {
                 </div>
 
                 {showForm && (
-                    <div className="mb-8 rounded-2xl border border-slate-700 bg-[#111827] p-6">
+                    <div className="mb-8 min-w-0 rounded-2xl border border-slate-700 bg-[#111827] p-4 sm:p-6">
                         <h2 className="mb-4 text-xl font-bold text-white">{editingPlayer ? "Edit Player" : "Add Player"}</h2>
-                        {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
-                        <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {error && <p role="alert" className="mb-4 break-words text-sm text-red-400">{error}</p>}
+                        <form onSubmit={handleSubmit} className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {/* Name */}
                             <div>
                                 <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">Name *</label>
@@ -269,11 +269,11 @@ function AdminPlayers() {
                                     <span className="text-sm text-white">Active</span>
                                 </label>
                             </div>
-                            <div className="flex gap-3 sm:col-span-2 lg:col-span-3">
-                                <button type="submit" className="rounded-lg bg-cyan-500 px-6 py-2.5 font-semibold text-slate-900 hover:bg-cyan-400">
+                            <div className="flex flex-wrap gap-3 sm:col-span-2 lg:col-span-3">
+                                <button type="submit" className="min-h-11 rounded-lg bg-cyan-500 px-6 py-2.5 font-semibold text-slate-900 hover:bg-cyan-400 lg:min-h-0">
                                     {editingPlayer ? "Update" : "Create"}
                                 </button>
-                                <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-slate-700 px-6 py-2.5 font-semibold text-slate-300 hover:border-slate-500">
+                                <button type="button" onClick={() => setShowForm(false)} className="min-h-11 rounded-lg border border-slate-700 px-6 py-2.5 font-semibold text-slate-300 hover:border-slate-500 lg:min-h-0">
                                     Cancel
                                 </button>
                             </div>
@@ -313,10 +313,10 @@ function AdminPlayers() {
                                             <td className="px-5 py-3 text-slate-300">{p.average}</td>
                                             <td className="px-5 py-3">
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => openEdit(p)} className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-500 hover:text-white">
+                                                    <button onClick={() => openEdit(p)} className="min-h-11 rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-semibold text-cyan-300 hover:bg-cyan-500 hover:text-white lg:min-h-0">
                                                         Edit
                                                     </button>
-                                                    <button onClick={() => handleDelete(p._id)} className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300 hover:bg-red-500 hover:text-white">
+                                                    <button onClick={() => handleDelete(p._id)} className="min-h-11 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300 hover:bg-red-500 hover:text-white lg:min-h-0">
                                                         Delete
                                                     </button>
                                                 </div>
@@ -330,12 +330,12 @@ function AdminPlayers() {
                         {totalPages > 1 && (
                             <div className="mt-6 flex justify-center gap-3">
                                 <button disabled={page <= 1} onClick={() => setPage(page - 1)}
-                                    className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-cyan-400 disabled:opacity-40">
+                                    className="min-h-11 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-cyan-400 disabled:opacity-40 lg:min-h-0">
                                     Prev
                                 </button>
                                 <span className="flex items-center px-4 text-sm text-slate-400">Page {page} of {totalPages}</span>
                                 <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}
-                                    className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-cyan-400 disabled:opacity-40">
+                                    className="min-h-11 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-cyan-400 disabled:opacity-40 lg:min-h-0">
                                     Next
                                 </button>
                             </div>

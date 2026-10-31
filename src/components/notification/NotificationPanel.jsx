@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNotifications } from "../../context/NotificationContext";
-import { FaCheckDouble, FaBell } from "react-icons/fa";
+import { FaCheckDouble, FaBell, FaTimes } from "react-icons/fa";
 
 const EVENT_ICONS = {
   MATCH_STARTED: "🟢",
@@ -20,7 +20,6 @@ function timeAgo(dateStr) {
   return `${days}d ago`;
 }
 
-// eslint-disable-next-line no-unused-vars
 function NotificationPanel({ onClose }) {
   const {
     notifications,
@@ -36,21 +35,37 @@ function NotificationPanel({ onClose }) {
   }, [fetchNotifications]);
 
   return (
-    <div className="absolute right-0 top-full mt-2 w-80 sm:w-96 rounded-xl border border-slate-700 bg-slate-800 shadow-2xl z-50">
+    <div
+      id="notification-panel"
+      role="region"
+      aria-label="Notifications"
+      className="absolute right-0 top-full z-50 mt-2 flex max-h-[calc(100dvh-6rem)] w-80 max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-800 shadow-2xl sm:w-96"
+    >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-700 px-4 py-3">
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b border-slate-700 px-3 py-2 sm:px-4 sm:py-3">
         <h3 className="text-sm font-semibold text-white">Notifications</h3>
-        <button
-          onClick={markAllNotificationsAsRead}
-          className="flex items-center gap-1 text-xs text-cyan-400 transition-colors hover:text-cyan-300"
-        >
-          <FaCheckDouble className="text-[10px]" />
-          Mark all read
-        </button>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            onClick={markAllNotificationsAsRead}
+            className="flex min-h-11 items-center gap-1 rounded-lg px-2 text-xs text-cyan-400 transition-colors hover:bg-slate-700/50 hover:text-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+          >
+            <FaCheckDouble className="text-[10px]" />
+            <span>Mark all read</span>
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close notifications"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-300 transition-colors hover:bg-slate-700 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
+          >
+            <FaTimes aria-hidden="true" />
+          </button>
+        </div>
       </div>
 
       {/* Notification list */}
-      <div className="max-h-96 overflow-y-auto">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {notifications.length === 0 && !loading ? (
           <div className="flex flex-col items-center justify-center py-10 text-slate-400">
             <FaBell className="mb-2 text-2xl text-slate-600" />
@@ -61,10 +76,11 @@ function NotificationPanel({ onClose }) {
           </div>
         ) : (
           notifications.map((n) => (
-            <div
+            <button
+              type="button"
               key={n._id}
               onClick={() => !n.read && markNotificationAsRead(n._id)}
-              className={`flex cursor-pointer gap-3 border-b border-slate-700/50 px-4 py-3 transition-colors hover:bg-slate-700/50 ${
+              className={`flex min-h-11 w-full min-w-0 items-start gap-3 border-b border-slate-700/50 px-4 py-3 text-left transition-colors hover:bg-slate-700/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-cyan-300 ${
                 !n.read ? "bg-slate-700/20" : ""
               }`}
             >
@@ -74,7 +90,7 @@ function NotificationPanel({ onClose }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-start justify-between gap-2">
                   <p
-                    className={`text-sm font-medium ${
+                    className={`min-w-0 break-words text-sm font-medium ${
                       !n.read ? "text-white" : "text-slate-300"
                     }`}
                   >
@@ -84,14 +100,14 @@ function NotificationPanel({ onClose }) {
                     <FaBell className="mt-1 h-2 w-2 shrink-0 text-cyan-400" />
                   )}
                 </div>
-                <p className="mt-0.5 text-xs text-slate-400 line-clamp-2">
+                <p className="mt-0.5 break-words text-xs text-slate-400 line-clamp-2">
                   {n.message}
                 </p>
                 <p className="mt-1 text-[10px] text-slate-500">
                   {timeAgo(n.createdAt)}
                 </p>
               </div>
-            </div>
+            </button>
           ))
         )}
 
@@ -104,7 +120,7 @@ function NotificationPanel({ onClose }) {
         {hasMore && !loading && notifications.length > 0 && (
           <button
             onClick={() => fetchNotifications(false)}
-            className="w-full py-2 text-xs text-cyan-400 transition-colors hover:bg-slate-700/50 hover:text-cyan-300"
+            className="min-h-11 w-full py-2 text-xs text-cyan-400 transition-colors hover:bg-slate-700/50 hover:text-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-cyan-300"
           >
             Load more
           </button>

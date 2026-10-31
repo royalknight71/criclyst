@@ -33,6 +33,7 @@ function TeamFilters({ value, onChange }) {
 
       <select
         value={value}
+        aria-label="Filter teams by format"
         onChange={(e) => onChange(e.target.value)}
         className="
           w-full

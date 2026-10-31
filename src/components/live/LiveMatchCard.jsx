@@ -90,9 +90,9 @@ function LiveMatchCard({ match }) {
   };
 
   return (
-    <div className="group w-full rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-5 text-left shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/10">
+    <div className="group w-full min-w-0 rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-4 text-left shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/10 sm:p-5">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           {displayState === "live" ? (
             <>
@@ -116,7 +116,7 @@ function LiveMatchCard({ match }) {
             <button
               onClick={handleFollowToggle}
               disabled={subLoading}
-              className={`flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold transition-all ${
+              className={`flex min-h-11 items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold transition-all lg:min-h-0 ${
                 subscribed
                   ? "bg-cyan-500/20 text-cyan-400 hover:bg-red-500/20 hover:text-red-400"
                   : "bg-slate-700/60 text-slate-300 hover:bg-cyan-500/20 hover:text-cyan-400"
@@ -139,11 +139,11 @@ function LiveMatchCard({ match }) {
       <button
         type="button"
         onClick={() => navigate(`/live/${match.id}`)}
-        className="w-full text-left"
+        className="w-full min-w-0 text-left"
       >
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+        <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-2">
           {/* Team A */}
-          <div className="text-center">
+          <div className="min-w-0 text-center">
             {teamAInfo?.img ? (
               <img
                 src={teamAInfo.img}
@@ -155,13 +155,13 @@ function LiveMatchCard({ match }) {
                 {teamAInfo?.shortname || teams[0]?.charAt(0) || "?"}
               </div>
             )}
-            <p className="truncate text-sm font-bold text-white">
+            <p className="break-words text-xs font-bold text-white sm:text-sm">
               {teamAInfo?.shortname || teams[0] || "--"}
             </p>
             {teamAScore ? (
-              <p className="mt-1 text-2xl font-black text-cyan-400">
+              <p className="mt-1 whitespace-nowrap text-base font-black text-cyan-400 md:text-lg xl:text-2xl">
                 {teamAScore.r}/{teamAScore.w}
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-[10px] font-normal text-slate-400 xl:text-xs">
                   {" "}({teamAScore.o} ov)
                 </span>
               </p>
@@ -171,10 +171,10 @@ function LiveMatchCard({ match }) {
           </div>
 
           {/* VS */}
-          <div className="px-2 text-2xl font-black text-slate-600">VS</div>
+          <div className="px-1 text-xl font-black text-slate-600 sm:px-2 sm:text-2xl">VS</div>
 
           {/* Team B */}
-          <div className="text-center">
+          <div className="min-w-0 text-center">
             {teamBInfo?.img ? (
               <img
                 src={teamBInfo.img}
@@ -186,13 +186,13 @@ function LiveMatchCard({ match }) {
                 {teamBInfo?.shortname || teams[1]?.charAt(0) || "?"}
               </div>
             )}
-            <p className="truncate text-sm font-bold text-white">
+            <p className="break-words text-xs font-bold text-white sm:text-sm">
               {teamBInfo?.shortname || teams[1] || "--"}
             </p>
             {teamBScore ? (
-              <p className="mt-1 text-2xl font-black text-cyan-400">
+              <p className="mt-1 whitespace-nowrap text-base font-black text-cyan-400 md:text-lg xl:text-2xl">
                 {teamBScore.r}/{teamBScore.w}
-                <span className="text-xs font-normal text-slate-400">
+                <span className="text-[10px] font-normal text-slate-400 xl:text-xs">
                   {" "}({teamBScore.o} ov)
                 </span>
               </p>
@@ -214,7 +214,7 @@ function LiveMatchCard({ match }) {
           {match.venue && (
             <div className="flex items-center gap-2">
               <FaLocationDot className="shrink-0 text-cyan-400" />
-              <span className="truncate">{match.venue}</span>
+              <span className="min-w-0 break-words">{match.venue}</span>
             </div>
           )}
           {match.date && (

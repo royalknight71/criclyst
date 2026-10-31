@@ -85,9 +85,9 @@ const Teams = () => {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-16 text-white">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-16">
+        <div className="mx-auto w-full min-w-0 max-w-7xl">
+          <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8">
             {Array.from({ length: 8 }).map((_, index) => (
               <TeamSkeleton key={index} />
             ))}
@@ -99,9 +99,9 @@ const Teams = () => {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          <p className="max-w-full break-words rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-4 text-red-400 sm:px-6">
             {error}
           </p>
         </div>
@@ -110,7 +110,7 @@ const Teams = () => {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B1120] px-6 py-16 text-white">
+    <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-16">
 
       {/* ================= HERO ================= */}
 
@@ -136,9 +136,9 @@ const Teams = () => {
 
       {/* ================= SEARCH & FILTERS ================= */}
 
-      <div className="mx-auto mt-12 flex max-w-7xl flex-col gap-4 md:flex-row">
+      <div className="mx-auto mt-10 flex w-full min-w-0 max-w-7xl flex-col gap-4 md:mt-12 md:flex-row">
 
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           <TeamSearchBar
             value={searchTerm}
             onChange={handleSearchChange}
@@ -155,7 +155,7 @@ const Teams = () => {
 
       {/* ================= TEAM COUNT ================= */}
 
-      <div className="mx-auto mt-8 max-w-7xl text-sm text-slate-400">
+      <div className="mx-auto mt-8 w-full min-w-0 max-w-7xl text-sm text-slate-400">
         Showing{" "}
         <span className="font-bold text-cyan-400">
           {teams.length}
@@ -169,8 +169,14 @@ const Teams = () => {
 
       {/* ================= TEAM GRID ================= */}
 
-      <div className="mx-auto mt-6 max-w-7xl">
-        <TeamGrid teams={teams} />
+      <div className="mx-auto mt-6 w-full min-w-0 max-w-7xl">
+        {teams.length > 0 ? (
+          <TeamGrid teams={teams} />
+        ) : (
+          <p className="rounded-2xl border border-slate-700 bg-slate-900/60 px-4 py-8 text-center text-slate-400 sm:px-6">
+            No teams match your search or filters.
+          </p>
+        )}
       </div>
 
       {/* ================= PAGINATION ================= */}

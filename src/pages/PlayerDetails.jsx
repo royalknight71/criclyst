@@ -225,7 +225,7 @@ return (
 
     <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
 
-    <div className="relative mx-auto max-w-7xl px-6 py-14">
+    <div className="relative mx-auto w-full min-w-0 max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
 
       {/* Back Button */}
 
@@ -240,7 +240,7 @@ return (
           border
           border-slate-700
           bg-slate-900/50
-          px-5
+          px-4 sm:px-5
           py-3
           text-slate-300
           transition-all
@@ -262,7 +262,7 @@ return (
           border
           border-slate-800
           bg-[#111827]
-          p-10
+          p-4 sm:p-10
         "
       >
 
@@ -289,12 +289,15 @@ return (
               alt={player.name}
               className="
                 relative
-                h-36
-                w-36
+                h-28
+                w-28
+                aspect-square
                 rounded-full
                 border-4
                 border-cyan-400
                 object-cover
+                sm:h-36
+                sm:w-36
               "
             />
 
@@ -302,7 +305,7 @@ return (
 
           {/* Name */}
 
-          <h1 className="mt-8 text-5xl font-black tracking-tight text-white">
+          <h1 className="mt-6 max-w-full break-words text-3xl font-black tracking-tight text-white sm:mt-8 sm:text-4xl md:text-5xl">
 
             {formattedPlayerName}
 
@@ -310,12 +313,12 @@ return (
 
           {/* Country */}
 
-          <div className="mt-4 flex items-center gap-2 text-lg text-slate-400">
+          <div className="mt-4 flex max-w-full flex-wrap items-center justify-center gap-2 text-base text-slate-400 sm:text-lg">
 
             <FaLocationDot className="text-cyan-400" />
 
             <CountryFlag country={player.country} className="text-xl" />
-            <span>{formattedCountryName}</span>
+            <span className="break-words">{formattedCountryName}</span>
 
           </div>
 
@@ -352,7 +355,7 @@ return (
             {!user ? (
                 <button
                     onClick={() => navigate("/login")}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3 font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400"
+                    className="inline-flex min-h-11 max-w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-sm font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400 sm:px-6 sm:text-base"
                 >
                     Login to add to Favorites
                 </button>
@@ -376,11 +379,11 @@ return (
 
      <div className="mt-10">
 
-  <h2 className="mb-6 text-3xl font-bold text-white">
+  <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">
     Career Statistics
   </h2>
 
-  <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-2">
+  <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5">
 
     {stats
       .filter((stat) => stat.show)
@@ -393,11 +396,11 @@ return (
           <div
             key={stat.label}
             className="
-              rounded-2xl
+              min-w-0 rounded-2xl
               border
               border-slate-800
               bg-[#111827]
-              p-5
+              p-4 sm:p-5
               transition-all
               duration-300
               hover:border-cyan-400/40
@@ -405,13 +408,14 @@ return (
             "
           >
 
-            <div className="flex items-center gap-4">
+            <div className="flex min-w-0 items-center gap-3 sm:gap-4">
 
               <div
                 className="
                   flex
-                  h-12
-                  w-12
+                  h-10
+                  w-10
+                  shrink-0
                   items-center
                   justify-center
                   rounded-xl
@@ -430,7 +434,7 @@ return (
 
                 </p>
 
-                <h3 className="mt-1 text-3xl font-bold text-white">
+                  <h3 className="mt-1 break-words text-2xl font-bold text-white sm:text-3xl">
 
                   {stat.value}
 
@@ -454,7 +458,7 @@ return (
 
 <div className="mt-12">
 
-  <h2 className="mb-6 text-3xl font-bold text-white">
+  <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">
     Player Information
   </h2>
 
@@ -464,25 +468,24 @@ return (
       border
       border-slate-800
       bg-[#111827]
-      p-8
+      p-4 sm:p-8
     "
   >
 
-    <div className="grid gap-5 md:grid-cols-2">
+    <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5">
 
       {playerInfo.map((item) => (
 
         <div
           key={item.label}
           className="
-            flex
-            items-center
-            justify-between
+            flex min-w-0
+            flex-wrap items-center justify-between gap-x-4 gap-y-1
             rounded-2xl
             border
             border-slate-700/60
             bg-slate-900/40
-            px-5
+            px-3 sm:px-5
             py-4
           "
         >
@@ -491,7 +494,7 @@ return (
             {item.label}
           </span>
 
-          <span className="font-semibold text-white">
+          <span className="min-w-0 break-words text-right font-semibold text-white">
             {item.value}
           </span>
 

@@ -17,8 +17,8 @@ import { MdHistory } from "react-icons/md";
  */
 function EmptyRecentMatches() {
   return (
-    <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-      <div className="max-w-4xl mx-auto px-6">
+    <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-12 sm:py-20">
+      <div className="mx-auto w-full min-w-0 max-w-4xl px-4 sm:px-6">
 
         {/* Heading */}
 
@@ -28,7 +28,7 @@ function EmptyRecentMatches() {
             MATCH HISTORY
           </span>
 
-          <h2 className="mt-2 text-4xl font-bold text-white">
+          <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
             Recent Matches
           </h2>
 
@@ -40,7 +40,7 @@ function EmptyRecentMatches() {
 
         {/* Empty Card */}
 
-        <div className="rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-12 text-center shadow-lg">
+        <div className="min-w-0 rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-5 text-center shadow-lg sm:p-12">
 
           <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-cyan-500/30 bg-cyan-500/10">
 
@@ -48,7 +48,7 @@ function EmptyRecentMatches() {
 
           </div>
 
-          <h3 className="text-3xl font-bold text-white">
+          <h3 className="text-2xl font-bold text-white sm:text-3xl">
             No Recent Matches
           </h3>
 
@@ -60,7 +60,7 @@ function EmptyRecentMatches() {
 
           <div className="my-8 h-px bg-slate-700"></div>
 
-          <div className="inline-flex items-center gap-3 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-5 py-3">
+          <div className="inline-flex max-w-full flex-wrap items-center justify-center gap-3 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-4 py-3 sm:px-5">
 
             <MdHistory className="text-xl text-cyan-400" />
 

@@ -49,13 +49,13 @@ function UpcomingMatches() {
   if(loading)
   {
     return (
-      <p>Loading...</p>
+      <p className="px-4 py-8 text-center text-slate-400">Loading upcoming matches...</p>
     )
   }
   if(error)
   {
     return (
-     <div className="text-center text-red-400 py-20">
+     <div className="break-words px-4 py-12 text-center text-red-400 sm:py-20">
     {error}
 </div>
     )
@@ -66,12 +66,12 @@ function UpcomingMatches() {
   }
 
     return (
-<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    <div className="max-w-4xl mx-auto px-6">
+<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-12 sm:py-20">
+    <div className="mx-auto w-full min-w-0 max-w-4xl px-4 sm:px-6">
 
         <div className="mb-10">
 
-    <h2 className="text-4xl font-bold text-white mt-2">
+    <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
         Upcoming Matches
     </h2>
 

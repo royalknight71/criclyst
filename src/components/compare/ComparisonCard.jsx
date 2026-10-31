@@ -54,13 +54,13 @@ function StatRow({ label, value1, value2, leader }) {
   return (
     <div
       className="
-        grid grid-cols-[1fr_auto_1fr] items-center gap-4 rounded-2xl
-        border border-slate-700/60 bg-slate-900/40 px-5 py-5
-        sm:gap-8 sm:px-8 sm:py-6
+        grid grid-cols-2 items-center gap-x-3 gap-y-2 rounded-2xl
+        border border-slate-700/60 bg-slate-900/40 px-3 py-4
+        sm:grid-cols-[minmax(0,1fr)_7rem_minmax(0,1fr)] sm:gap-8 sm:px-8 sm:py-6
       "
     >
       <span
-        className={`text-right text-xl font-bold sm:text-2xl ${
+        className={`col-start-1 row-start-2 min-w-0 break-words text-center text-lg font-bold leading-tight sm:col-start-1 sm:row-start-1 sm:text-right sm:text-2xl ${
           leader === "p1" ? "text-cyan-300" : "text-white"
         }`}
       >
@@ -72,12 +72,12 @@ function StatRow({ label, value1, value2, leader }) {
         )}
       </span>
 
-      <span className="w-20 shrink-0 text-center text-xs uppercase tracking-wider text-slate-400 sm:w-28 sm:text-sm">
+      <span className="col-span-2 col-start-1 row-start-1 w-auto text-center text-[0.65rem] uppercase tracking-wider text-slate-400 sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:w-28 sm:text-xs md:text-sm">
         {label}
       </span>
 
       <span
-        className={`text-left text-xl font-bold sm:text-2xl ${
+        className={`col-start-2 row-start-2 min-w-0 break-words text-center text-lg font-bold leading-tight sm:col-start-3 sm:row-start-1 sm:text-left sm:text-2xl ${
           leader === "p2" ? "text-cyan-300" : "text-white"
         }`}
       >
@@ -118,7 +118,7 @@ function PlayerHeader({ player }) {
     <Link
       to={`/players/${player._id}`}
       className="
-        group flex flex-col items-center text-center transition-transform
+        group flex w-full min-w-0 max-w-full flex-col items-center text-center transition-transform
         duration-300 hover:-translate-y-1
       "
     >
@@ -134,19 +134,19 @@ function PlayerHeader({ player }) {
         />
       </div>
 
-      <h3 className="mt-4 text-2xl font-black text-white group-hover:text-cyan-300 sm:text-3xl">
+      <h3 className="mt-4 max-w-full break-words text-xl font-black text-white group-hover:text-cyan-300 sm:text-3xl">
         {toTitleCase(player.name)}
       </h3>
 
-      <p className="mt-2 flex items-center gap-1.5 text-slate-400">
-        <FaLocationDot className="text-cyan-400" />
-        <CountryFlag country={player.country} className="text-base" />
-        {toTitleCase(player.country)}
+      <p className="mt-2 flex max-w-full flex-wrap items-center justify-center gap-1.5 text-sm text-slate-400 sm:text-base">
+        <FaLocationDot className="shrink-0 text-cyan-400" />
+        <CountryFlag country={player.country} className="shrink-0 text-base" />
+        <span className="break-words">{toTitleCase(player.country)}</span>
       </p>
 
       <span
         className={`
-          mt-3 rounded-full border px-4 py-1.5 text-sm font-semibold
+          mt-3 max-w-full break-words rounded-full border px-4 py-1.5 text-center text-xs font-semibold sm:text-sm
           ${roleBadgeClass(player.role)}
         `}
       >
@@ -202,7 +202,7 @@ function ComparisonCard({ player1, player2, onReset }) {
       <div
         className="
           relative overflow-hidden rounded-[32px] border border-slate-800
-          bg-[#111827] p-8 sm:p-10
+          bg-[#111827] p-4 sm:p-10
         "
       >
         <div className="absolute left-0 top-0 h-1 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500" />
@@ -210,7 +210,7 @@ function ComparisonCard({ player1, player2, onReset }) {
         <div className="absolute -left-16 -top-16 h-52 w-52 rounded-full bg-cyan-500/10 blur-[100px]" />
         <div className="absolute -bottom-16 -right-16 h-52 w-52 rounded-full bg-purple-500/10 blur-[100px]" />
 
-        <div className="relative flex flex-col items-center justify-between gap-6 sm:flex-row sm:gap-8">
+        <div className="relative flex min-w-0 flex-col items-center justify-between gap-5 sm:flex-row sm:gap-8">
           <PlayerHeader player={player1} />
 
           <span
@@ -280,8 +280,8 @@ function ComparisonCard({ player1, player2, onReset }) {
       </div>
 
       {/* Comparison summary */}
-      <div className="rounded-3xl border border-slate-800 bg-[#111827] p-8 sm:p-10">
-        <h3 className="mb-8 text-2xl font-bold text-white">
+      <div className="min-w-0 rounded-3xl border border-slate-800 bg-[#111827] p-4 sm:p-10">
+        <h3 className="mb-6 text-xl font-bold text-white sm:mb-8 sm:text-2xl">
           Comparison Summary
         </h3>
 
@@ -297,9 +297,9 @@ function ComparisonCard({ player1, player2, onReset }) {
             ].map(({ player, leads }) => (
               <div
                 key={player._id}
-                className="rounded-2xl border border-slate-700/60 bg-slate-900/40 px-6 py-5"
+                className="min-w-0 rounded-2xl border border-slate-700/60 bg-slate-900/40 px-4 py-4 sm:px-6 sm:py-5"
               >
-                <p className="font-bold text-white">
+                <p className="break-words font-bold text-white">
                   {toTitleCase(player.name)}{" "}
                   {leads.length > 0 ? "leads in:" : "leads in no stat."}
                 </p>
@@ -325,10 +325,10 @@ function ComparisonCard({ player1, player2, onReset }) {
 
       {/* Reset */}
       <div className="flex justify-center">
-        <button
+          <button
           onClick={onReset}
           className="
-            rounded-xl border border-slate-700 bg-slate-900/50 px-6 py-3
+            min-h-11 rounded-xl border border-slate-700 bg-slate-900/50 px-5 py-3
             text-slate-300 transition-all duration-300 hover:border-cyan-400
             hover:text-cyan-400
           "

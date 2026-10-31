@@ -7,6 +7,7 @@ function NotificationBell() {
   const { unreadCount } = useNotifications();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -14,16 +15,37 @@ function NotificationBell() {
         setOpen(false);
       }
     }
+
+    function handleKeyDown(e) {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  const closePanel = () => {
+    setOpen(false);
+    buttonRef.current?.focus();
+  };
 
   return (
     <div className="relative" ref={ref}>
       <button
+        ref={buttonRef}
+        type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative p-2 text-slate-300 transition-colors hover:text-cyan-400"
+        className="relative flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-300 transition-colors hover:bg-slate-800 hover:text-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300 focus-visible:outline-offset-2 min-[1366px]:min-h-0 min-[1366px]:min-w-0"
         aria-label="Notifications"
+        aria-expanded={open}
+        aria-controls="notification-panel"
       >
         <FaBell className="text-xl" />
         {unreadCount > 0 && (
@@ -33,7 +55,7 @@ function NotificationBell() {
         )}
       </button>
       {open && (
-        <NotificationPanel onClose={() => setOpen(false)} />
+        <NotificationPanel onClose={closePanel} />
       )}
     </div>
   );

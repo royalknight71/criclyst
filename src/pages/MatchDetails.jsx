@@ -144,7 +144,7 @@ function MatchDetails() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] items-center justify-center">
           <p className="text-lg text-slate-400">Loading match...</p>
         </div>
@@ -154,9 +154,9 @@ function MatchDetails() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          <p className="max-w-full break-words rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-4 text-red-400 sm:px-6">
             Error: {error}
           </p>
         </div>
@@ -166,7 +166,7 @@ function MatchDetails() {
 
   if (!match) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6">
           <p className="text-lg text-slate-400">Match Not Found</p>
           <button
@@ -233,7 +233,7 @@ function MatchDetails() {
 
       <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 py-14">
+      <div className="relative mx-auto w-full min-w-0 max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
         {/* Back Button */}
         <button
           onClick={() => navigate("/matches")}
@@ -246,7 +246,7 @@ function MatchDetails() {
             border
             border-slate-700
             bg-slate-900/50
-            px-5
+            px-4 sm:px-5
             py-3
             text-slate-300
             transition-all
@@ -267,7 +267,7 @@ function MatchDetails() {
             border
             border-slate-800
             bg-[#111827]
-            p-10
+            p-4 sm:p-10
           "
         >
           {/* Hero Glow */}
@@ -321,11 +321,11 @@ function MatchDetails() {
           </div>
 
           {/* Teams */}
-          <div className="relative mt-10 grid grid-cols-[1fr_auto_1fr] items-center">
+          <div className="relative mt-8 grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:mt-10 sm:gap-2">
             {/* Team A */}
             <button
               onClick={() => navigate(`/teams/${match.teamA?._id}`)}
-              className="group mx-auto flex flex-col items-center text-center"
+              className="group flex min-w-0 w-full flex-col items-center px-1 text-center"
             >
               <div className="relative">
                 <div className="absolute inset-0 rounded-lg bg-cyan-400/20 blur-xl" />
@@ -333,23 +333,23 @@ function MatchDetails() {
                   <CountryFlag country={match.teamA?.country} className="team-flag-logo" />
                 </div>
               </div>
-              <h2 className="mt-4 text-lg font-bold capitalize text-white transition-colors duration-300 group-hover:text-cyan-400 sm:text-xl">
+              <h2 className="mt-4 max-w-full break-words text-base font-bold capitalize text-white transition-colors duration-300 group-hover:text-cyan-400 sm:text-xl">
                 {toTitleCase(match.teamA?.name)}
               </h2>
-              <p className="mt-1 text-sm capitalize text-slate-400">
+              <p className="mt-1 flex max-w-full flex-wrap items-center justify-center text-xs capitalize text-slate-400 sm:text-sm">
                 <CountryFlag country={match.teamA?.country} className="text-base mr-1" />
                 {toTitleCase(match.teamA?.country)}
               </p>
             </button>
 
-            <div className="px-4 text-3xl font-black text-slate-600 sm:px-8 sm:text-4xl">
+            <div className="px-1 text-xl font-black text-slate-600 sm:px-4 sm:text-4xl">
               VS
             </div>
 
             {/* Team B */}
             <button
               onClick={() => navigate(`/teams/${match.teamB?._id}`)}
-              className="group mx-auto flex flex-col items-center text-center"
+              className="group flex min-w-0 w-full flex-col items-center px-1 text-center"
             >
               <div className="relative">
                 <div className="absolute inset-0 rounded-lg bg-purple-400/20 blur-xl" />
@@ -357,10 +357,10 @@ function MatchDetails() {
                   <CountryFlag country={match.teamB?.country} className="team-flag-logo" />
                 </div>
               </div>
-              <h2 className="mt-4 text-lg font-bold capitalize text-white transition-colors duration-300 group-hover:text-purple-400 sm:text-xl">
+              <h2 className="mt-4 max-w-full break-words text-base font-bold capitalize text-white transition-colors duration-300 group-hover:text-purple-400 sm:text-xl">
                 {toTitleCase(match.teamB?.name)}
               </h2>
-              <p className="mt-1 text-sm capitalize text-slate-400">
+              <p className="mt-1 flex max-w-full flex-wrap items-center justify-center text-xs capitalize text-slate-400 sm:text-sm">
                 <CountryFlag country={match.teamB?.country} className="text-base mr-1" />
                 {toTitleCase(match.teamB?.country)}
               </p>
@@ -369,7 +369,7 @@ function MatchDetails() {
 
           {/* Venue + Date */}
           <div className="relative mt-10 flex flex-col items-center justify-center gap-4 text-sm capitalize text-slate-400 sm:flex-row sm:gap-8">
-            <span className="flex items-center gap-2">
+            <span className="flex min-w-0 items-center gap-2 break-words">
               <FaLocationDot className="text-cyan-400" />
               {match.venue || "--"}
             </span>
@@ -388,7 +388,7 @@ function MatchDetails() {
                 bg-green-500/10 p-4
               "
             >
-              <p className="flex items-center justify-center gap-2 text-center text-base font-semibold text-green-300">
+              <p className="flex flex-wrap items-center justify-center gap-2 break-words text-center text-sm font-semibold text-green-300 sm:text-base">
                 <FaTrophy className="shrink-0 text-amber-400" />
                 {match.result}
               </p>
@@ -407,7 +407,7 @@ function MatchDetails() {
                 border
                 border-slate-800
                 bg-[#111827]
-                p-8
+                p-4 sm:p-8
               "
             >
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -429,13 +429,13 @@ function MatchDetails() {
                       border
                       border-slate-700/60
                       bg-slate-900/40
-                      p-5
+                      p-4 sm:p-5
                     "
                   >
                     <p className="truncate text-xs uppercase tracking-wider text-slate-400">
                       {score.label}
                     </p>
-                    <h3 className="mt-2 text-3xl font-extrabold text-cyan-400">
+                    <h3 className="mt-2 break-words text-2xl font-extrabold text-cyan-400 sm:text-3xl">
                       {score.value}
                     </h3>
                   </div>
@@ -448,13 +448,13 @@ function MatchDetails() {
                     border
                     border-slate-700/60
                     bg-slate-900/40
-                    p-5
+                    p-4 sm:p-5
                   "
                 >
                   <p className="text-xs uppercase tracking-wider text-slate-400">
                     Overs
                   </p>
-                  <h3 className="mt-2 text-3xl font-extrabold text-white">
+                  <h3 className="mt-2 break-words text-2xl font-extrabold text-white sm:text-3xl">
                     {match.scorecard?.overs || "--"}
                   </h3>
                   <p className="mt-3 text-sm text-slate-400">
@@ -485,10 +485,10 @@ function MatchDetails() {
               border
               border-slate-800
               bg-[#111827]
-              p-8
+              p-4 sm:p-8
             "
           >
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid min-w-0 gap-5 sm:grid-cols-2">
               {matchInfo.map((item) => {
                 const Icon = item.icon;
 
@@ -496,14 +496,14 @@ function MatchDetails() {
                   <div
                     key={item.label}
                     className="
-                      flex
+                      flex min-w-0
                       items-center
                       gap-4
                       rounded-2xl
                       border
                       border-slate-700/60
                       bg-slate-900/40
-                      px-5
+                      px-4 sm:px-5
                       py-4
                     "
                   >
@@ -523,7 +523,7 @@ function MatchDetails() {
                       <p className="text-xs uppercase tracking-wider text-slate-400">
                         {item.label}
                       </p>
-                      <h3 className="mt-1 truncate font-semibold capitalize text-white">
+                      <h3 className="mt-1 break-words font-semibold capitalize text-white">
                         {item.value}
                       </h3>
                     </div>
@@ -534,7 +534,7 @@ function MatchDetails() {
               {/* Winner */}
               <div
                 className="
-                  flex
+                  flex min-w-0
                   items-center
                   gap-4
                   rounded-2xl
@@ -564,7 +564,7 @@ function MatchDetails() {
                   {match.winner?._id ? (
                     <button
                       onClick={() => navigate(`/teams/${match.winner._id}`)}
-                      className="mt-1 block max-w-full truncate font-semibold capitalize text-amber-400 transition-colors duration-300 hover:text-amber-300"
+                      className="mt-1 block max-w-full break-words font-semibold capitalize text-amber-400 transition-colors duration-300 hover:text-amber-300"
                     >
                       {toTitleCase(match.winner.name)}
                     </button>
@@ -577,7 +577,7 @@ function MatchDetails() {
               {/* Man of the Match */}
               <div
                 className="
-                  flex
+                  flex min-w-0
                   items-center
                   gap-4
                   rounded-2xl
@@ -609,7 +609,7 @@ function MatchDetails() {
                       onClick={() =>
                         navigate(`/players/${match.manOfTheMatch._id}`)
                       }
-                      className="mt-1 block max-w-full truncate font-semibold capitalize text-yellow-400 transition-colors duration-300 hover:text-yellow-300"
+                      className="mt-1 block max-w-full break-words font-semibold capitalize text-yellow-400 transition-colors duration-300 hover:text-yellow-300"
                     >
                       {toTitleCase(match.manOfTheMatch.name)}
                     </button>

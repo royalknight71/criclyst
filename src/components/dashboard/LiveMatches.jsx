@@ -45,11 +45,11 @@ function LiveMatches() {
 
         if(loading)
 {
-    return <p>Loading...</p>;
+    return <p className="px-4 py-8 text-center text-slate-400">Loading live matches...</p>;
 }
 if(error)
 {
-    return <h1>{error}</h1>;
+    return <p className="break-words px-4 py-8 text-center text-red-400">{error}</p>;
 }
 
 // Provider could not be checked at all — say so instead of claiming
@@ -59,13 +59,13 @@ const providerStale = meta?.stale === true;
 
 if(matches.length===0 && providerUnavailable)
     return (
-<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    <div className="max-w-4xl mx-auto px-6">
+<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-12 sm:py-20">
+    <div className="mx-auto w-full min-w-0 max-w-4xl px-4 sm:px-6">
         <div className="mb-10">
     <span className="text-cyan-400 uppercase tracking-widest text-sm font-semibold">
         LIVE CRICKET
     </span>
-    <h2 className="text-4xl font-bold text-white mt-2">
+    <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
         Live Matches
     </h2>
 </div>
@@ -87,15 +87,15 @@ if(matches.length===0)
     return <EmptyLiveMatches />;
 
   return (
-<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    <div className="max-w-4xl mx-auto px-6">
+<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-12 sm:py-20">
+    <div className="mx-auto w-full min-w-0 max-w-4xl px-4 sm:px-6">
 
         <div className="mb-10">
     <span className="text-cyan-400 uppercase tracking-widest text-sm font-semibold">
         LIVE CRICKET
     </span>
 
-    <h2 className="text-4xl font-bold text-white mt-2">
+    <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
         Live Matches
     </h2>
 

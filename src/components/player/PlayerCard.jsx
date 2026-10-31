@@ -92,8 +92,9 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
       className="
         group
         relative
-            w-full
-    max-w-380
+        w-full
+        min-w-0
+        max-w-[380px]
         cursor-pointer
         overflow-hidden
         rounded-3xl
@@ -136,18 +137,20 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
         "
       />
 
-      <div className="relative px-6 py-6">
+      <div className="relative min-w-0 px-4 py-5 sm:px-6 sm:py-6">
 
         {/* Profile */}
 
-        <div className="flex items-center gap-4">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
 
           <img
             src={player.image || "/default-player.png"}
             alt={player.name}
             className="
-              h-16
-              w-16
+              h-14
+              w-14
+              shrink-0
+              aspect-square
               rounded-full
               border-2
               border-cyan-400
@@ -158,14 +161,14 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
             "
           />
 
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
 
-            <h2 className="text-lg font-bold text-white">
+            <h2 className="break-words text-base font-bold text-white sm:text-lg">
               {formatText(player.name)}
             </h2>
 
-            <div className="mt-1 flex items-center gap-2 text-sm text-slate-400">
-              <FaLocationDot className="text-cyan-400" />
+            <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-2 text-sm text-slate-400">
+              <FaLocationDot className="shrink-0 text-cyan-400" />
               <CountryFlag country={player.country} className="text-base" />
               {formatText(player.country)}
             </div>
@@ -173,7 +176,7 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
             <span
               className={`
                 mt-3
-                inline-flex
+                inline-flex max-w-full flex-wrap
                 rounded-full
                 px-3
                 py-1
@@ -207,7 +210,7 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
                   border
                   border-slate-700/60
                   bg-slate-900/40
-                  px-4
+                  px-3 sm:px-4
                   py-3
                   transition-all
                   duration-300
@@ -217,13 +220,14 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
                 "
               >
 
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
 
                   <div
                     className="
                       flex
                       h-10
                       w-10
+                      shrink-0
                       items-center
                       justify-center
                       rounded-xl
@@ -234,7 +238,7 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
                     <Icon className="text-lg" />
                   </div>
 
-                  <div>
+                  <div className="min-w-0">
 
                     <p
                       className="
@@ -250,7 +254,7 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
                     <p
                       className="
                         mt-1
-                        text-lg
+                        break-words text-base sm:text-lg
                         font-bold
                         text-white
                       "
@@ -279,21 +283,21 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
           "
         >
 
-          <div className="flex items-center justify-between">
+          <div className="flex min-w-0 items-start justify-between gap-3">
 
-            <div>
+            <div className="min-w-0 flex-1">
 
               <p className="text-xs text-slate-500">
                 TEAM
               </p>
 
-              <p className="mt-1 font-semibold text-white">
+              <p className="break-words font-semibold text-white">
                 {formatText(player.team ?? "Free Agent")}
               </p>
 
             </div>
 
-            <div className="text-right">
+            <div className="shrink-0 text-right">
 
               <p className="text-xs text-slate-500">
                 JERSEY
@@ -308,7 +312,8 @@ function PlayerCard({ player, onUnfavorite, showFavoriteAction = false }) {
           </div>
 
           <div
-            className="
+              className="
+              min-h-11
               mt-5
               flex
               items-center

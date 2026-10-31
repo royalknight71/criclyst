@@ -42,7 +42,7 @@ function RecentMatchCard({ match }) {
   });
 
   return (
-    <div className="group rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20">
+    <div className="group w-full min-w-0 rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-4 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20 sm:p-6">
 
       {/* Header */}
 
@@ -66,9 +66,9 @@ function RecentMatchCard({ match }) {
 
       {/* Teams */}
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-2">
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="mx-auto mb-3 aspect-[3/2] w-14 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900">
 
@@ -76,21 +76,21 @@ function RecentMatchCard({ match }) {
 
           </div>
 
-          <h3 className="text-xl font-bold text-white">
+          <h3 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamA?.name)}
           </h3>
 
-          <p className="mt-2 text-3xl font-extrabold text-cyan-400">
+          <p className="mt-2 whitespace-nowrap text-2xl font-extrabold text-cyan-400 sm:text-3xl">
             {match.scorecard?.teamAScore}
           </p>
 
         </div>
 
-        <div className="px-6 text-4xl font-black text-slate-600">
+        <div className="px-1 text-2xl font-black text-slate-600 sm:px-4 sm:text-4xl">
           VS
         </div>
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="mx-auto mb-3 aspect-[3/2] w-14 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900">
 
@@ -98,11 +98,11 @@ function RecentMatchCard({ match }) {
 
           </div>
 
-          <h3 className="text-xl font-bold text-white">
+          <h3 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamB?.name)}
           </h3>
 
-          <p className="mt-2 text-3xl font-extrabold text-cyan-400">
+          <p className="mt-2 whitespace-nowrap text-2xl font-extrabold text-cyan-400 sm:text-3xl">
             {match.scorecard?.teamBScore}
           </p>
 
@@ -116,7 +116,7 @@ function RecentMatchCard({ match }) {
 
       <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
 
-        <p className="text-center text-lg font-semibold text-green-300">
+        <p className="break-words text-center text-base font-semibold text-green-300 sm:text-lg">
           🏆 {match.result}
         </p>
 
@@ -126,17 +126,17 @@ function RecentMatchCard({ match }) {
 
       <div className="mt-6 grid gap-5 md:grid-cols-2">
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaStar className="mt-1 text-yellow-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Player of the Match
             </p>
 
-            <p className="font-medium text-white">
+            <p className="break-words font-medium text-white">
               {formatName(match.manOfTheMatch?.name)}
             </p>
 
@@ -144,17 +144,17 @@ function RecentMatchCard({ match }) {
 
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaTrophy className="mt-1 text-amber-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Winner
             </p>
 
-            <p className="font-medium text-white">
+            <p className="break-words font-medium text-white">
               {formatName(match.winner?.name)}
             </p>
 
@@ -162,17 +162,17 @@ function RecentMatchCard({ match }) {
 
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaLocationDot className="mt-1 text-cyan-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Venue
             </p>
 
-            <p className="text-white">
+            <p className="break-words text-white">
               {match.venue}
             </p>
 
@@ -180,11 +180,11 @@ function RecentMatchCard({ match }) {
 
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaCalendarAlt className="mt-1 text-cyan-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Match Date

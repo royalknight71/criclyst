@@ -92,11 +92,11 @@ function Hero() {
   }, [reducedMotion]);
 
   return (
-    <section className="bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#172840] px-6 pb-16 pt-16 md:pb-20 md:pt-24">
+    <section className="bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#172840] px-4 pb-12 pt-12 sm:px-6 sm:pb-16 sm:pt-16 md:pb-20 md:pt-24">
       <div className="mx-auto max-w-6xl">
         <div className="max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">Criclyst · Cricket, in context</p>
-          <h1 className="mt-5 text-5xl font-extrabold leading-tight text-white md:text-7xl">
+          <p className="break-words text-xs font-semibold uppercase tracking-[0.22em] text-cyan-400 sm:text-sm sm:tracking-[0.3em]">Criclyst · Cricket, in context</p>
+          <h1 className="mt-5 text-4xl font-extrabold leading-tight text-white sm:text-5xl md:text-7xl">
             <span className="block">Follow the game.</span>
             <span className="hero-typewriter block" aria-hidden="true">
               <span className="hero-typewriter__sizer">{headlinePhrases[0]}</span>
@@ -107,7 +107,7 @@ function Hero() {
             </span>
             <span className="sr-only">Follow the game. Understand every innings.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300" aria-hidden="true">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8" aria-hidden="true">
             <span key={reducedMotion ? "reduced" : descriptionIndex} className="hero-description">
               {reducedMotion ? descriptions[0] : descriptions[descriptionIndex]}
             </span>
@@ -115,16 +115,16 @@ function Hero() {
           <p className="sr-only">
             Criclyst covers live matches, upcoming fixtures, recent results, player profiles, team insights, player comparisons, and cricket analytics.
           </p>
-          <div className="mt-9 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-3 sm:mt-9 sm:gap-4">
             <NavLink
               to="/matches"
-              className="group inline-flex items-center gap-3 rounded-xl bg-cyan-500 px-6 py-3.5 font-semibold text-slate-900 transition hover:bg-cyan-400"
+              className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-cyan-500 px-5 py-3.5 text-sm font-semibold text-slate-900 transition hover:bg-cyan-400 sm:px-6 sm:text-base"
             >
               Browse Matches <FaArrowRight className="transition-transform group-hover:translate-x-1" />
             </NavLink>
             <NavLink
               to="/players"
-              className="inline-flex items-center rounded-xl border border-slate-600 px-6 py-3.5 font-semibold text-white transition hover:border-cyan-400 hover:text-cyan-300"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl border border-slate-600 px-5 py-3.5 text-sm font-semibold text-white transition hover:border-cyan-400 hover:text-cyan-300 sm:px-6 sm:text-base"
             >
               Explore Players
             </NavLink>

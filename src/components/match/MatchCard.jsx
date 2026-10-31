@@ -60,17 +60,17 @@ function MatchCard({ match }) {
     <CardTag
       {...cardProps}
       className={`
-        group rounded-3xl
+        group w-full min-w-0 rounded-3xl
         border border-slate-700
         bg-gradient-to-br from-slate-800 to-slate-900
-        p-6
+        p-4 sm:p-6
         text-left
         shadow-lg
         ${providerOnly ? "" : "cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20"}
       `}
     >
       {/* Status + Format */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <span
           className={`
             inline-flex items-center gap-2 rounded-full
@@ -93,23 +93,23 @@ function MatchCard({ match }) {
       <div className="my-5 border-t border-slate-700" />
 
       {/* Teams */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
-        <div className="text-center">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-2">
+        <div className="min-w-0 text-center">
           <div className="mx-auto mb-3 aspect-[3/2] w-13 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
             <CountryFlag country={match.teamA?.country} className="team-flag-logo" />
           </div>
-          <h3 className="truncate text-base font-bold capitalize text-white">
+          <h3 className="break-words text-sm font-bold capitalize text-white sm:text-base">
             {formatName(match.teamA?.name)}
           </h3>
         </div>
 
-        <div className="px-4 text-2xl font-black text-slate-600">VS</div>
+        <div className="px-1 text-xl font-black text-slate-600 sm:px-3 sm:text-2xl">VS</div>
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
           <div className="mx-auto mb-3 aspect-[3/2] w-13 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900 transition-colors duration-300 group-hover:border-cyan-400">
             <CountryFlag country={match.teamB?.country} className="team-flag-logo" />
           </div>
-          <h3 className="truncate text-base font-bold capitalize text-white">
+          <h3 className="break-words text-sm font-bold capitalize text-white sm:text-base">
             {formatName(match.teamB?.name)}
           </h3>
         </div>
@@ -132,7 +132,7 @@ function MatchCard({ match }) {
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <FaLocationDot className="mt-1 shrink-0 text-cyan-400" />
-          <p className="truncate text-sm text-white">{match.venue || "Venue TBC"}</p>
+          <p className="min-w-0 break-words text-sm text-white">{match.venue || "Venue TBC"}</p>
         </div>
 
         {formattedDate && (
