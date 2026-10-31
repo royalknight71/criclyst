@@ -3,7 +3,6 @@
  * Aggregated read-only endpoints powering the dashboard: overall counts,
  * live/recent/upcoming matches, and top player leaderboards.
  */
-import mongoose from "mongoose";
 import Player from "../models/player.model.js";
 import Team from "../models/team.model.js";
 import Match from "../models/match.model.js";
@@ -85,9 +84,13 @@ export const getAllStats=async (req,res)=>{
 export const getLiveMatches=async (req,res)=>{
     try{
         const { snapshotAvailable, stateMap, meta, relevant } = getStatusSnapshot();
-        const liveMatches=await Match.find(
-            buildStatusFilter("live", stateMap, snapshotAvailable)
-        ).sort({
+        // A stored status is not enough to call a match live. When there is
+        // no successful provider snapshot, return no live rows and let meta
+        // explain that the provider could not be checked.
+        const liveFilter = snapshotAvailable
+            ? buildStatusFilter("live", stateMap, true)
+            : { _id: { $exists: false } };
+        const liveMatches=await Match.find(liveFilter).sort({
             matchDate: 1
         }).populate("teamA", "name country captain").populate("teamB", "name country captain")
         .populate("tossWinner", "name country captain").lean()
@@ -142,9 +145,16 @@ export const getRecentMatches=async (req,res)=>{
     try{
         const limit = getSectionLimit(process.env.DASHBOARD_RECENT_LIMIT, 5);
         const { snapshotAvailable, stateMap, meta } = getStatusSnapshot();
-        const recentMatches=await Match.find(
-            buildStatusFilter("completed", stateMap, snapshotAvailable)
-        ).sort(RECENT_MATCHES_SORT).limit(limit).populate("teamA","name country captain coach").populate("teamB","name country captain coach")
+        // Only a provider match explicitly classified completed in the
+        // authoritative snapshot qualifies as a recent result. Requiring
+        // completedAt excludes admin/demo rows and provides completion order.
+        const completedIds = getIdsWithState(stateMap, "completed");
+        const recentFilter = {
+            providerId: { $in: snapshotAvailable ? completedIds : [] },
+            completedAt: { $ne: null },
+            status: "completed",
+        };
+        const recentMatches=await Match.find(recentFilter).sort(RECENT_MATCHES_SORT).limit(limit).populate("teamA","name country captain coach").populate("teamB","name country captain coach")
         .populate("tossWinner","name country captain").populate("winner","name country captain").populate(
             "manOfTheMatch",
             "name country role"
@@ -178,9 +188,15 @@ export const getUpcomingMatches=async (req,res)=>{
     try{
         const limit = getSectionLimit(process.env.DASHBOARD_UPCOMING_LIMIT, 5);
         const { snapshotAvailable, stateMap, meta } = getStatusSnapshot();
-        const upcomingMatches=await Match.find(
-            buildStatusFilter("upcoming", stateMap, snapshotAvailable)
-        ).sort({
+        // Homepage fixtures must be future dated and provider-confirmed as
+        // upcoming. Missing/unavailable provider data produces an empty set.
+        const upcomingIds = snapshotAvailable
+            ? getIdsWithState(stateMap, "upcoming")
+            : [];
+        const upcomingMatches=await Match.find({
+            providerId: { $in: upcomingIds },
+            matchDate: { $gt: new Date() },
+        }).sort({
             matchDate: 1
         }).limit(limit).populate("teamA", "name country captain").populate("teamB", "name country captain").lean()
 

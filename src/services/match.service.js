@@ -24,9 +24,7 @@ import api from "../api/axios";
  *   match objects plus provider freshness metadata.
  */
 export const getLiveMatch=async ()=>{
-    const {data}=await api.get(
-        "/matches?status=live&limit=20"
-    )
+    const {data}=await api.get("/dashboard/live-matches")
     return { matches: data.data || [], meta: data.meta || null }
 }
 
@@ -39,10 +37,8 @@ export const getLiveMatch=async ()=>{
  * @returns {Promise<Array<Object>>} List of upcoming match objects.
  */
 export const getUpcomingMatches=async ()=>{
-    const {data}=await api.get(
-        "/matches?status=upcoming&sortBy=matchDate&order=asc&limit=5"
-    )
-    return data.data;
+    const {data}=await api.get("/dashboard/upcoming-matches")
+    return { matches: data.data || [], meta: data.meta || null }
 }
 
 /**
@@ -55,10 +51,8 @@ export const getUpcomingMatches=async ()=>{
  * @returns {Promise<Array<Object>>} List of completed match objects.
  */
 export const getRecentMatches=async()=>{
-    const {data}=await api.get(
-        "/matches?status=completed&sortBy=completedAt&order=desc&limit=5"
-    )
-    return data.data
+    const {data}=await api.get("/dashboard/recent-matches")
+    return { matches: data.data || [], meta: data.meta || null }
 }
 
 /**

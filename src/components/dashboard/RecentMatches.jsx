@@ -1,101 +1,72 @@
-/**
- * RecentMatches.jsx
- *
- * Dashboard section listing recently completed cricket matches.
- * Fetches match history on mount and renders a RecentMatchCard for each
- * completed match, with dedicated loading, error, and empty states.
- */
-
+import { useEffect, useState } from "react";
 import { getRecentMatches } from "../../services/match.service";
 import RecentMatchCard from "./widgets/RecentMatchCard";
-import EmptyRecentMatches from "./widgets/EmptyRecentMatches"
-import { useState,useEffect } from "react";
 
-/**
- * RecentMatches component.
- *
- * Loads recent matches via getRecentMatches and displays them as a list of
- * result cards. Shows a loading indicator, an error message, or an
- * empty-state section depending on the fetch outcome.
- *
- * @component
- * @returns {JSX.Element} The recent matches section.
- */
 function RecentMatches() {
-    const [loading,setLoading]=useState(true)
-    const [matches,setMatches]=useState([])
-    const [error,setError]=useState(null)
+  const [loading, setLoading] = useState(true);
+  const [matches, setMatches] = useState([]);
+  const [meta, setMeta] = useState(null);
+  const [error, setError] = useState("");
 
-    useEffect(()=>{
-        async function findRecentMatches()
-        {
-            try{
-                const response = await getRecentMatches();
-                setMatches(response)
-            }
-            catch(error)
-            {
-                setError(error.message)
-            }
-            finally
-            {
-                setLoading(false)
-            }
-        }
-        findRecentMatches()
-    },[])
-    if(loading)
-    {
-        return (
-            <p>Loading...</p>
-        )
-    }
-    if(error)
-    {
-            return (
-     <div className="text-center text-red-400 py-20">
-        <section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    {error}
-    </section>
-</div>
-    )
-    }
-    if(matches.length===0)
-    {
-        return <EmptyRecentMatches/>
-    }
+  useEffect(() => {
+    let active = true;
+    getRecentMatches()
+      .then((response) => {
+        if (!active) return;
+        setMatches(response.matches);
+        setMeta(response.meta);
+      })
+      .catch(() => {
+        if (active) setError("Recent results could not be loaded. Please try again later.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
+  }, []);
 
-        return (
-<section className="bg-gradient-to-b from-slate-800 via-slate-900 to-[#0f172a] py-20">
-    <div className="max-w-4xl mx-auto px-6">
+  const lastUpdated = meta?.lastSyncAt
+    ? new Date(meta.lastSyncAt).toLocaleString()
+    : null;
+  const providerUnavailable = meta?.providerStatus === "unavailable";
 
- <div className="mb-10">
-
-    <span className="uppercase tracking-widest text-cyan-400 text-sm font-semibold">
-        MATCH HISTORY
-    </span>
-
-    <h2 className="text-4xl font-bold text-white mt-2">
-        Recent Matches
-    </h2>
-
-    <p className="text-slate-400 mt-2">
-        Relive the latest international cricket action.
-    </p>
-
-</div>
-        <div className="grid gap-6">
-               { matches.map((match)=>(
-    <RecentMatchCard
-        key={match._id}
-        match={match}
-    />
-        ))}
+  return (
+    <section className="bg-gradient-to-b from-[#0f172a] via-slate-900 to-[#111827] py-14 md:py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.25em] text-cyan-400">The latest results</p>
+            <h2 className="mt-2 text-4xl font-bold text-white">Recent Results</h2>
+            <p className="mt-2 text-slate-400">Completed matches, ordered by confirmed completion.</p>
+          </div>
+          {lastUpdated && <p className="text-sm text-slate-400">Provider updated {lastUpdated}</p>}
         </div>
 
-
-    </div>
-</section>
+        {meta?.stale && lastUpdated && (
+          <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-3 text-sm text-amber-200">
+            These results reflect the last successful provider snapshot from {lastUpdated}.
+          </div>
+        )}
+        {loading ? (
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/70 px-6 py-10 text-center text-slate-300" role="status">Loading confirmed results…</div>
+        ) : error ? (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/5 px-6 py-10 text-center text-red-200" role="alert">{error}</div>
+        ) : providerUnavailable ? (
+          <div className="rounded-2xl border border-amber-500/30 bg-slate-900/70 px-6 py-10 text-center text-slate-300">
+            Results are temporarily unavailable because the cricket data provider could not be checked.
+          </div>
+        ) : matches.length === 0 ? (
+          <div className="rounded-2xl border border-slate-700 bg-slate-900/70 px-6 py-10 text-center">
+            <h3 className="text-xl font-semibold text-white">No recent results available</h3>
+            <p className="mt-2 text-slate-400">Provider-confirmed completed matches will appear here.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2">
+            {matches.map((match) => <RecentMatchCard key={match._id} match={match} />)}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
