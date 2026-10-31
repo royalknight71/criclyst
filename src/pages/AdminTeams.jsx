@@ -106,12 +106,12 @@ function AdminTeams() {
         });
     }
 
-    const inputCls = "rounded-lg border border-slate-700 bg-slate-900 px-4 py-2.5 text-white placeholder-slate-500 outline-none focus:border-cyan-400";
+    const inputCls = "w-full min-w-0 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2.5 text-white placeholder-slate-500 outline-none focus:border-cyan-400";
 
     return (
         <section className="relative min-h-screen overflow-hidden bg-[#0B1120]">
             <div className="absolute top-20 left-0 h-96 w-96 rounded-full bg-green-500/10 blur-[120px]" />
-            <div className="relative mx-auto max-w-6xl px-6 py-16">
+            <div className="relative mx-auto w-full min-w-0 max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
                 <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <p className="text-green-400 font-semibold tracking-[0.2em] uppercase text-sm">Admin</p>
@@ -130,10 +130,10 @@ function AdminTeams() {
                 </div>
 
                 {showForm && (
-                    <div className="mb-8 rounded-2xl border border-slate-700 bg-[#111827] p-6">
+                    <div className="mb-8 min-w-0 rounded-2xl border border-slate-700 bg-[#111827] p-4 sm:p-6">
                         <h2 className="mb-4 text-xl font-bold text-white">{editingTeam ? "Edit Team" : "Add Team"}</h2>
-                        {error && <p className="mb-4 text-sm text-red-400">{error}</p>}
-                        <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {error && <p role="alert" className="mb-4 break-words text-sm text-red-400">{error}</p>}
+                        <form onSubmit={handleSubmit} className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             <input required placeholder="Team Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className={inputCls} />
                             <input required placeholder="Country" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className={inputCls} />
                             <select value={form.format} onChange={(e) => setForm({ ...form, format: e.target.value })} className={inputCls}>
@@ -162,11 +162,11 @@ function AdminTeams() {
                                 <div className="max-h-48 overflow-y-auto rounded-lg border border-slate-700 bg-slate-900 p-3">
                                     {allPlayers.length === 0 && <p className="text-sm text-slate-500">No players available</p>}
                                     {allPlayers.map((p) => (
-                                        <label key={p._id} className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-800">
+                                        <label key={p._id} className="flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-slate-800">
                                             <input type="checkbox" checked={form.players.includes(p._id)} onChange={() => togglePlayer(p._id)}
                                                 className="accent-green-500" />
-                                            <span className="text-sm capitalize text-white">{p.name}</span>
-                                            <span className="text-xs text-slate-500">({p.country})</span>
+                                            <span className="min-w-0 break-words text-sm capitalize text-white">{p.name}</span>
+                                            <span className="break-words text-xs text-slate-500">({p.country})</span>
                                         </label>
                                     ))}
                                 </div>
@@ -185,11 +185,11 @@ function AdminTeams() {
                                 </label>
                             </div>
 
-                            <div className="flex gap-3 sm:col-span-2 lg:col-span-3">
-                                <button type="submit" className="rounded-lg bg-green-500 px-6 py-2.5 font-semibold text-white hover:bg-green-400">
+                            <div className="flex flex-wrap gap-3 sm:col-span-2 lg:col-span-3">
+                                <button type="submit" className="min-h-11 rounded-lg bg-green-500 px-6 py-2.5 font-semibold text-white hover:bg-green-400 lg:min-h-0">
                                     {editingTeam ? "Update" : "Create"}
                                 </button>
-                                <button type="button" onClick={() => setShowForm(false)} className="rounded-lg border border-slate-700 px-6 py-2.5 font-semibold text-slate-300 hover:border-slate-500">
+                                <button type="button" onClick={() => setShowForm(false)} className="min-h-11 rounded-lg border border-slate-700 px-6 py-2.5 font-semibold text-slate-300 hover:border-slate-500 lg:min-h-0">
                                     Cancel
                                 </button>
                             </div>
@@ -223,10 +223,10 @@ function AdminTeams() {
                                             <td className="px-5 py-3 text-slate-300">{t.players?.length || 0}</td>
                                             <td className="px-5 py-3">
                                                 <div className="flex gap-2">
-                                                    <button onClick={() => openEdit(t)} className="rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs font-semibold text-green-300 hover:bg-green-500 hover:text-white">
+                                                    <button onClick={() => openEdit(t)} className="min-h-11 rounded-lg border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs font-semibold text-green-300 hover:bg-green-500 hover:text-white lg:min-h-0">
                                                         Edit
                                                     </button>
-                                                    <button onClick={() => handleDelete(t._id)} className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300 hover:bg-red-500 hover:text-white">
+                                                    <button onClick={() => handleDelete(t._id)} className="min-h-11 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-1 text-xs font-semibold text-red-300 hover:bg-red-500 hover:text-white lg:min-h-0">
                                                         Delete
                                                     </button>
                                                 </div>
@@ -240,12 +240,12 @@ function AdminTeams() {
                         {totalPages > 1 && (
                             <div className="mt-6 flex justify-center gap-3">
                                 <button disabled={page <= 1} onClick={() => setPage(page - 1)}
-                                    className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-green-400 disabled:opacity-40">
+                                    className="min-h-11 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-green-400 disabled:opacity-40 lg:min-h-0">
                                     Prev
                                 </button>
                                 <span className="flex items-center px-4 text-sm text-slate-400">Page {page} of {totalPages}</span>
                                 <button disabled={page >= totalPages} onClick={() => setPage(page + 1)}
-                                    className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-green-400 disabled:opacity-40">
+                                    className="min-h-11 rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:border-green-400 disabled:opacity-40 lg:min-h-0">
                                     Next
                                 </button>
                             </div>

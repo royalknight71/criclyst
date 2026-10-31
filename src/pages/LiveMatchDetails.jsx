@@ -73,7 +73,7 @@ function ScoreBlock({ score }) {
   }
   return (
     <div>
-      <p className="mt-1 text-3xl font-black text-cyan-400">
+      <p className="mt-1 whitespace-nowrap text-2xl font-black text-cyan-400 sm:text-3xl">
         {score.r}/{score.w}
         <span className="text-sm font-normal text-slate-400">
           {" "}({score.o} ov)
@@ -335,8 +335,8 @@ function LiveMatchDetails() {
     (sc?.matchStarted === true && sc?.matchEnded !== true);
 
   return (
-    <main className="min-h-screen bg-[#080d1c] px-6 py-16 text-white">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen min-w-0 bg-[#080d1c] px-4 py-10 text-white sm:px-6 sm:py-16">
+      <div className="mx-auto w-full min-w-0 max-w-5xl">
         {/* Back button */}
         <button
           onClick={() => navigate("/live-scores")}
@@ -379,7 +379,7 @@ function LiveMatchDetails() {
         {(liveScore || scorecardData) && (
           <>
             {/* ─── Match Header ────────────────────────── */}
-            <div className="rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-xl">
+            <div className="min-w-0 rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-900 to-slate-800 p-4 shadow-xl sm:p-6">
               {/* Status + type */}
               <div className="flex items-center justify-between mb-4">
                 <MatchStatusBadge match={ls.matchStarted !== undefined ? ls : sc} />
@@ -389,12 +389,12 @@ function LiveMatchDetails() {
               </div>
 
               {/* Match name */}
-              <h1 className="mb-4 text-xl font-bold text-white">{matchName}</h1>
+              <h1 className="mb-4 break-words text-xl font-bold text-white sm:text-2xl">{matchName}</h1>
 
               {/* Scoreboard */}
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+              <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-4">
                 {/* Team A */}
-                <div className="text-center">
+                <div className="min-w-0 text-center">
                   {teamAInfo?.img ? (
                     <img
                       src={teamAInfo.img}
@@ -406,17 +406,17 @@ function LiveMatchDetails() {
                       {teamAInfo?.shortname || teams[0]?.charAt(0) || "?"}
                     </div>
                   )}
-                  <p className="text-sm font-bold text-white">
+                  <p className="break-words text-xs font-bold text-white sm:text-sm">
                     {teamAInfo?.shortname || teams[0] || "--"}
                   </p>
                   <ScoreBlock score={teamAScore} />
                 </div>
 
                 {/* VS */}
-                <div className="text-3xl font-black text-slate-600">VS</div>
+                <div className="px-1 text-xl font-black text-slate-600 sm:text-3xl">VS</div>
 
                 {/* Team B */}
-                <div className="text-center">
+                <div className="min-w-0 text-center">
                   {teamBInfo?.img ? (
                     <img
                       src={teamBInfo.img}
@@ -428,7 +428,7 @@ function LiveMatchDetails() {
                       {teamBInfo?.shortname || teams[1]?.charAt(0) || "?"}
                     </div>
                   )}
-                  <p className="text-sm font-bold text-white">
+                  <p className="break-words text-xs font-bold text-white sm:text-sm">
                     {teamBInfo?.shortname || teams[1] || "--"}
                   </p>
                   <ScoreBlock score={teamBScore} />
@@ -442,11 +442,11 @@ function LiveMatchDetails() {
               </p>
 
               {/* Match info */}
-              <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-slate-400">
+              <div className="mt-4 flex min-w-0 flex-wrap justify-center gap-4 text-xs text-slate-400">
                 {venue && (
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex min-w-0 items-center gap-1.5">
                     <FaLocationDot className="text-cyan-400" />
-                    <span>{venue}</span>
+                    <span className="break-words">{venue}</span>
                   </div>
                 )}
                 {matchDate && (
@@ -492,7 +492,7 @@ function LiveMatchDetails() {
               </div>
             ) : (
               <div className="mt-8 rounded-2xl border border-slate-700 bg-slate-900/50 p-6">
-                <div className="flex items-center gap-3 mb-2">
+                <div className="mb-2 flex items-center gap-3">
                   <FaSatelliteDish className="text-lg text-slate-500" />
                   <h3 className="text-lg font-bold text-white">Scorecard</h3>
                 </div>

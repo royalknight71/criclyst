@@ -32,10 +32,10 @@ function Footer() {
   return (
     <footer className="border-t border-slate-800 bg-slate-950">
       {/* Main Footer */}
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-6 py-14 md:grid-cols-2 lg:grid-cols-4">
+      <div className="mx-auto grid min-w-0 max-w-7xl grid-cols-1 gap-10 px-4 py-12 sm:gap-12 sm:px-6 sm:py-14 md:grid-cols-2 lg:grid-cols-4">
 
         {/* Brand */}
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-4">
             <img
               src={logo}
@@ -48,7 +48,7 @@ function Footer() {
             </h2>
           </div>
 
-          <p className="mt-5 max-w-sm text-sm leading-7 text-slate-400">
+          <p className="mt-5 max-w-sm break-words text-sm leading-7 text-slate-400">
             AI-powered Cricket Analytics Platform built for
             cricket enthusiasts to explore player statistics,
             match insights and performance analytics.
@@ -59,13 +59,14 @@ function Footer() {
           </p>
           <p className="mt-2 text-xs text-slate-500">Version 1.0</p>
 
-          <div className="mt-6 flex items-center gap-5 text-2xl text-slate-400">
+          <div className="mt-6 flex flex-wrap items-center gap-2 text-2xl text-slate-400">
 
             <a
               href="https://github.com/royalknight71/criclyst"
               target="_blank"
               rel="noreferrer"
-              className="transition duration-300 hover:scale-110 hover:text-cyan-400"
+              aria-label="Criclyst on GitHub"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg transition duration-300 hover:scale-110 hover:text-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
             >
               <FaGithub />
             </a>
@@ -74,7 +75,8 @@ function Footer() {
               href="https://www.linkedin.com/in/krish-gupta-1441b2311/"
               target="_blank"
               rel="noreferrer"
-              className="transition duration-300 hover:scale-110 hover:text-cyan-400"
+              aria-label="Criclyst on LinkedIn"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg transition duration-300 hover:scale-110 hover:text-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
             >
               <FaLinkedin />
             </a>
@@ -83,7 +85,8 @@ function Footer() {
               href="https://x.com/"
               target="_blank"
               rel="noreferrer"
-              className="transition duration-300 hover:scale-110 hover:text-cyan-400"
+              aria-label="Criclyst on X"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-lg transition duration-300 hover:scale-110 hover:text-cyan-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-cyan-300"
             >
               <FaXTwitter />
             </a>
@@ -93,7 +96,7 @@ function Footer() {
 
         {/* Quick Links */}
 
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-5 text-lg font-semibold text-white">
             Quick Links
           </h3>
@@ -150,26 +153,26 @@ function Footer() {
 
         {/* Resources */}
 
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-5 text-lg font-semibold text-white">
             Resources
           </h3>
 
           <ul className="space-y-3 text-slate-400">
 
-            <li className="transition duration-300 hover:translate-x-1 hover:text-cyan-400 cursor-pointer">
+            <li className="break-words text-slate-400">
               About
             </li>
 
-            <li className="transition duration-300 hover:translate-x-1 hover:text-cyan-400 cursor-pointer">
+            <li className="break-words text-slate-400">
               Privacy Policy
             </li>
 
-            <li className="transition duration-300 hover:translate-x-1 hover:text-cyan-400 cursor-pointer">
+            <li className="break-words text-slate-400">
               Terms of Service
             </li>
 
-            <li className="transition duration-300 hover:translate-x-1 hover:text-cyan-400 cursor-pointer">
+            <li className="break-words text-slate-400">
               Contact
             </li>
 
@@ -178,7 +181,7 @@ function Footer() {
 
         {/* Tech Stack */}
 
-        <div>
+        <div className="min-w-0">
           <h3 className="mb-5 text-lg font-semibold text-white">
             Tech Stack
           </h3>
@@ -218,7 +221,7 @@ function Footer() {
       {/* Bottom Footer */}
 
       <div className="border-t border-slate-800 ">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-6 text-sm text-slate-500 md:flex-row py-7">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-6 text-center text-sm text-slate-500 sm:px-6 md:flex-row md:gap-4 md:text-left">
 
           <p>
             © 2026 Criclyst. All rights reserved.

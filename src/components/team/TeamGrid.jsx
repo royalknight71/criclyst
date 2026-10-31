@@ -18,7 +18,7 @@ function TeamGrid({ teams, onUnfavorite, showFavoriteAction = false }) {
   return (
     <div
       className="
-        grid
+        grid min-w-0
         grid-cols-1
         sm:grid-cols-2
         lg:grid-cols-3

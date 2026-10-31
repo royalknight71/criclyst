@@ -17,6 +17,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { useEffect, useState } from "react";
 
 /** Shared axis tick styling for readability on the dark background. */
 const AXIS_TICK = { fill: "#94a3b8", fontSize: 12 };
@@ -27,6 +28,8 @@ const TOOLTIP_STYLE = {
     backgroundColor: "#111827",
     border: "1px solid #334155",
     borderRadius: "12px",
+    maxWidth: "calc(100vw - 32px)",
+    overflowWrap: "anywhere",
   },
   itemStyle: { color: "#e2e8f0" },
   labelStyle: { color: "#94a3b8" },
@@ -51,25 +54,38 @@ function AnalyticsBarChart({
     color,
     name})
     {
+    const [isNarrow, setIsNarrow] = useState(() => window.innerWidth < 640);
+
+    useEffect(() => {
+        const handleResize = () => setIsNarrow(window.innerWidth < 640);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const formatAxisLabel = (value) => {
+        const label = String(value ?? "");
+        return isNarrow && label.length > 12 ? `${label.slice(0, 11)}…` : label;
+    };
+
     return (
         <div
             className="
-                rounded-3xl border border-slate-800 bg-[#111827] p-6
+                min-w-0 rounded-3xl border border-slate-800 bg-[#111827] p-4
                 transition-colors duration-300 hover:border-slate-700 sm:p-8
             "
         >
-            <h2 className="mb-6 text-lg font-bold text-white sm:text-xl">
+            <h2 className="mb-5 break-words text-lg font-bold text-white sm:mb-6 sm:text-xl">
                 {title}
             </h2>
 
-            <div className="h-[300px] w-full">
+            <div className="h-[300px] w-full min-w-0 sm:h-[320px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                         data={data}
                         layout="vertical"
                         margin={{
                             top: 5,
-                            right: 16,
+                            right: isNarrow ? 4 : 16,
                             left: 0,
                             bottom: 0,
                         }}
@@ -82,20 +98,23 @@ function AnalyticsBarChart({
 
                         <XAxis
                             type="number"
-                            tick={AXIS_TICK}
+                            tick={{ ...AXIS_TICK, fontSize: isNarrow ? 10 : AXIS_TICK.fontSize }}
                             stroke="#334155"
                         />
 
                         <YAxis
                             type="category"
                             dataKey={namekey}
-                            width={140}
-                            tick={AXIS_TICK}
+                            width={isNarrow ? 88 : 140}
+                            tick={{ ...AXIS_TICK, fontSize: isNarrow ? 10 : AXIS_TICK.fontSize }}
+                            tickFormatter={formatAxisLabel}
+                            tickMargin={isNarrow ? 5 : 8}
                             stroke="#334155"
                         />
 
                         <Tooltip
                             {...TOOLTIP_STYLE}
+                            allowEscapeViewBox={{ x: false, y: false }}
                             cursor={{ fill: "rgba(148,163,184,0.08)" }}
                         />
 
@@ -103,7 +122,7 @@ function AnalyticsBarChart({
                             verticalAlign="top"
                             iconType="circle"
                             formatter={(value) => (
-                                <span className="text-slate-400">{value}</span>
+                                <span className="break-words text-slate-400">{value}</span>
                             )}
                         />
 

@@ -145,7 +145,7 @@ function TeamDetails() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] items-center justify-center">
           <p className="text-lg text-slate-400">Loading team...</p>
         </div>
@@ -155,9 +155,9 @@ function TeamDetails() {
 
   if (error) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] items-center justify-center">
-          <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-6 py-4 text-red-400">
+          <p className="max-w-full break-words rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-4 text-red-400 sm:px-6">
             Error: {error}
           </p>
         </div>
@@ -167,7 +167,7 @@ function TeamDetails() {
 
   if (!team) {
     return (
-      <main className="min-h-screen bg-[#0B1120] px-6 py-20 text-white">
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
         <div className="flex min-h-[50vh] flex-col items-center justify-center gap-6">
           <p className="text-lg text-slate-400">Team Not Found</p>
           <button
@@ -233,7 +233,7 @@ function TeamDetails() {
 
       <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[140px]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 py-14">
+      <div className="relative mx-auto w-full min-w-0 max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
         {/* Back Button */}
         <button
           onClick={() => navigate("/teams")}
@@ -246,7 +246,7 @@ function TeamDetails() {
             border
             border-slate-700
             bg-slate-900/50
-            px-5
+            px-4 sm:px-5
             py-3
             text-slate-300
             transition-all
@@ -267,7 +267,7 @@ function TeamDetails() {
             border
             border-slate-800
             bg-[#111827]
-            p-10
+            p-4 sm:p-10
           "
         >
           {/* Hero Glow */}
@@ -284,7 +284,7 @@ function TeamDetails() {
               <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-2xl" />
               <div
                 className="
-                  relative flex h-36 w-36
+                  relative flex h-28 w-28 sm:h-36 sm:w-36
                   items-center justify-center
                   overflow-hidden rounded-full
                   border-4 border-cyan-400
@@ -307,15 +307,15 @@ function TeamDetails() {
             </div>
 
             {/* Name */}
-            <h1 className="mt-8 text-5xl font-black tracking-tight capitalize text-white">
+            <h1 className="mt-6 max-w-full break-words text-3xl font-black tracking-tight capitalize text-white sm:mt-8 sm:text-4xl md:text-5xl">
               {toTitleCase(team.name)}
             </h1>
 
             {/* Country */}
-            <div className="mt-4 flex items-center gap-2 text-lg capitalize text-slate-400">
+            <div className="mt-4 flex max-w-full flex-wrap items-center justify-center gap-2 text-base capitalize text-slate-400 sm:text-lg">
               <FaLocationDot className="text-cyan-400" />
               <CountryFlag country={team.country} className="text-xl" />
-              <span>{toTitleCase(team.country)}</span>
+              <span className="break-words">{toTitleCase(team.country)}</span>
             </div>
 
             {/* Format Badge */}
@@ -339,7 +339,7 @@ function TeamDetails() {
               {!user ? (
                   <button
                       onClick={() => navigate("/login")}
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-6 py-3 font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400"
+                      className="inline-flex min-h-11 max-w-full flex-wrap items-center justify-center gap-2 rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-3 text-sm font-semibold text-slate-300 transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400 sm:px-6 sm:text-base"
                   >
                       Login to add to Favorites
                   </button>
@@ -366,7 +366,7 @@ function TeamDetails() {
 
         {/* Team Information */}
         <div className="mt-12">
-          <h2 className="mb-6 text-3xl font-bold text-white">Team Information</h2>
+        <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">Team Information</h2>
 
           <div
             className="
@@ -374,10 +374,10 @@ function TeamDetails() {
               border
               border-slate-800
               bg-[#111827]
-              p-8
+              p-4 sm:p-8
             "
           >
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
               {teamInfo.map((item) => {
                 const Icon = item.icon;
 
@@ -385,14 +385,14 @@ function TeamDetails() {
                   <div
                     key={item.label}
                     className="
-                      flex
+                      flex min-w-0
                       items-center
                       gap-4
                       rounded-2xl
                       border
                       border-slate-700/60
                       bg-slate-900/40
-                      px-5
+                      px-3 sm:px-5
                       py-4
                     "
                   >
@@ -408,11 +408,11 @@ function TeamDetails() {
                       <Icon />
                     </div>
 
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="text-xs uppercase tracking-wider text-slate-400">
                         {item.label}
                       </p>
-                      <h3 className="mt-1 truncate font-semibold capitalize text-white">
+                      <h3 className="mt-1 break-words font-semibold capitalize text-white">
                         {item.value}
                       </h3>
                     </div>
@@ -425,7 +425,7 @@ function TeamDetails() {
 
         {/* Squad */}
         <div className="mt-12">
-          <h2 className="mb-6 text-3xl font-bold text-white">
+          <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">
             Squad{" "}
             <span className="text-base font-medium text-slate-400">
               ({team.players?.length || 0} players)
@@ -433,16 +433,16 @@ function TeamDetails() {
           </h2>
 
           {team.players?.length > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {team.players.map((player) => (
                 <button
                   key={player._id}
                   onClick={() => navigate(`/players/${player._id}`)}
                   className="
-                    group rounded-2xl
+                    group min-w-0 rounded-2xl
                     border border-slate-800
                     bg-[#111827]
-                    p-5
+                    p-4 sm:p-5
                     text-left
                     transition-all duration-300
                     hover:-translate-y-1
@@ -471,15 +471,15 @@ function TeamDetails() {
                   </span>
 
                   {/* Name */}
-                  <h3 className="mt-4 truncate text-lg font-bold capitalize text-white transition-colors duration-300 group-hover:text-cyan-400">
+                  <h3 className="mt-4 break-words text-base font-bold capitalize text-white transition-colors duration-300 group-hover:text-cyan-400 sm:text-lg">
                     {toTitleCase(player.name)}
                   </h3>
 
                   {/* Country */}
-                  <div className="mt-2 flex items-center gap-2 text-sm capitalize text-slate-400">
+                  <div className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-sm capitalize text-slate-400">
                     <FaLocationDot className="text-cyan-400" />
                     <CountryFlag country={player.country} className="text-base" />
-                    <span>{toTitleCase(player.country)}</span>
+                    <span className="break-words">{toTitleCase(player.country)}</span>
                   </div>
                 </button>
               ))}

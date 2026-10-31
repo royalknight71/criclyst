@@ -14,13 +14,13 @@ function TeamSkeleton() {
   return (
     <div
       className="
-        w-full
+        relative w-full min-w-0
         overflow-hidden
         rounded-2xl
         border
         border-slate-700/70
         bg-[#111827]
-        p-6
+        p-4 sm:p-6
         animate-pulse
       "
     >

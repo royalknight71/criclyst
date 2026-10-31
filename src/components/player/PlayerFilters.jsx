@@ -33,6 +33,7 @@ function PlayerFilters({ value, onChange }) {
 
       <select
         value={value}
+        aria-label="Filter players by role"
         onChange={(e) => onChange(e.target.value)}
         className="
           w-full

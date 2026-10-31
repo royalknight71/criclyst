@@ -48,11 +48,11 @@ function UpcomingMatchCard({ match }) {
   );
 
   return (
-    <div className="group rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20">
+    <div className="group w-full min-w-0 rounded-3xl border border-slate-700 bg-gradient-to-br from-slate-800 to-slate-900 p-4 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-cyan-400 hover:shadow-cyan-500/20 sm:p-6">
 
       {/* Header */}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
 
         <div className="flex items-center gap-2 text-cyan-400 font-semibold">
 
@@ -72,9 +72,9 @@ function UpcomingMatchCard({ match }) {
 
       {/* Teams */}
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-2">
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="mx-auto mb-3 aspect-[3/2] w-14 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900">
 
@@ -82,17 +82,17 @@ function UpcomingMatchCard({ match }) {
 
           </div>
 
-          <h3 className="text-xl font-bold text-white">
+          <h3 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamA?.name)}
           </h3>
 
         </div>
 
-        <div className="px-6 text-4xl font-black text-slate-500">
+        <div className="px-1 text-2xl font-black text-slate-500 sm:px-4 sm:text-4xl">
           VS
         </div>
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="mx-auto mb-3 aspect-[3/2] w-14 overflow-hidden rounded-md border border-cyan-500/40 bg-slate-900">
 
@@ -100,7 +100,7 @@ function UpcomingMatchCard({ match }) {
 
           </div>
 
-          <h3 className="text-xl font-bold text-white">
+          <h3 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamB?.name)}
           </h3>
 
@@ -114,17 +114,17 @@ function UpcomingMatchCard({ match }) {
 
       <div className="grid gap-5 md:grid-cols-2">
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaLocationDot className="mt-1 text-cyan-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Venue
             </p>
 
-            <p className="text-white">
+            <p className="break-words text-white">
               {match.venue}
             </p>
 
@@ -132,17 +132,17 @@ function UpcomingMatchCard({ match }) {
 
         </div>
 
-        <div className="flex items-start gap-3">
+        <div className="flex min-w-0 items-start gap-3">
 
           <FaCalendarAlt className="mt-1 text-cyan-400" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-xs uppercase tracking-widest text-slate-400">
               Match Date
             </p>
 
-            <p className="text-white">
+            <p className="break-words text-white">
               {formattedDate} • {formattedTime}
             </p>
 
@@ -156,7 +156,7 @@ function UpcomingMatchCard({ match }) {
 
       <div className="mt-6 rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
 
-        <p className="text-center text-lg font-semibold text-cyan-300">
+        <p className="break-words text-center text-base font-semibold text-cyan-300 sm:text-lg">
 
           Kick-off in{" "}
 

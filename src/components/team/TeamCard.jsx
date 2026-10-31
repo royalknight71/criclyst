@@ -27,11 +27,11 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
   return (
     <div
       className="
-        group relative overflow-hidden
+        group relative w-full min-w-0 overflow-hidden
         rounded-2xl
         border border-slate-700/70
         bg-[#111827]
-        p-6
+        p-4 sm:p-6
         transition-all duration-300
         hover:-translate-y-2
         hover:border-cyan-400
@@ -63,13 +63,13 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
       </div>
 
       {/* Team Info */}
-      <div className="text-center">
+      <div className="min-w-0 text-center">
 
-        <h2 className="text-xl font-bold capitalize text-white">
+        <h2 className="break-words text-lg font-bold capitalize text-white sm:text-xl">
           {team.name}
         </h2>
 
-        <p className="mt-1 text-sm capitalize text-slate-400">
+        <p className="mt-1 flex max-w-full flex-wrap items-center justify-center text-sm capitalize text-slate-400">
           <CountryFlag country={team.country} className="text-base mr-1" />
           {team.country}
         </p>
@@ -95,21 +95,21 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
       <div className="mt-6 space-y-3 border-t border-slate-700 pt-5">
 
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-slate-500">
+            <span className="shrink-0 text-slate-500">
             Captain
           </span>
 
-          <span className="text-right capitalize text-slate-200">
+          <span className="min-w-0 break-words text-right capitalize text-slate-200">
             {team.captain?.name || "N/A"}
           </span>
         </div>
 
         <div className="flex items-center justify-between gap-3 text-sm">
-          <span className="text-slate-500">
+            <span className="shrink-0 text-slate-500">
             Coach
           </span>
 
-          <span className="text-right capitalize text-slate-200">
+          <span className="min-w-0 break-words text-right capitalize text-slate-200">
             {team.coach || "N/A"}
           </span>
         </div>
@@ -134,7 +134,7 @@ const TeamCard = ({ team, onUnfavorite, showFavoriteAction = false }) => {
         <button
           onClick={() => navigate(`/teams/${team._id}`)}
           className="
-            flex-1
+            min-h-11 flex-1
             rounded-lg
             border border-cyan-400
             bg-transparent

@@ -30,14 +30,14 @@ const formatName = (name = "") =>
 function MatchCard({match}){
   const navigate = useNavigate();
   return (
-    <div className="group  bg-gradient-to-br
+    <div className="group w-full min-w-0 bg-gradient-to-br
 from-slate-900
-to-slate-800 backdrop-blur-md border border-slate-700 rounded-3xl p-4
+to-slate-800 backdrop-blur-md border border-slate-700 rounded-3xl p-4 sm:p-6
 transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:shadow-2xl hover:shadow-cyan-500/10 shadow-lg">
 
       {/* Header */}
 
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap justify-between items-center gap-3">
 
         <div className="flex items-center gap-3">
 
@@ -61,11 +61,11 @@ transition-all duration-300 hover:-translate-y-2 hover:border-cyan-400 hover:sha
 
       {/* Teams */}
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+      <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1 sm:gap-2">
 
         {/* Team A */}
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="aspect-[3/2] w-14
 rounded-md
@@ -77,11 +77,11 @@ bg-slate-900 mx-auto mb-3 overflow-hidden">
 
           </div>
 
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamA?.name)}
           </h2>
 
-          <p className="mt-2 text-5xl
+          <p className="mt-2 whitespace-nowrap text-3xl sm:text-5xl
 font-black
 tracking-tight text-cyan-400">
             {match.scorecard?.teamAScore}
@@ -91,9 +91,9 @@ tracking-tight text-cyan-400">
 
         {/* VS */}
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
-          <div className="text-4xl
+        <div className="px-1 text-2xl sm:px-3 sm:text-4xl
 font-black
 text-slate-600 ">
             VS
@@ -103,7 +103,7 @@ text-slate-600 ">
 
         {/* Team B */}
 
-        <div className="text-center">
+        <div className="min-w-0 text-center">
 
           <div className="aspect-[3/2] w-14
 rounded-md
@@ -115,11 +115,11 @@ bg-slate-900  mx-auto mb-3 overflow-hidden">
 
           </div>
 
-          <h2 className="text-xl font-bold text-white">
+          <h2 className="break-words text-base font-bold text-white sm:text-xl">
             {formatName(match.teamB?.name)}
           </h2>
 
-          <p className="mt-2 text-5xl
+          <p className="mt-2 whitespace-nowrap text-3xl sm:text-5xl
 font-black
 tracking-tight text-cyan-400">
             {match.scorecard?.teamBScore}
@@ -133,19 +133,19 @@ tracking-tight text-cyan-400">
 
       {/* Match Info */}
 
-      <div className="grid md:grid-cols-2 gap-5">
+      <div className="grid min-w-0 gap-5 md:grid-cols-2">
 
         <div className="flex items-start gap-3">
 
           <FaLocationDot className="text-cyan-400 mt-1" />
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-slate-400 text-sm uppercase">
               Venue
             </p>
 
-            <p className="text-white">
+            <p className="break-words text-white">
               {formatName(match.venue) || "Venue TBC"}
             </p>
 
@@ -158,13 +158,13 @@ tracking-tight text-cyan-400">
 
           <MdSportsCricket className="text-cyan-400 mt-1 text-lg"/>
 
-          <div>
+          <div className="min-w-0">
 
             <p className="text-slate-400 text-sm uppercase">
               Toss
             </p>
 
-            <p className="text-white">
+            <p className="break-words text-white">
               {formatName(match.tossWinner.name)} won the toss & elected to {match.tossDecision}
             </p>
 
@@ -177,9 +177,9 @@ tracking-tight text-cyan-400">
 
       {/* Stats */}
 
-      <div className="grid grid-cols-2 gap-5 mt-6">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5">
 
-        <div className="bg-slate-900 rounded-2xl p-5 border border-slate-700">
+        <div className="min-w-0 rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-5">
 
           <p className="uppercase text-xs tracking-widest text-slate-400">
 
@@ -187,7 +187,7 @@ tracking-tight text-cyan-400">
 
           </p>
 
-          <h3 className="text-3xl font-bold text-white mt-2">
+          <h3 className="mt-2 break-words text-2xl font-bold text-white sm:text-3xl">
 
             {match.scorecard?.target || "—"}
 
@@ -195,7 +195,7 @@ tracking-tight text-cyan-400">
 
         </div>
 
-        <div className="bg-slate-900 rounded-2xl p-5 border border-slate-700">
+        <div className="min-w-0 rounded-2xl border border-slate-700 bg-slate-900 p-3 sm:p-5">
 
           <p className="uppercase text-xs tracking-widest text-slate-400">
 
@@ -203,7 +203,7 @@ tracking-tight text-cyan-400">
 
           </p>
 
-          <h3 className="text-3xl font-bold text-white mt-2">
+          <h3 className="mt-2 break-words text-2xl font-bold text-white sm:text-3xl">
 
             {match.scorecard?.currentRunRate}
 

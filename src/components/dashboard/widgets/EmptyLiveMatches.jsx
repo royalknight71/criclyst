@@ -19,9 +19,9 @@ return (
 <section className="bg-gradient-to-b
 from-[#172840]
 via-[#182234]
-to-[#0f172a] pt-14 pb-20">
+to-[#0f172a] px-4 pt-12 pb-14 sm:px-6 sm:pt-14 sm:pb-20">
 
-    <div className="max-w-7xl mx-auto px-6">
+    <div className="mx-auto w-full min-w-0 max-w-7xl">
 
         {/* Heading */}
 
@@ -31,7 +31,7 @@ to-[#0f172a] pt-14 pb-20">
     Live Cricket
 </p>
 
-    <h2 className="mt-2 text-4xl font-bold text-white">
+    <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">
         Live Matches
     </h2>
 
@@ -49,8 +49,8 @@ to-[#0f172a] pt-14 pb-20">
         border
         border-slate-700
         bg-slate-900
-        px-10
-        py-16
+        px-4
+        py-10
         text-center
         transition-all
         duration-300
@@ -82,7 +82,7 @@ to-[#0f172a] pt-14 pb-20">
 
             {/* Heading */}
 
-            <h3 className="mt-8 text-4xl font-bold text-white">
+            <h3 className="mt-8 text-3xl font-bold text-white sm:text-4xl">
                 No Live Matches
             </h3>
 
@@ -104,7 +104,7 @@ to-[#0f172a] pt-14 pb-20">
 
             <div className="
             mt-8
-            inline-flex
+            inline-flex max-w-full flex-wrap justify-center
             items-center
             gap-3
             rounded-full

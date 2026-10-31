@@ -105,9 +105,9 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
   );
 
   return (
-    <div className="flex h-full flex-col rounded-3xl border border-slate-800 bg-[#111827] p-6">
+    <div className="flex h-full min-w-0 flex-col rounded-3xl border border-slate-800 bg-[#111827] p-4 sm:p-6">
       {/* Slot header */}
-      <div className="mb-5 flex min-h-[2rem] items-center justify-between">
+      <div className="mb-5 flex min-h-[2rem] items-center justify-between gap-3">
         <h3 className="text-lg font-bold uppercase tracking-wider text-cyan-400">
           {label}
         </h3>
@@ -116,7 +116,7 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
           <button
             onClick={handleClear}
             className="
-              flex items-center gap-2 rounded-xl border border-slate-700
+              flex min-h-11 items-center gap-2 rounded-xl border border-slate-700
               bg-slate-900/60 px-4 py-2 text-sm text-slate-300
               transition-all duration-300 hover:border-cyan-400 hover:text-cyan-400
             "
@@ -129,33 +129,32 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
 
       {selected ? (
         /* Selected player card */
-        <div className="flex min-h-[4rem] flex-1 items-center gap-4">
+        <div className="flex min-h-[4rem] min-w-0 flex-1 items-center gap-3 sm:gap-4">
           <div className="relative shrink-0">
             <div className="absolute inset-0 rounded-full bg-cyan-400/20 blur-xl" />
             <img
               src={selected.image || "/default-player.png"}
               alt={toTitleCase(selected.name)}
               className="
-                relative h-16 w-16 rounded-full border-2 border-cyan-400
-                object-cover
+              relative h-14 w-14 rounded-full border-2 border-cyan-400 object-cover sm:h-16 sm:w-16
               "
             />
           </div>
 
           <div className="min-w-0">
-            <p className="truncate text-xl font-bold text-white">
+            <p className="break-words text-lg font-bold text-white sm:text-xl">
               {toTitleCase(selected.name)}
             </p>
-            <p className="mt-1 flex items-center gap-1.5 text-sm text-slate-400">
-              <FaLocationDot className="text-cyan-400" />
-              <CountryFlag country={selected.country} className="text-base" />
-              {toTitleCase(selected.country)}
+            <p className="mt-1 flex min-w-0 flex-wrap items-center gap-1.5 text-sm text-slate-400">
+              <FaLocationDot className="shrink-0 text-cyan-400" />
+              <CountryFlag country={selected.country} className="shrink-0 text-base" />
+              <span className="min-w-0 break-words">{toTitleCase(selected.country)}</span>
             </p>
           </div>
         </div>
       ) : (
         /* Search + dropdown picker */
-        <div className="relative flex min-h-[4rem] flex-1 items-center">
+        <div className="relative flex min-h-[4rem] min-w-0 flex-1 items-center">
           <FaSearch
             className="
               pointer-events-none absolute left-4 top-1/2 -translate-y-1/2
@@ -172,8 +171,10 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
             }}
             onFocus={() => setOpen(true)}
             placeholder={`Search for ${label.toLowerCase()}...`}
+            aria-expanded={open}
+            aria-controls={`${label.toLowerCase().replace(/\s+/g, "-")}-results`}
             className="
-              w-full rounded-2xl border border-slate-700 bg-slate-900/60
+              min-w-0 w-full rounded-2xl border border-slate-700 bg-slate-900/60
               py-3.5 pl-11 pr-5 text-white placeholder:text-slate-500
               outline-none backdrop-blur-md transition-all duration-300
               focus:border-cyan-400 focus:ring-4 focus:ring-cyan-500/10
@@ -183,9 +184,10 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
           {open && (
             <div
               className="
-                absolute z-20 mt-2 w-full overflow-hidden rounded-2xl
+                absolute left-0 z-20 mt-2 w-full max-w-full overflow-hidden rounded-2xl
                 border border-slate-700 bg-[#111827] shadow-2xl shadow-black/50
               "
+              id={`${label.toLowerCase().replace(/\s+/g, "-")}-results`}
             >
               {searching ? (
                 <div className="space-y-3 p-4">
@@ -217,13 +219,13 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
                   </p>
                 </div>
               ) : (
-                <ul className="max-h-72 overflow-y-auto">
+                <ul className="max-h-72 min-w-0 overflow-y-auto">
                   {availableResults.map((player) => (
                     <li key={player._id}>
                       <button
                         onClick={() => handleSelect(player)}
                         className="
-                          flex w-full items-center gap-3 px-4 py-3 text-left
+                          flex w-full min-w-0 items-start gap-2 px-3 py-3 text-left sm:items-center sm:gap-3 sm:px-4
                           transition-colors duration-200 hover:bg-cyan-500/10
                         "
                       >
@@ -246,7 +248,7 @@ function PlayerSelector({ label, selected, onSelect, disabledId }) {
                         </span>
                         <span
                           className={`
-                            shrink-0 rounded-full px-3 py-1 text-xs font-semibold
+                            max-w-[6.5rem] shrink-0 rounded-full px-2 py-1 text-center text-[0.65rem] font-semibold leading-tight sm:max-w-none sm:px-3 sm:text-xs
                             ${
                               player.role === "Batsman"
                                 ? "border border-cyan-500/30 bg-cyan-500/10 text-cyan-300"

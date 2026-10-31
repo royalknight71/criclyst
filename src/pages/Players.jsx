@@ -116,9 +116,9 @@ if (loading) {
 
       <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[120px]" />
 
-      <div className="relative mx-auto max-w-7xl px-6 py-16">
+      <div className="relative mx-auto w-full min-w-0 max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
 
-        <div className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8">
 
           {Array.from({ length: 8 }).map((_, index) => (
             <PlayerSkeleton key={index} />
@@ -134,14 +134,22 @@ if (loading) {
 
   if(error)
     return (
-  <div className="error-state">
-    <h2>Something went wrong.</h2>
-    <p>{error}</p>
-  </div>
+  <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
+    <div className="mx-auto max-w-3xl rounded-xl border border-red-500/30 bg-red-500/10 p-4 sm:p-6">
+      <h2 className="text-xl font-semibold">Something went wrong.</h2>
+      <p className="mt-2 break-words text-red-300">{error}</p>
+    </div>
+  </main>
 );
 
   if(players.length===0)
-    return <EmptyPlayers/>
+    return (
+      <main className="min-h-screen min-w-0 bg-[#0B1120] px-4 py-12 text-white sm:px-6 sm:py-20">
+        <div className="mx-auto max-w-7xl">
+          <EmptyPlayers />
+        </div>
+      </main>
+    );
 
 return (
 <section className="relative min-h-screen overflow-hidden bg-[#0B1120]">
@@ -150,7 +158,7 @@ return (
 
   <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[120px]" />
 
-  <div className="relative mx-auto max-w-7xl px-6 py-16">
+  <div className="relative mx-auto w-full min-w-0 max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
     {/* <div className="players-header">
       <h1>Players</h1>
       <p>{players.length} Players Found</p>
@@ -164,7 +172,7 @@ return (
   <h1
   className="
     mt-4
-    text-5xl
+    text-4xl sm:text-5xl
     font-black
     leading-tight
     text-white
@@ -195,9 +203,9 @@ return (
   </p>
 
 </div>
-<div className="mt-12 flex flex-col gap-4 md:flex-row">
+<div className="mt-10 flex min-w-0 flex-col gap-4 md:mt-12 md:flex-row">
     {/* SearchBar */}
-    <div className="flex-1">
+    <div className="min-w-0 flex-1">
     <SearchBar
     value={searchTerm}
     onChange={handleSearchChange}
@@ -213,7 +221,7 @@ return (
 
 </div>
 
-<div className="mt-6 flex items-center justify-between">
+<div className="mt-6 flex min-w-0 flex-wrap items-center justify-between gap-2">
 
     <p className="text-sm text-slate-400">
 
@@ -234,7 +242,7 @@ return (
     </p>
 
 </div>
-      <div className="mt-12">
+      <div className="mt-8 min-w-0 sm:mt-12">
     <PlayerGrid players={players} />
 </div>
 {

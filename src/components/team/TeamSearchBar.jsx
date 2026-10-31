@@ -35,10 +35,11 @@ function TeamSearchBar({ value, onChange, placeholder }) {
       <input
         type="text"
         placeholder={placeholder}
+        aria-label={placeholder || "Search teams"}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="
-          w-full
+          min-w-0 w-full
           rounded-2xl
           border
           border-slate-700

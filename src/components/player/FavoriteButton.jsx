@@ -23,9 +23,10 @@ function FavoriteButton({ isFavorited, loading, onToggle, size = "default", clas
     };
 
     const baseClasses = `
-        inline-flex items-center justify-center rounded-xl font-semibold
+        inline-flex min-h-11 items-center justify-center rounded-xl font-semibold
         border transition-all duration-300
         disabled:cursor-not-allowed disabled:opacity-50
+        lg:min-h-0
         ${sizeClasses[size] || sizeClasses.default}
     `;
 

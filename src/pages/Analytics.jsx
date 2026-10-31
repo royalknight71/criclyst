@@ -141,29 +141,29 @@ function Analytics() {
       <div className="absolute left-0 top-20 h-96 w-96 rounded-full bg-cyan-500/10 blur-[120px]" />
       <div className="absolute right-0 top-40 h-96 w-96 rounded-full bg-purple-500/10 blur-[120px]" />
 
-      <div className="relative mx-auto max-w-[1400px] px-6 py-16 sm:px-10 lg:px-12">
+      <div className="relative mx-auto w-full min-w-0 max-w-[1400px] px-4 py-10 sm:px-10 sm:py-16 lg:px-12">
         {/* Header */}
         <div className="text-center">
-          <p className="text-cyan-400 font-semibold tracking-[0.3em] uppercase">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-400 sm:text-base sm:tracking-[0.3em]">
             CRICKET ANALYTICS
           </p>
 
-          <h1 className="mt-4 text-5xl font-black leading-tight text-white">
+          <h1 className="mt-4 text-4xl font-black leading-tight text-white sm:text-5xl">
             Analytics{" "}
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent">
+            <span className="block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 bg-clip-text text-transparent sm:inline">
               Dashboard
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
+          <p className="mx-auto mt-5 max-w-2xl text-base text-slate-400 sm:mt-6 sm:text-lg">
             Visual insights across every player in the Criclyst database
           </p>
         </div>
 
         {loading ? (
           /* Loading skeletons */
-          <div className="mt-14 space-y-10">
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+          <div className="mt-10 min-w-0 space-y-8 sm:mt-14 sm:space-y-10">
+            <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 xl:grid-cols-6">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
@@ -176,7 +176,7 @@ function Analytics() {
             </div>
 
             {[1, 2].map((row) => (
-              <div key={row} className="grid gap-8 lg:grid-cols-2">
+              <div key={row} className="grid min-w-0 gap-6 lg:grid-cols-2 lg:gap-8">
                 {Array.from({ length: row === 1 ? 1 : 2 }).map((_, index) => (
                   <div
                     key={index}
@@ -191,11 +191,11 @@ function Analytics() {
           </div>
         ) : error ? (
           /* API error state */
-          <div className="mx-auto mt-14 max-w-xl rounded-3xl border border-red-500/30 bg-red-500/5 p-10 text-center">
-            <h2 className="text-2xl font-bold text-white">
+          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-red-500/30 bg-red-500/5 p-5 text-center sm:mt-14 sm:p-10">
+            <h2 className="text-xl font-bold text-white sm:text-2xl">
               Failed to load analytics.
             </h2>
-            <p className="mt-3 text-slate-400">{error}</p>
+            <p className="mt-3 break-words text-slate-400">{error}</p>
           </div>
         ) : !analytics || analytics.overview.totalPlayers === 0 ? (
           /* Empty database state */
@@ -205,7 +205,7 @@ function Analytics() {
         ) : (
           <>
             {/* Filters */}
-            <div className="mt-12">
+            <div className="mt-10 min-w-0 sm:mt-12">
               <AnalyticsFilters
                 country={countryFilter}
                 role={roleFilter}
@@ -218,7 +218,7 @@ function Analytics() {
             </div>
 
             {/* Overview stat cards */}
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+            <div className="mt-8 grid min-w-0 gap-4 sm:mt-10 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 xl:grid-cols-6">
               {overviewCards.map((card) => (
                 <SummaryCard
                   key={card.title}
@@ -230,7 +230,7 @@ function Analytics() {
             </div>
 
             {/* Charts */}
-            <div className="mt-16 space-y-10">
+            <div className="mt-10 min-w-0 space-y-8 sm:mt-16 sm:space-y-10">
               <AnalyticsBarChart
                 title="Top Run Scorers"
                 data={formatLeaderboard(analytics.topRunScorers)}
@@ -249,7 +249,7 @@ function Analytics() {
                 name="Wickets"
               />
 
-              <div className="grid gap-8 lg:grid-cols-2">
+              <div className="grid min-w-0 gap-6 lg:grid-cols-2 lg:gap-8">
                 <AnalyticsBarChart
                   title="Highest Batting Average"
                   data={formatLeaderboard(analytics.topBattingAverages)}
@@ -269,7 +269,7 @@ function Analytics() {
                 />
               </div>
 
-              <div className="grid gap-8 xl:grid-cols-2">
+              <div className="grid min-w-0 gap-6 xl:grid-cols-2 xl:gap-8">
                 <AnalyticsBarChart
                   title="Country-wise Player Distribution"
                   data={analytics.countryDistribution.map((item) => ({

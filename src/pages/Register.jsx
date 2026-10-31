@@ -68,7 +68,7 @@ function Register() {
                 </h1>
 
                 {error && (
-                    <div className="mb-4 rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                    <div role="alert" className="mb-4 break-words rounded-lg bg-red-500/10 px-4 py-3 text-sm text-red-400">
                         {error}
                     </div>
                 )}
