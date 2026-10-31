@@ -1,170 +1,137 @@
-/**
- * Hero.jsx
- *
- * Landing hero section for the dashboard. Displays the main headline, an
- * AI-powered badge, a typewriter-animated tagline cycling through multiple
- * texts, feature highlights, and navigation buttons to the players and
- * analytics pages.
- */
-
+import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
-import {
-  FaRobot,
-  FaChartLine,
-  FaUsers,
-  FaBrain,
-} from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { FaArrowRight } from "react-icons/fa6";
+import "./Hero.css";
 
-/**
- * Hero component.
- *
- * Runs a type/delete typewriter effect over the taglines using timed state
- * updates: characters are typed at 70ms intervals and deleted at 40ms, with
- * a pause after each full sentence.
- *
- * @component
- * @returns {JSX.Element} The hero landing section.
- */
-function Hero() {
-  //Text Animation Typre-Writer
-const texts = [
-  "Analyze players with AI-powered insights.",
-  "Compare player performance instantly.",
-  "Visualize cricket analytics like never before."
+const headlinePhrases = [
+  "Understand every innings.",
+  "Track every moment.",
+  "Discover player insights.",
+  "Compare cricket legends.",
+  "Explore the game deeper.",
 ];
 
-const [textIndex, setTextIndex] = useState(0);
-const [displayText, setDisplayText] = useState("");
-const [isDeleting, setIsDeleting] = useState(false);
+const descriptions = [
+  "Live match coverage and real-time score updates.",
+  "Upcoming fixtures so you never miss a match.",
+  "Recent results and match-winning performances.",
+  "Detailed player profiles and team insights.",
+  "Compare players and explore cricket analytics.",
+];
 
-useEffect(() => {
-  const currentText = texts[textIndex];
+function Hero() {
+  const [reducedMotion, setReducedMotion] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
+  );
+  const [typedText, setTypedText] = useState("");
+  const [descriptionIndex, setDescriptionIndex] = useState(0);
 
-  const timeout = setTimeout(() => {
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = (event) => setReducedMotion(event.matches);
 
-    if (!isDeleting) {
+    mediaQuery.addEventListener("change", updatePreference);
+    return () => mediaQuery.removeEventListener("change", updatePreference);
+  }, []);
 
-      setDisplayText(
-        currentText.substring(0, displayText.length + 1)
-      );
+  useEffect(() => {
+    if (reducedMotion) return undefined;
 
-      if (displayText === currentText) {
-        setTimeout(() => {
-          setIsDeleting(true);
-        }, 1500);
+    let timeoutId;
+    let phraseIndex = 0;
+    let characterIndex = 0;
+    let deleting = false;
+    let cancelled = false;
+
+    const tick = () => {
+      if (cancelled) return;
+
+      const phrase = headlinePhrases[phraseIndex];
+      if (!deleting) {
+        characterIndex += 1;
+        setTypedText(phrase.slice(0, characterIndex));
+
+        if (characterIndex === phrase.length) {
+          deleting = true;
+          timeoutId = window.setTimeout(tick, 1650);
+          return;
+        }
+
+        timeoutId = window.setTimeout(tick, 76);
+        return;
       }
 
-    } else {
+      characterIndex -= 1;
+      setTypedText(phrase.slice(0, characterIndex));
 
-      setDisplayText(
-        currentText.substring(0, displayText.length - 1)
-      );
-
-      if (displayText === "") {
-        setIsDeleting(false);
-        setTextIndex((prev) => (prev + 1) % texts.length);
+      if (characterIndex === 0) {
+        deleting = false;
+        phraseIndex = (phraseIndex + 1) % headlinePhrases.length;
+        timeoutId = window.setTimeout(tick, 420);
+        return;
       }
 
-    }
+      timeoutId = window.setTimeout(tick, 34);
+    };
 
-  }, isDeleting ? 40 : 70);
+    timeoutId = window.setTimeout(tick, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [reducedMotion]);
 
-  return () => clearTimeout(timeout);
+  useEffect(() => {
+    if (reducedMotion) return undefined;
 
-}, [displayText, isDeleting, textIndex]);
+    const intervalId = window.setInterval(() => {
+      setDescriptionIndex((index) => (index + 1) % descriptions.length);
+    }, 5200);
+
+    return () => window.clearInterval(intervalId);
+  }, [reducedMotion]);
+
   return (
-    <>
-    <section
-  className="
-flex
-min-h-[85vh]
-items-center
-justify-center
-px-6
-pt-10
-bg-gradient-to-b
-from-[#020617]
-via-[#0f172a]
-to-[#111827]
-py-24
-"
->
-  <div className="max-w-4xl text-center">
-
-    {/* AI Badge */}
-    <div className="mb-6 flex items-center justify-center gap-3">
-      <FaRobot
-    className="text-cyan-400 text-4xl animate-bounce"
-/>
-      <span className="uppercase tracking-[0.3em] text-cyan-400 font-semibold">
-        AI Powered
-      </span>
-    </div>
-
-    {/* Main Heading */}
-        <h1 className="text-6xl font-extrabold leading-tight text-white">
-            Cricket Analytics
-        </h1>
-
-        <h2 className="text-7xl font-extrabold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent leading-tight pb-2">
-    Beyond Statistics
-</h2>
-    {/* Typewriter */}
-    <p className="mx-auto mt-8 max-w-2xl text-xl leading-9 text-slate-300">
-      {displayText}
-      <span className="animate-pulse">|</span>
-    </p>
-
-    {/* Extra Text */}
-<div className="mt-10 flex flex-wrap justify-center items-center gap-8 text-slate-300">
-
-    <div className="flex items-center gap-2">
-        <FaUsers className="text-cyan-400 text-xl"/>
-        <span>Compare Players</span>
-    </div>
-
-    <span className="text-slate-600">•</span>
-
-    <div className="flex items-center gap-2">
-        <FaChartLine className="text-cyan-400 text-xl"/>
-        <span>Interactive Analytics</span>
-    </div>
-
-    <span className="text-slate-600">•</span>
-
-    <div className="flex items-center gap-2">
-        <FaBrain className="text-cyan-400 text-xl"/>
-        <span>AI Match Insights</span>
-    </div>
-
-</div>
-
-    {/* Buttons */}
-    <div className="mt-12 flex justify-center gap-6">
-
-      <NavLink
-            to="/players"
-            className="group flex items-center gap-3 rounded-xl border border-cyan-500 px-8 py-4 font-semibold text-cyan-400 transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-500 hover:text-slate-900 hover:shadow-[0_0_30px_rgba(34,211,238,0.35)]"
-            >
-            Explore Players
-            <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-2" />
-            </NavLink>
-
+    <section className="bg-gradient-to-b from-[#020617] via-[#0f172a] to-[#172840] px-6 pb-16 pt-16 md:pb-20 md:pt-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="max-w-3xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-cyan-400">Criclyst · Cricket, in context</p>
+          <h1 className="mt-5 text-5xl font-extrabold leading-tight text-white md:text-7xl">
+            <span className="block">Follow the game.</span>
+            <span className="hero-typewriter block" aria-hidden="true">
+              <span className="hero-typewriter__sizer">{headlinePhrases[0]}</span>
+              <span className="hero-typewriter__text">
+                {reducedMotion ? headlinePhrases[0] : typedText}
+                {!reducedMotion && <span className="hero-typewriter__cursor" />}
+              </span>
+            </span>
+            <span className="sr-only">Follow the game. Understand every innings.</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300" aria-hidden="true">
+            <span key={reducedMotion ? "reduced" : descriptionIndex} className="hero-description">
+              {reducedMotion ? descriptions[0] : descriptions[descriptionIndex]}
+            </span>
+          </p>
+          <p className="sr-only">
+            Criclyst covers live matches, upcoming fixtures, recent results, player profiles, team insights, player comparisons, and cricket analytics.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-4">
             <NavLink
-            to="/analytics"
-            className="rounded-xl border border-cyan-500 px-8 py-4 font-semibold text-cyan-400 transition-all duration-300 hover:-translate-y-1 hover:bg-cyan-500 hover:text-slate-900 hover:shadow-[0_0_30px_rgba(34,211,238,0.35)]"
+              to="/matches"
+              className="group inline-flex items-center gap-3 rounded-xl bg-cyan-500 px-6 py-3.5 font-semibold text-slate-900 transition hover:bg-cyan-400"
             >
-            View Analytics
+              Browse Matches <FaArrowRight className="transition-transform group-hover:translate-x-1" />
             </NavLink>
-
-    </div>
-
-  </div>
-</section>
-    </>
-   
+            <NavLink
+              to="/players"
+              className="inline-flex items-center rounded-xl border border-slate-600 px-6 py-3.5 font-semibold text-white transition hover:border-cyan-400 hover:text-cyan-300"
+            >
+              Explore Players
+            </NavLink>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

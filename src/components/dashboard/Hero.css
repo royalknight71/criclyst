@@ -1,0 +1,58 @@
+.hero-typewriter {
+  display: grid;
+  position: relative;
+}
+
+.hero-typewriter__sizer,
+.hero-typewriter__text {
+  grid-area: 1 / 1;
+}
+
+.hero-typewriter__sizer {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hero-typewriter__text {
+  min-width: 0;
+}
+
+.hero-typewriter__cursor {
+  display: inline-block;
+  width: 0.065em;
+  height: 0.86em;
+  margin-left: 0.08em;
+  vertical-align: -0.04em;
+  border-radius: 1px;
+  background-color: currentColor;
+  animation: hero-cursor-blink 1.05s steps(2, start) infinite;
+}
+
+.hero-description {
+  display: inline-block;
+  animation: hero-description-in 420ms ease both;
+}
+
+@keyframes hero-cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@keyframes hero-description-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-typewriter__cursor,
+  .hero-description {
+    animation: none;
+  }
+}
